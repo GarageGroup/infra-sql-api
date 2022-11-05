@@ -63,13 +63,13 @@ jobs:
     # Api.Provider.Microsoft
 
     - name: Restore Api.Provider.Microsoft
-      run: dotnet restore ./src/*/*/Swagger.Core.csproj
+      run: dotnet restore ./src/*/*/Api.Provider.Microsoft.csproj
 
     - name: Build Api.Provider.Microsoft
-      run: dotnet build ./src/*/*/Swagger.Core.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Api.Provider.Microsoft.csproj --no-restore  -c Release
 
     - name: Pack Api.Provider.Microsoft
-      run: dotnet pack ./src/*/*/Swagger.Core.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Api.Provider.Microsoft.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Abstractions.ExecuteNonQuery
 
