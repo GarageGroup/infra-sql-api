@@ -27,10 +27,22 @@ public static class MicrosoftDbProvider
 
         string GetConnectionString(IConfiguration configuration)
             =>
-            configuration.GetConnectionString(connectionStringName);
+            configuration.GetConnectionStringOrThrow(connectionStringName ?? string.Empty);
     }
 
     private static Dependency<IDbProvider> InnerUseMicrosoftDbProvider(this Dependency<string> dependency)
         =>
         dependency.Map<IDbProvider>(MicrosoftDbProviderImpl.Create);
+
+    private static string GetConnectionStringOrThrow(this IConfiguration configuration, string connectionStringName)
+    {
+        var connectionString = configuration.GetConnectionString(connectionStringName);
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException($"Connection string '{connectionStringName}' must be specified");
+        }
+
+        return connectionString;
+    }
 }

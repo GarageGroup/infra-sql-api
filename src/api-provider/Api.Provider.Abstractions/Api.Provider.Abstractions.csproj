@@ -8,11 +8,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Provider.Abstractions</AssemblyName>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-  </ItemGroup>
 
 </Project>

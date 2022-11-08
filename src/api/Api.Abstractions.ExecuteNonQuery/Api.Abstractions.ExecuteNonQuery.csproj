@@ -8,11 +8,11 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions.ExecuteNonQuery</AssemblyName>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.SqlRequest" Version="0.0.1" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.SqlRequest" Version="0.1.0" />
   </ItemGroup>
 
 </Project>
