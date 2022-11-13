@@ -11,10 +11,10 @@ public sealed record class SqlRequest
         Parameters = FlatArray.Empty<KeyValuePair<string, object?>>();
     }
 
-    public SqlRequest(string query, [AllowNull] FlatArray<KeyValuePair<string, object?>> parameters = null)
+    public SqlRequest(string query, FlatArray<KeyValuePair<string, object?>> parameters)
     {
         Query = query ?? string.Empty;
-        Parameters = parameters ?? FlatArray.Empty<KeyValuePair<string, object?>>();
+        Parameters = parameters;
     }
 
     public string Query { get; }

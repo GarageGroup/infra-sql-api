@@ -35,7 +35,9 @@ partial class SqlApi
             return default;
         }
 
-        var dbItem = new DbItem(dbReader);
+        var fieldIndexes = CreateFieldIndexes(dbReader);
+        var dbItem = new DbItem(dbReader, fieldIndexes);
+
         return T.ReadEntity(dbItem);
     }
 }
