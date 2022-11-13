@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 
@@ -29,4 +30,8 @@ internal sealed partial class SqlApi : ISqlApi
 
         return dbCommand;
     }
+
+    private static IReadOnlyDictionary<string, int> CreateFieldIndexes(DbDataReader dbDataReader)
+        =>
+        Enumerable.Range(0, dbDataReader.FieldCount).ToDictionary(dbDataReader.GetName, static index => index);
 }

@@ -34,14 +34,15 @@ partial class SqlApi
 
         if (isPresent is false)
         {
-            return FlatArray.Empty<T>();
+            return default;
         }
 
         var collection = new List<T>();
+        var fieldIndexes = CreateFieldIndexes(dbReader);
 
         do
         {
-            var dbItem = new DbItem(dbReader);
+            var dbItem = new DbItem(dbReader, fieldIndexes);
             var entity = T.ReadEntity(dbItem);
 
             collection.Add(entity);
