@@ -6,7 +6,7 @@ namespace GGroupp.Infra;
 
 partial class SqlApi
 {
-    public ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(SqlRequest request, CancellationToken cancellationToken = default)
+    public ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(DbRequest request, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
         _ = request ?? throw new ArgumentNullException(nameof(request));
@@ -19,7 +19,7 @@ partial class SqlApi
         return InnerQueryEntityOrAbsentAsync<T>(request, cancellationToken);
     }
 
-    private async ValueTask<Result<T, Unit>> InnerQueryEntityOrAbsentAsync<T>(SqlRequest request, CancellationToken cancellationToken)
+    private async ValueTask<Result<T, Unit>> InnerQueryEntityOrAbsentAsync<T>(DbRequest request, CancellationToken cancellationToken)
         where T : IDbEntity<T>
     {
         using var dbConnection = dbProvider.GetDbConnection();

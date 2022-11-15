@@ -1,11 +1,13 @@
 ﻿using Microsoft.Data.SqlClient;
-using System.Collections.Generic;
+using System;
 
 namespace GGroupp.Infra;
 
 partial class MicrosoftDbProviderImpl
 {
-    public object GetDbParameter(KeyValuePair<string, object?> parameter)
-        =>
-        new SqlParameter(parameter.Key, parameter.Value);
+    public object GetSqlParameter(DbParameter parameter)
+    {
+        _ = parameter ?? throw new ArgumentNullException(nameof(parameter));
+        return new SqlParameter(parameter.Name, parameter.Value);
+    }
 }

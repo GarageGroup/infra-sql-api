@@ -6,7 +6,7 @@ namespace GGroupp.Infra;
 
 partial class SqlApi
 {
-    public ValueTask<int> ExecuteNonQueryAsync(SqlRequest request, CancellationToken cancellationToken = default)
+    public ValueTask<int> ExecuteNonQueryAsync(DbRequest request, CancellationToken cancellationToken = default)
     {
         _ = request ?? throw new ArgumentNullException(nameof(request));
 
@@ -18,7 +18,7 @@ partial class SqlApi
         return InnerExecuteNonQueryAsync(request, cancellationToken);
     }
 
-    private async ValueTask<int> InnerExecuteNonQueryAsync(SqlRequest request, CancellationToken cancellationToken)
+    private async ValueTask<int> InnerExecuteNonQueryAsync(DbRequest request, CancellationToken cancellationToken)
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);

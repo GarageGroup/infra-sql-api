@@ -7,12 +7,13 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>GGroupp.Infra</RootNamespace>
-    <AssemblyName>GGroupp.Infra.Sql.Api.Core.SqlRequest</AssemblyName>
-    <Version>0.2.0</Version>
+    <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbRequest</AssemblyName>
+    <Version>0.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EarlyFuncPack.Collections.FlatArray" Version="0.5.0" />
+    <PackageReference Include="EarlyFuncPack.Collections.FlatArray" Version="0.6.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbParameter" Version="0.0.1" />
   </ItemGroup>
 
 </Project>

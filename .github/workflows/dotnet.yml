@@ -25,7 +25,11 @@ jobs:
       run: dotnet nuget add source ~/nuget
 
     - name: Add GGroupp NuGet Source
-      run: dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }} -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }} -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }} --store-password-in-clear-text
+      run: >
+        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
+        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --store-password-in-clear-text
 
     # Api.Core.DbEntity
 
@@ -38,16 +42,27 @@ jobs:
     - name: Pack Api.Core.DbEntity
       run: dotnet pack ./src/*/*/Api.Core.DbEntity.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.SqlRequest
+    # Api.Core.DbParameter
 
-    - name: Restore Api.Core.SqlRequest
-      run: dotnet restore ./src/*/*/Api.Core.SqlRequest.csproj
+    - name: Restore Api.Core.DbParameter
+      run: dotnet restore ./src/*/*/Api.Core.DbParameter.csproj
 
-    - name: Build Api.Core.SqlRequest
-      run: dotnet build ./src/*/*/Api.Core.SqlRequest.csproj --no-restore  -c Release
+    - name: Build Api.Core.DbParameter
+      run: dotnet build ./src/*/*/Api.Core.DbParameter.csproj --no-restore  -c Release
 
-    - name: Pack Api.Core.SqlRequest
-      run: dotnet pack ./src/*/*/Api.Core.SqlRequest.csproj --no-restore -o ~/nuget  -c Release
+    - name: Pack Api.Core.DbParameter
+      run: dotnet pack ./src/*/*/Api.Core.DbParameter.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbRequest
+
+    - name: Restore Api.Core.DbRequest
+      run: dotnet restore ./src/*/*/Api.Core.DbRequest.csproj
+
+    - name: Build Api.Core.DbRequest
+      run: dotnet build ./src/*/*/Api.Core.DbRequest.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.DbRequest
+      run: dotnet pack ./src/*/*/Api.Core.DbRequest.csproj --no-restore -o ~/nuget  -c Release
       
     # Api.Provider.Abstractions
 
@@ -130,4 +145,8 @@ jobs:
 
     - name: Push Packages
       if: ${{ github.ref == 'refs/heads/main' }}
-      run: dotnet nuget push "../../../nuget/*.nupkg" -s ${{ secrets.GG_NUGET_SOURCE_URL }} -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }} --skip-duplicate
+      run: >
+        dotnet nuget push "../../../nuget/*.nupkg"
+        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --skip-duplicate
