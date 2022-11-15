@@ -6,6 +6,6 @@ namespace GGroupp.Infra;
 
 public interface ISqlQueryEntitySetSupplier
 {
-    ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(SqlRequest request, CancellationToken cancellationToken = default)
+    ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(DbRequest request, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>;
 }
