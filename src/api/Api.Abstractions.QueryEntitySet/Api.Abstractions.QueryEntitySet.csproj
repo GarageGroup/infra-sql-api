@@ -8,12 +8,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions.QueryEntitySet</AssemblyName>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbEntity" Version="0.0.1" />
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbRequest" Version="0.3.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbRequest" Version="0.3.1" />
   </ItemGroup>
 
 </Project>
