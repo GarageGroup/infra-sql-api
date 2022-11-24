@@ -8,11 +8,11 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbRequest</AssemblyName>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EarlyFuncPack.Collections.FlatArray" Version="0.8.1" />
+    <PackageReference Include="EarlyFuncPack.Collections.FlatArray" Version="0.9.0" />
     <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbParameter" Version="0.0.2" />
   </ItemGroup>
 
