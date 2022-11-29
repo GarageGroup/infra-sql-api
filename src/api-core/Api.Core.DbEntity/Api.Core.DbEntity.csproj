@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    <LangVersion>preview</LangVersion>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbEntity</AssemblyName>
     <Version>0.0.2</Version>
