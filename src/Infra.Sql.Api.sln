@@ -3,39 +3,37 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47B15AC3-0371-45D4-AD4C-21776F9D3E39}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{5521F55C-44D1-4A6A-8257-74369CCBB67C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\api\Api\Api.csproj", "{34329956-5A5D-4A87-A8F6-A881A9A1A618}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "api\Api\Api.csproj", "{34329956-5A5D-4A87-A8F6-A881A9A1A618}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions", "src\api\Api.Abstractions\Api.Abstractions.csproj", "{577E76AA-0E65-4A03-98ED-63E17281B7BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions", "api\Api.Abstractions\Api.Abstractions.csproj", "{577E76AA-0E65-4A03-98ED-63E17281B7BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.ExecuteNonQuery", "src\api\Api.Abstractions.ExecuteNonQuery\Api.Abstractions.ExecuteNonQuery.csproj", "{38577441-0295-4232-AF68-6BF44AF71155}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.ExecuteNonQuery", "api\Api.Abstractions.ExecuteNonQuery\Api.Abstractions.ExecuteNonQuery.csproj", "{38577441-0295-4232-AF68-6BF44AF71155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.QueryEntity", "src\api\Api.Abstractions.QueryEntity\Api.Abstractions.QueryEntity.csproj", "{C3FB985F-823C-4CDF-9F45-CF70A7538CD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.QueryEntity", "api\Api.Abstractions.QueryEntity\Api.Abstractions.QueryEntity.csproj", "{C3FB985F-823C-4CDF-9F45-CF70A7538CD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.QueryEntitySet", "src\api\Api.Abstractions.QueryEntitySet\Api.Abstractions.QueryEntitySet.csproj", "{AC2FCC1D-DE62-4154-BFBE-D5E8E400AAC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.QueryEntitySet", "api\Api.Abstractions.QueryEntitySet\Api.Abstractions.QueryEntitySet.csproj", "{AC2FCC1D-DE62-4154-BFBE-D5E8E400AAC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-core", "api-core", "{B7B90C3A-69EB-44A8-8C26-CFD4BDDDDC37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbEntity", "src\api-core\Api.Core.DbEntity\Api.Core.DbEntity.csproj", "{E0123567-49A3-4301-94D6-857DB8CC741A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbEntity", "api-core\Api.Core.DbEntity\Api.Core.DbEntity.csproj", "{E0123567-49A3-4301-94D6-857DB8CC741A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbParameter", "src\api-core\Api.Core.DbParameter\Api.Core.DbParameter.csproj", "{F1A2BDDF-F7DD-4DFF-B789-8522845AD641}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbParameter", "api-core\Api.Core.DbParameter\Api.Core.DbParameter.csproj", "{F1A2BDDF-F7DD-4DFF-B789-8522845AD641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbRequest", "src\api-core\Api.Core.DbRequest\Api.Core.DbRequest.csproj", "{474C041E-F2A0-4121-A1AC-783A4F2C9BEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbRequest", "api-core\Api.Core.DbRequest\Api.Core.DbRequest.csproj", "{474C041E-F2A0-4121-A1AC-783A4F2C9BEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-provider", "api-provider", "{0082E854-6B4D-4742-936B-A5DA365661AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Provider.Abstractions", "src\api-provider\Api.Provider.Abstractions\Api.Provider.Abstractions.csproj", "{448B9ACD-DC4C-4016-880F-BE55AE3C9A3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Provider.Abstractions", "api-provider\Api.Provider.Abstractions\Api.Provider.Abstractions.csproj", "{448B9ACD-DC4C-4016-880F-BE55AE3C9A3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Provider.Microsoft", "src\api-provider\Api.Provider.Microsoft\Api.Provider.Microsoft.csproj", "{4F640E5B-90EC-4FFE-87F9-B40FEF2A3D6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Provider.Microsoft", "api-provider\Api.Provider.Microsoft\Api.Provider.Microsoft.csproj", "{4F640E5B-90EC-4FFE-87F9-B40FEF2A3D6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{5A4BF435-88F0-4091-90F4-C6385C0FD01C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".settings", ".settings", "{5A4BF435-88F0-4091-90F4-C6385C0FD01C}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
-		Directory.Build.props = Directory.Build.props
 		README.md = README.md
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Global
@@ -89,17 +87,14 @@ Global
 		{4F640E5B-90EC-4FFE-87F9-B40FEF2A3D6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5521F55C-44D1-4A6A-8257-74369CCBB67C} = {47B15AC3-0371-45D4-AD4C-21776F9D3E39}
 		{34329956-5A5D-4A87-A8F6-A881A9A1A618} = {5521F55C-44D1-4A6A-8257-74369CCBB67C}
 		{577E76AA-0E65-4A03-98ED-63E17281B7BC} = {5521F55C-44D1-4A6A-8257-74369CCBB67C}
 		{38577441-0295-4232-AF68-6BF44AF71155} = {5521F55C-44D1-4A6A-8257-74369CCBB67C}
 		{C3FB985F-823C-4CDF-9F45-CF70A7538CD4} = {5521F55C-44D1-4A6A-8257-74369CCBB67C}
 		{AC2FCC1D-DE62-4154-BFBE-D5E8E400AAC1} = {5521F55C-44D1-4A6A-8257-74369CCBB67C}
-		{B7B90C3A-69EB-44A8-8C26-CFD4BDDDDC37} = {47B15AC3-0371-45D4-AD4C-21776F9D3E39}
 		{E0123567-49A3-4301-94D6-857DB8CC741A} = {B7B90C3A-69EB-44A8-8C26-CFD4BDDDDC37}
 		{F1A2BDDF-F7DD-4DFF-B789-8522845AD641} = {B7B90C3A-69EB-44A8-8C26-CFD4BDDDDC37}
 		{474C041E-F2A0-4121-A1AC-783A4F2C9BEB} = {B7B90C3A-69EB-44A8-8C26-CFD4BDDDDC37}
-		{0082E854-6B4D-4742-936B-A5DA365661AC} = {47B15AC3-0371-45D4-AD4C-21776F9D3E39}
 		{448B9ACD-DC4C-4016-880F-BE55AE3C9A3D} = {0082E854-6B4D-4742-936B-A5DA365661AC}
 		{4F640E5B-90EC-4FFE-87F9-B40FEF2A3D6D} = {0082E854-6B4D-4742-936B-A5DA365661AC}
 	EndGlobalSection

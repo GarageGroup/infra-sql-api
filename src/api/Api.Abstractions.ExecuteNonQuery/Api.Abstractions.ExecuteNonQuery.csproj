@@ -3,11 +3,11 @@
   <PropertyGroup>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions.ExecuteNonQuery</AssemblyName>
-    <Version>0.5.1</Version>
+    <Version>0.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbRequest" Version="0.5.1" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbRequest" Version="0.6.0" />
   </ItemGroup>
 
 </Project>

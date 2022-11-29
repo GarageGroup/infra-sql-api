@@ -7,8 +7,7 @@ public static class SqlApiDependency
 {
     public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency)
     {
-        _ = dependency ?? throw new ArgumentNullException(nameof(dependency));
-
+        ArgumentNullException.ThrowIfNull(dependency);
         return dependency.Map<ISqlApi>(SqlApi.Create);
     }
 }

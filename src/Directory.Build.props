@@ -1,13 +1,11 @@
 <Project>
-  
+
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <EnablePreviewFeatures>True</EnablePreviewFeatures>
-    <LangVersion>preview</LangVersion>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <InvariantGlobalization>true</InvariantGlobalization>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  
+
 </Project>

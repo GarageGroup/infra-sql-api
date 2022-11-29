@@ -8,7 +8,7 @@ partial class SqlApi
 {
     public ValueTask<int> ExecuteNonQueryAsync(DbRequest request, CancellationToken cancellationToken = default)
     {
-        _ = request ?? throw new ArgumentNullException(nameof(request));
+        ArgumentNullException.ThrowIfNull(request);
 
         if (cancellationToken.IsCancellationRequested)
         {
