@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using PrimeFuncPack;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GGroupp.Infra;
 
@@ -92,19 +93,14 @@ public static class MicrosoftDbProvider
 
     private static IEnumerable<int> GetInt32Collecton(this IConfigurationSection section, string key)
     {
-        var list = new List<int>();
-        var items = section.GetSection(key).AsEnumerable();
+        return section.GetSection(key).AsEnumerable().Select(GetValue).Where(IsNotEmpty).Select(int.Parse).ToArray();
 
-        foreach (var item in items)
-        {
-            if (string.IsNullOrEmpty(item.Value))
-            {
-                continue;
-            }
+        static string GetValue(KeyValuePair<string, string?> kv)
+            =>
+            kv.Value ?? string.Empty;
 
-            list.Add(int.Parse(item.Value));
-        }
-
-        return list;
+        static bool IsNotEmpty(string item)
+            =>
+            string.IsNullOrEmpty(item) is false;
     }
 }
