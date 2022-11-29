@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="EarlyFuncPack.Collections.FlatArray" Version="0.10.0" />
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbParameter" Version="0.0.2" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbParameter" Version="0.0.3" />
   </ItemGroup>
 
 </Project>
