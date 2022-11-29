@@ -1,7 +1,7 @@
 <Project>
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
