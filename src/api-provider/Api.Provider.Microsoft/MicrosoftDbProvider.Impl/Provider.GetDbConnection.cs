@@ -7,5 +7,8 @@ partial class MicrosoftDbProviderImpl
 {
     public DbConnection GetDbConnection()
         =>
-        new SqlConnection(connectionString);
+        new SqlConnection(connectionString)
+        {
+            RetryLogicProvider = retryLogicBaseProvider
+        };
 }

@@ -6,10 +6,12 @@ namespace GGroupp.Infra;
 
 partial class SqlApi
 {
+#if NET7_0_OR_GREATER
+
     public ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(DbRequest request, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
-        _ = request ?? throw new ArgumentNullException(nameof(request));
+        ArgumentNullException.ThrowIfNull(request);
 
         if (cancellationToken.IsCancellationRequested)
         {
@@ -19,8 +21,34 @@ partial class SqlApi
         return InnerQueryEntityOrAbsentAsync<T>(request, cancellationToken);
     }
 
+#else
+
+    public ValueTask<Result<IDbItem, Unit>> QueryEntityOrAbsentAsync(DbRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return ValueTask.FromCanceled<Result<IDbItem, Unit>>(cancellationToken);
+        }
+
+        return InnerQueryDbItemOrAbsentAsync(request, cancellationToken);
+    }
+
+#endif
+
+#if NET7_0_OR_GREATER
+
     private async ValueTask<Result<T, Unit>> InnerQueryEntityOrAbsentAsync<T>(DbRequest request, CancellationToken cancellationToken)
         where T : IDbEntity<T>
+    {
+        var result = await InnerQueryDbItemOrAbsentAsync(request, cancellationToken).ConfigureAwait(false);
+        return result.MapSuccess(T.ReadEntity);
+    }
+
+#endif
+
+    private async ValueTask<Result<IDbItem, Unit>> InnerQueryDbItemOrAbsentAsync(DbRequest request, CancellationToken cancellationToken)
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -36,8 +64,6 @@ partial class SqlApi
         }
 
         var fieldIndexes = CreateFieldIndexes(dbReader);
-        var dbItem = new DbItem(dbReader, fieldIndexes);
-
-        return T.ReadEntity(dbItem);
+        return new DbItem(dbReader, fieldIndexes);
     }
 }
