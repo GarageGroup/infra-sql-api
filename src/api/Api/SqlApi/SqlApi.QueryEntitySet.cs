@@ -20,57 +20,29 @@ partial class SqlApi
             return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetAsync<T>(request, cancellationToken);
+        return InnerQueryEntitySetAsync<T>(request, T.ReadEntity, cancellationToken);
     }
 
 #else
 
-    public ValueTask<FlatArray<IDbItem>> QueryEntitySetAsync(DbRequest request, CancellationToken cancellationToken = default)
+    public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
+        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mapper);
 
         if (cancellationToken.IsCancellationRequested)
         {
-            return ValueTask.FromCanceled<FlatArray<IDbItem>>(cancellationToken);
+            return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryDbItemSetAsync(request, cancellationToken);
+        return InnerQueryEntitySetAsync(request, mapper, cancellationToken);
     }
 
 #endif
 
-#if NET7_0_OR_GREATER
-
-    private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(DbRequest request, CancellationToken cancellationToken)
-        where T : IDbEntity<T>
-    {
-        var dbItems = await InnerQueryDbItemSetAsync(request, cancellationToken).ConfigureAwait(false);
-        return MapDbItems<T>(dbItems);
-    }
-
-    private static FlatArray<T> MapDbItems<T>(FlatArray<IDbItem> dbItems)
-        where T : IDbEntity<T>
-    {
-        if (dbItems.IsEmpty)
-        {
-            return default;
-        }
-
-        var builder = FlatArray<T>.Builder.OfLength(dbItems.Length);
-        var index = 0;
-
-        foreach (var dbItem in dbItems)
-        {
-            builder[index] = T.ReadEntity(dbItem);
-            index++;
-        }
-
-        return builder.MoveToArray();
-    }
-
-#endif
-
-    private async ValueTask<FlatArray<IDbItem>> InnerQueryDbItemSetAsync(DbRequest request, CancellationToken cancellationToken)
+    private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(
+        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -85,13 +57,15 @@ partial class SqlApi
             return default;
         }
 
-        var collection = new List<IDbItem>();
+        var collection = new List<T>();
         var fieldIndexes = CreateFieldIndexes(dbReader);
 
         while (true)
         {
             var dbItem = new DbItem(dbReader, fieldIndexes);
-            collection.Add(dbItem);
+            var dbEntity = mapper.Invoke(dbItem);
+
+            collection.Add(dbEntity);
 
             if (await dbReader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {

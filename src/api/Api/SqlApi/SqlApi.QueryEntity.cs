@@ -18,37 +18,29 @@ partial class SqlApi
             return ValueTask.FromCanceled<Result<T, Unit>>(cancellationToken);
         }
 
-        return InnerQueryEntityOrAbsentAsync<T>(request, cancellationToken);
+        return InnerQueryDbItemOrAbsentAsync(request, T.ReadEntity, cancellationToken);
     }
 
 #else
 
-    public ValueTask<Result<IDbItem, Unit>> QueryEntityOrAbsentAsync(DbRequest request, CancellationToken cancellationToken = default)
+    public ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(
+        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mapper);
 
         if (cancellationToken.IsCancellationRequested)
         {
-            return ValueTask.FromCanceled<Result<IDbItem, Unit>>(cancellationToken);
+            return ValueTask.FromCanceled<Result<T, Unit>>(cancellationToken);
         }
 
-        return InnerQueryDbItemOrAbsentAsync(request, cancellationToken);
+        return InnerQueryDbItemOrAbsentAsync(request, mapper, cancellationToken);
     }
 
 #endif
 
-#if NET7_0_OR_GREATER
-
-    private async ValueTask<Result<T, Unit>> InnerQueryEntityOrAbsentAsync<T>(DbRequest request, CancellationToken cancellationToken)
-        where T : IDbEntity<T>
-    {
-        var result = await InnerQueryDbItemOrAbsentAsync(request, cancellationToken).ConfigureAwait(false);
-        return result.MapSuccess(T.ReadEntity);
-    }
-
-#endif
-
-    private async ValueTask<Result<IDbItem, Unit>> InnerQueryDbItemOrAbsentAsync(DbRequest request, CancellationToken cancellationToken)
+    private async ValueTask<Result<T, Unit>> InnerQueryDbItemOrAbsentAsync<T>(
+        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -64,6 +56,8 @@ partial class SqlApi
         }
 
         var fieldIndexes = CreateFieldIndexes(dbReader);
-        return new DbItem(dbReader, fieldIndexes);
+        var dbItem = new DbItem(dbReader, fieldIndexes);
+
+        return mapper.Invoke(dbItem);
     }
 }

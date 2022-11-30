@@ -13,7 +13,8 @@ public interface ISqlQueryEntitySupplier
 
 #else
 
-    ValueTask<Result<IDbItem, Unit>> QueryEntityOrAbsentAsync(DbRequest request, CancellationToken cancellationToken = default);
+    ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(
+        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default);
 
 #endif
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +14,8 @@ public interface ISqlQueryEntitySetSupplier
 
 #else
 
-    ValueTask<FlatArray<IDbItem>> QueryEntitySetAsync(DbRequest request, CancellationToken cancellationToken = default);
+    ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
+        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default);
 
 #endif
 }

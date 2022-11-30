@@ -3,13 +3,13 @@
   <PropertyGroup>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions</AssemblyName>
-    <Version>0.6.0</Version>
+    <Version>0.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.ExecuteNonQuery" Version="0.6.0" />
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntity" Version="0.6.0" />
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="0.6.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntity" Version="0.7.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="0.7.0" />
   </ItemGroup>
 
 </Project>
