@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api</AssemblyName>
-    <Version>0.8.0</Version>
+    <Version>0.8.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,8 +1,18 @@
-﻿namespace GGroupp.Infra;
+﻿using System;
+
+namespace GGroupp.Infra;
 
 partial class DbValueProvider
 {
     public double GetDouble()
-        =>
-        dbDataReader.GetDouble(fieldIndex);
+    {
+        try
+        {
+            return dbDataReader.GetDouble(fieldIndex);
+        }
+        catch (Exception exception)
+        {
+            throw WrapSourceException(exception);
+        }
+    }
 }

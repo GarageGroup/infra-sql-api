@@ -6,13 +6,14 @@ partial class DbItem
 {
     public DbValue GetFieldValueOrThrow(string fieldName)
     {
-        var fieldIndex = GetFieldIndex(fieldName ?? string.Empty);
+        var name = fieldName ?? string.Empty;
+        var fieldIndex = GetFieldIndex(name);
 
         if (fieldIndex is null)
         {
-            throw new InvalidOperationException($"Field {fieldName} must be present in the data reader");
+            throw new InvalidOperationException($"Field {name} must be present in the data reader");
         }
 
-        return GetDbValue(fieldIndex.Value);
+        return GetDbValue(fieldIndex.Value, name);
     }
 }

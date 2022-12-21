@@ -1,8 +1,18 @@
-﻿namespace GGroupp.Infra;
+﻿using System;
+
+namespace GGroupp.Infra;
 
 partial class DbValueProvider
 {
     public decimal GetDecimal()
-        =>
-        dbDataReader.GetDecimal(fieldIndex);
+    {
+        try
+        {
+            return dbDataReader.GetDecimal(fieldIndex);
+        }
+        catch (Exception exception)
+        {
+            throw WrapSourceException(exception);
+        }
+    }
 }

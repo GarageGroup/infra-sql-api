@@ -1,9 +1,19 @@
-﻿namespace GGroupp.Infra;
+﻿using System;
+
+namespace GGroupp.Infra;
 
 partial class DbValueProvider
 {
     public T Get<T>() where T
         : notnull
-        =>
-        dbDataReader.GetFieldValue<T>(fieldIndex);
+    {
+        try
+        {
+            return dbDataReader.GetFieldValue<T>(fieldIndex);
+        }
+        catch (Exception exception)
+        {
+            throw WrapSourceException(exception);
+        }
+    }
 }

@@ -4,13 +4,14 @@ partial class DbItem
 {
     public DbValue? GetFieldValueOrDefault(string fieldName)
     {
-        var fieldIndex = GetFieldIndex(fieldName ?? string.Empty);
+        var name = fieldName ?? string.Empty;
+        var fieldIndex = GetFieldIndex(name);
 
         if (fieldIndex is null)
         {
             return null;
         }
 
-        return GetDbValue(fieldIndex.Value);
+        return GetDbValue(fieldIndex.Value, name);
     }
 }
