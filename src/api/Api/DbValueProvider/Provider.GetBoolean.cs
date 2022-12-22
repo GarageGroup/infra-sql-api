@@ -1,8 +1,18 @@
-﻿namespace GGroupp.Infra;
+﻿using System;
+
+namespace GGroupp.Infra;
 
 partial class DbValueProvider
 {
     public bool GetBoolean()
-        =>
-        dbDataReader.GetBoolean(fieldIndex);
+    {
+        try
+        {
+            return dbDataReader.GetBoolean(fieldIndex);
+        }
+        catch (Exception exception)
+        {
+            throw WrapSourceException(exception);
+        }
+    }
 }

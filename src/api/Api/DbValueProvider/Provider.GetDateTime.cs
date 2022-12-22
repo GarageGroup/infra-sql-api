@@ -5,6 +5,14 @@ namespace GGroupp.Infra;
 partial class DbValueProvider
 {
     public DateTime GetDateTime()
-        =>
-        dbDataReader.GetDateTime(fieldIndex);
+    {
+        try
+        {
+            return dbDataReader.GetDateTime(fieldIndex);
+        }
+        catch (Exception exception)
+        {
+            throw WrapSourceException(exception);
+        }
+    }
 }

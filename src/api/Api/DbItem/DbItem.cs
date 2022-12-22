@@ -19,8 +19,8 @@ internal sealed partial class DbItem : IDbItem
         =>
         fieldIndexes.TryGetValue(fieldName, out var index) ? index : null;
 
-    private DbValue GetDbValue(int fieldIndex)
+    private DbValue GetDbValue(int fieldIndex, string fieldName)
         =>
         new(
-            dbValueProvider: new DbValueProvider(dbDataReader, fieldIndex));
+            dbValueProvider: new DbValueProvider(dbDataReader, fieldIndex, fieldName));
 }

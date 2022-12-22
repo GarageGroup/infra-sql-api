@@ -1,8 +1,18 @@
-﻿namespace GGroupp.Infra;
+﻿using System;
+
+namespace GGroupp.Infra;
 
 partial class DbValueProvider
 {
     public bool IsNull()
-        =>
-        dbDataReader.IsDBNull(fieldIndex);
+    {
+        try
+        {
+            return dbDataReader.IsDBNull(fieldIndex);
+        }
+        catch (Exception exception)
+        {
+            throw WrapSourceException(exception);
+        }
+    }
 }
