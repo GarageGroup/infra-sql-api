@@ -5,5 +5,5 @@ namespace GGroupp.Infra;
 
 public interface ISqlExecuteNonQuerySupplier
 {
-    ValueTask<int> ExecuteNonQueryAsync(DbRequest request, CancellationToken cancellationToken = default);
+    ValueTask<int> ExecuteNonQueryAsync(IDbQuery query, CancellationToken cancellationToken = default);
 }

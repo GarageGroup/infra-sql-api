@@ -2,21 +2,39 @@ using System;
 
 namespace GGroupp.Infra;
 
-public sealed record class DbRequest
+public sealed record class DbRequest : IDbQuery
 {
-    public DbRequest(string query)
+    public DbRequest(string tableName)
+        =>
+        TableName = tableName ?? string.Empty;
+
+    public DbRequest(string tableName, string shortName)
     {
-        Query = query ?? string.Empty;
-        Parameters = FlatArray.Empty<DbParameter>();
+        TableName = tableName ?? string.Empty;
+        ShortName = string.IsNullOrWhiteSpace(shortName) ? null : shortName;
     }
 
-    public DbRequest(string query, FlatArray<DbParameter> parameters)
-    {
-        Query = query ?? string.Empty;
-        Parameters = parameters;
-    }
+    public string TableName { get; }
 
-    public string Query { get; }
+    public string? ShortName { get; }
 
-    public FlatArray<DbParameter> Parameters { get; }
+    public int? Top { get; init; }
+
+    public long? Offset { get; init; }
+
+    public FlatArray<string> SelectedFields { get; init; }
+
+    public FlatArray<IDbFilter> Filters { get; init; }
+
+    public FlatArray<DbJoinedTable> JoinedTables { get; init; }
+
+    public FlatArray<DbOrder> Orders { get; init; }
+
+    string IDbQuery.GetSqlQuery()
+        =>
+        this.BuildSqlQuery();
+
+    FlatArray<DbParameter> IDbQuery.GetParameters()
+        =>
+        this.BuildParameters();
 }

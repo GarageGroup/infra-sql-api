@@ -9,25 +9,25 @@ partial class SqlApi
 {
 #if NET7_0_OR_GREATER
 
-    public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(DbRequest request, CancellationToken cancellationToken = default)
+    public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(query);
 
         if (cancellationToken.IsCancellationRequested)
         {
             return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetAsync<T>(request, T.ReadEntity, cancellationToken);
+        return InnerQueryEntitySetAsync<T>(query, T.ReadEntity, cancellationToken);
     }
 
 #else
 
     public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
-        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
+        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(mapper);
 
         if (cancellationToken.IsCancellationRequested)
@@ -35,18 +35,18 @@ partial class SqlApi
             return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetAsync(request, mapper, cancellationToken);
+        return InnerQueryEntitySetAsync(query, mapper, cancellationToken);
     }
 
 #endif
 
     private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(
-        DbRequest request, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-        using var dbCommand = CreateDbCommand(dbConnection, request);
+        using var dbCommand = CreateDbCommand(dbConnection, query);
         using var dbReader = await dbCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
         var isPresent = await dbReader.ReadAsync(cancellationToken).ConfigureAwait(false);
