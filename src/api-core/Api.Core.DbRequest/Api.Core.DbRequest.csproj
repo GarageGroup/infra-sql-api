@@ -3,12 +3,11 @@
   <PropertyGroup>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbRequest</AssemblyName>
-    <Version>0.7.0</Version>
+    <Version>0.8.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbParameter" Version="0.1.0" />
-    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.0.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbQuery" Version="0.0.1" />
   </ItemGroup>
 
 </Project>

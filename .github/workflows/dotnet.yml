@@ -53,6 +53,17 @@ jobs:
     - name: Pack Api.Core.DbParameter
       run: dotnet pack ./src/*/*/Api.Core.DbParameter.csproj --no-restore -o ~/nuget  -c Release
 
+    # Api.Core.DbQuery
+
+    - name: Restore Api.Core.DbQuery
+      run: dotnet restore ./src/*/*/Api.Core.DbQuery.csproj
+
+    - name: Build Api.Core.DbQuery
+      run: dotnet build ./src/*/*/Api.Core.DbQuery.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.DbQuery
+      run: dotnet pack ./src/*/*/Api.Core.DbQuery.csproj --no-restore -o ~/nuget  -c Release
+
     # Api.Core.DbRequest
 
     - name: Restore Api.Core.DbRequest
@@ -63,6 +74,14 @@ jobs:
 
     - name: Pack Api.Core.DbRequest
       run: dotnet pack ./src/*/*/Api.Core.DbRequest.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbRequest.Tests
+
+    - name: Restore Api.Core.DbRequest.Tests
+      run: dotnet restore ./src/*/*/Api.Core.DbRequest.Tests.csproj
+
+    - name: Test Api.Core.DbRequest.Tests
+      run: dotnet test ./src/*/*/Api.Core.DbRequest.Tests.csproj --no-restore  -c Release
       
     # Api.Provider.Abstractions
 
