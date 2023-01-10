@@ -2,7 +2,7 @@ using System.Text;
 
 namespace GGroupp.Infra;
 
-partial class DbRequestExtensions
+partial class DbQueryExtensions
 {
     internal static string BuildFilterSqlQuery(this DbFieldFilter filter)
         =>

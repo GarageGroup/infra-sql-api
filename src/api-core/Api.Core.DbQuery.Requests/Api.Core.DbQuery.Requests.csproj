@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <RootNamespace>GGroupp.Infra</RootNamespace>
-    <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbRequest</AssemblyName>
-    <Version>0.8.0</Version>
+    <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbQuery.Requests</AssemblyName>
+    <Version>0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

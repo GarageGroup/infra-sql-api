@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GGroupp.Infra;
 
-internal static partial class DbRequestExtensions
+internal static partial class DbQueryExtensions
 {
     private static string BuildSqlQuery(this FlatArray<IDbFilter> filters)
     {
@@ -97,6 +97,15 @@ internal static partial class DbRequestExtensions
             _ => throw OutOfRangeException(@operator)
         };
 
+    private static string GetName(this DbLogicalOperator @operator)
+        =>
+        @operator switch
+        {
+            DbLogicalOperator.And => "AND",
+            DbLogicalOperator.Or => "OR",
+            _ => throw OutOfRangeException(@operator),
+        };
+
     private static string GetName(this DbJoinType joinType)
         =>
         joinType switch
@@ -119,17 +128,21 @@ internal static partial class DbRequestExtensions
 
     private static ArgumentOutOfRangeException OutOfRangeException(DbFilterOperator @operator)
         =>
-        new($"An unexpected DbFilterOperator value: {@operator}");
+        new($"An unexpected {nameof(DbFilterOperator)} value: {@operator}");
+
+    private static ArgumentOutOfRangeException OutOfRangeException(DbLogicalOperator @operator)
+        =>
+        new($"An unexpected {nameof(DbLogicalOperator)} value: {@operator}");
 
     private static ArgumentOutOfRangeException OutOfRangeException(DbArrayFilterOperator @operator)
         =>
-        new($"An unexpected DbArrayFilterOperator value: {@operator}");
+        new($"An unexpected {nameof(DbArrayFilterOperator)} value: {@operator}");
 
     private static ArgumentOutOfRangeException OutOfRangeException(DbJoinType joinType)
         =>
-        new($"An unexpected DbJoinType: {joinType}");
+        new($"An unexpected {nameof(DbJoinType)} value: {joinType}");
     
     private static ArgumentOutOfRangeException OutOfRangeException(DbOrderType orderType)
         =>
-        new($"An unexpected DbOrderType: {orderType}");
+        new($"An unexpected {nameof(DbOrderType)} value: {orderType}");
 }

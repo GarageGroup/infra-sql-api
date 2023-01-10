@@ -2,13 +2,13 @@ using System;
 
 namespace GGroupp.Infra;
 
-public sealed record class DbRequest : IDbQuery
+public sealed record class DbSelectQuery : IDbQuery
 {
-    public DbRequest(string tableName)
+    public DbSelectQuery(string tableName)
         =>
         TableName = tableName ?? string.Empty;
 
-    public DbRequest(string tableName, string shortName)
+    public DbSelectQuery(string tableName, string shortName)
     {
         TableName = tableName ?? string.Empty;
         ShortName = string.IsNullOrWhiteSpace(shortName) ? null : shortName;
@@ -24,7 +24,7 @@ public sealed record class DbRequest : IDbQuery
 
     public FlatArray<string> SelectedFields { get; init; }
 
-    public FlatArray<IDbFilter> Filters { get; init; }
+    public IDbFilter? Filter { get; init; }
 
     public FlatArray<DbJoinedTable> JoinedTables { get; init; }
 
