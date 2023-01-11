@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GGroupp.Infra.Sql.Api.Core.Tests;
 
-public static partial class DbRequestTest
+public static partial class DbSelectQueryTest
 {
     public static IEnumerable<object[]> GetSqlQueryTestData()
         =>
@@ -11,12 +11,12 @@ public static partial class DbRequestTest
         {
             new object[]
             {
-                new DbRequest("Country"),
+                new DbSelectQuery("Country"),
                 "SELECT * FROM Country"
             },
             new object[]
             {
-                new DbRequest("Country")
+                new DbSelectQuery("Country")
                 {
                     Top = 5
                 },
@@ -24,53 +24,39 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
-                    Filters = new(
-                        new StubDbFilter("HasBalcony = @HasBalcony", new DbParameter("HasBalcony", false)))
+                    Filter = new StubDbFilter("HasBalcony = 1")
                 },
-                "SELECT * FROM Property p WHERE HasBalcony = @HasBalcony"
+                "SELECT * FROM Property p WHERE HasBalcony = 1"
             },
             new object[]
             {
-                new DbRequest("Property", "\t")
-                {
-                    SelectedFields = new("Id", "Name"),
-                    Filters = new(
-                        new StubDbFilter("Id > @Id", new DbParameter("Id", 15)),
-                        new StubDbFilter("Name = @Name", new DbParameter("Name", null)),
-                        new StubDbFilter("Price > 0"))
-                },
-                "SELECT Id, Name FROM Property WHERE (Id > @Id AND Name = @Name AND Price > 0)"
-            },
-            new object[]
-            {
-                new DbRequest("Property")
+                new DbSelectQuery("Property", "\t")
                 {
                     SelectedFields = new("Id", "Name"),
-                    Filters = new(
-                        new StubDbFilter("Id > @Id", new DbParameter("Id", 15)),
-                        new StubDbFilter("\t", new DbParameter("Name", "Some string")),
-                        new StubDbFilter("Price IN (@Price0, @Price1)", new("Price0", null), new("Price1", 10.51m)))
+                    Filter = new StubDbFilter(
+                        "Id > @Id AND Name = @Name AND Price > 0",
+                        new("HasBalcony", false),
+                        new("Name", null))
                 },
-                "SELECT Id, Name FROM Property WHERE (Id > @Id AND Price IN (@Price0, @Price1))"
+                "SELECT Id, Name FROM Property WHERE Id > @Id AND Name = @Name AND Price > 0"
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
                     JoinedTables = new(
                         new DbJoinedTable(
-                            DbJoinType.Inner, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id"), new StubDbFilter("t.Id > 0")))
+                            DbJoinType.Inner, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id")))
                 },
-                "SELECT * FROM Property p INNER JOIN Translation t ON (t.PropertyId = p.Id AND t.Id > 0)"
+                "SELECT * FROM Property p INNER JOIN Translation t ON t.PropertyId = p.Id"
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
-                    Filters = new(
-                        new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15))),
+                    Filter = new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15)),
                     JoinedTables = new(
                         new(DbJoinType.Left, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id")),
                         new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId")))
@@ -79,11 +65,10 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
                     SelectedFields = new("p.Id", "\t", "t.Id", null!),
-                    Filters = new(
-                        new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15))),
+                    Filter = new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15)),
                     JoinedTables = new(
                         new(DbJoinType.Left, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id")),
                         new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId")))
@@ -93,7 +78,7 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property")
+                new DbSelectQuery("Property")
                 {
                     Orders = new(
                         new DbOrder("CrmId", DbOrderType.Ascending))
@@ -102,7 +87,7 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
                     Orders = new(
                         new("p.CrmId", DbOrderType.Descending),
@@ -113,7 +98,7 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property")
+                new DbSelectQuery("Property")
                 {
                     Orders = new(new("Id"), new("Name", DbOrderType.Descending)),
                     Offset = 7
@@ -122,13 +107,12 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
                     Top = 7,
                     Offset = 5071,
                     SelectedFields = new("p.Id", "t.Id"),
-                    Filters = new(
-                        new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15))),
+                    Filter = new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15)),
                     JoinedTables = new(
                         new(DbJoinType.Left, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id")),
                         new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId"))),
@@ -147,18 +131,17 @@ public static partial class DbRequestTest
         {
             new object[]
             {
-                new DbRequest("Country"),
+                new DbSelectQuery("Country"),
                 default(FlatArray<DbParameter>)
             },
             new object[]
             {
-                new DbRequest("Country")
+                new DbSelectQuery("Country")
                 {
                     Top = 5,
                     Offset = long.MaxValue,
                     SelectedFields = new("Id", "Name"),
-                    Filters = new FlatArray<IDbFilter>(
-                        new StubDbFilter("Id > 0")),
+                    Filter = new StubDbFilter("Id > 0"),
                     Orders = new FlatArray<DbOrder>(
                         new DbOrder("Name"))
                 },
@@ -166,43 +149,26 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
-                    Filters = new(
-                        new StubDbFilter("HasBalcony = @HasBalcony", new DbParameter("HasBalcony", false)))
+                    Filter = new StubDbFilter("HasBalcony = @HasBalcony", new DbParameter("HasBalcony", false))
                 },
                 new FlatArray<DbParameter>(
                     new DbParameter("HasBalcony", false))
             },
             new object[]
             {
-                new DbRequest("Property", "\t")
+                new DbSelectQuery("Property", "\t")
                 {
                     SelectedFields = new("Id", "Name"),
-                    Filters = new(
-                        new StubDbFilter("Id > @Id", new DbParameter("Id", 15)),
-                        new StubDbFilter("Name = @Name", new DbParameter("Name", null)),
-                        new StubDbFilter("Price > 0"))
+                    Filter = new StubDbFilter("Id > @Id", new("Id", 15), new("Name", null))
                 },
                 new FlatArray<DbParameter>(
                     new("Id", 15), new("Name", null))
             },
             new object[]
             {
-                new DbRequest("Property")
-                {
-                    SelectedFields = new("Id", "Name"),
-                    Filters = new(
-                        new StubDbFilter("Id > @Id", new DbParameter("Id", 15)),
-                        new StubDbFilter("\t", new DbParameter("Name", "Some string")),
-                        new StubDbFilter("Price IN (@Price0, @Price1)", new("Price0", null), new("Price1", 10.51m)))
-                },
-                new FlatArray<DbParameter>(
-                    new("Id", 15), new("Name", "Some string"), new("Price0", null), new("Price1", 10.51m))
-            },
-            new object[]
-            {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
                     JoinedTables = new(
                         new DbJoinedTable(
@@ -213,14 +179,12 @@ public static partial class DbRequestTest
             },
             new object[]
             {
-                new DbRequest("Property", "p")
+                new DbSelectQuery("Property", "p")
                 {
                     Top = 15,
                     SelectedFields = new("p.Id", "t.Id"),
-                    Filters = new(
-                        new StubDbFilter("Id > @Id", new DbParameter("Id", 15)),
-                        new StubDbFilter("\t", new DbParameter("Name", "Some string")),
-                        new StubDbFilter("Price IN (@Price0, @Price1)", new("Price0", null), new("Price1", 10.51m))),
+                    Filter = new StubDbFilter(
+                        "Id > @Id", new("Id", 15), new("Name", "Some string"), new("Price0", null), new("Price1", 10.51m)),
                     JoinedTables = new(
                         new(DbJoinType.Left, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id", new DbParameter("Value", null))),
                         new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId", new DbParameter("CityValue", "Some value"))))

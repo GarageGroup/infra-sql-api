@@ -3,11 +3,11 @@ using Xunit;
 
 namespace GGroupp.Infra.Sql.Api.Core.Tests;
 
-partial class DbRequestTest
+partial class DbSelectQueryTest
 {
     [Theory]
     [MemberData(nameof(GetParametersTestData))]
-    public static void GetFilterParameters_ExpectCorrectParameters(DbRequest source, FlatArray<DbParameter> expected)
+    public static void GetFilterParameters_ExpectCorrectParameters(DbSelectQuery source, FlatArray<DbParameter> expected)
     {
         var query = (IDbQuery)source;
         var actual = query.GetParameters();

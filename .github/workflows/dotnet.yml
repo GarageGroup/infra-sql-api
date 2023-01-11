@@ -64,24 +64,24 @@ jobs:
     - name: Pack Api.Core.DbQuery
       run: dotnet pack ./src/*/*/Api.Core.DbQuery.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbRequest
+    # Api.Core.DbQuery.Requests
 
-    - name: Restore Api.Core.DbRequest
-      run: dotnet restore ./src/*/*/Api.Core.DbRequest.csproj
+    - name: Restore Api.Core.DbQuery.Requests
+      run: dotnet restore ./src/*/*/Api.Core.DbQuery.Requests.csproj
 
-    - name: Build Api.Core.DbRequest
-      run: dotnet build ./src/*/*/Api.Core.DbRequest.csproj --no-restore  -c Release
+    - name: Build Api.Core.DbQuery.Requests
+      run: dotnet build ./src/*/*/Api.Core.DbQuery.Requests.csproj --no-restore  -c Release
 
-    - name: Pack Api.Core.DbRequest
-      run: dotnet pack ./src/*/*/Api.Core.DbRequest.csproj --no-restore -o ~/nuget  -c Release
+    - name: Pack Api.Core.DbQuery.Requests
+      run: dotnet pack ./src/*/*/Api.Core.DbQuery.Requests.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbRequest.Tests
+    # Api.Core.DbQuery.Requests.Tests
 
-    - name: Restore Api.Core.DbRequest.Tests
-      run: dotnet restore ./src/*/*/Api.Core.DbRequest.Tests.csproj
+    - name: Restore Api.Core.DbQuery.Requests.Tests
+      run: dotnet restore ./src/*/*/Api.Core.DbQuery.Requests.Tests.csproj
 
-    - name: Test Api.Core.DbRequest.Tests
-      run: dotnet test ./src/*/*/Api.Core.DbRequest.Tests.csproj --no-restore  -c Release
+    - name: Test Api.Core.DbQuery.Requests.Tests
+      run: dotnet test ./src/*/*/Api.Core.DbQuery.Requests.Tests.csproj --no-restore  -c Release
       
     # Api.Provider.Abstractions
 
