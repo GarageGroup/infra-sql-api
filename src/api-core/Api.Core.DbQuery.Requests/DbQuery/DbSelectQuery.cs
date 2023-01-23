@@ -6,11 +6,11 @@ public sealed record class DbSelectQuery : IDbQuery
 {
     public DbSelectQuery(string tableName)
         =>
-        TableName = tableName ?? string.Empty;
+        TableName = tableName.OrEmpty();
 
     public DbSelectQuery(string tableName, string shortName)
     {
-        TableName = tableName ?? string.Empty;
+        TableName = tableName.OrEmpty();
         ShortName = string.IsNullOrWhiteSpace(shortName) ? null : shortName;
     }
 

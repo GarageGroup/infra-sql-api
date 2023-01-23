@@ -1,19 +1,21 @@
+using System;
+
 namespace GGroupp.Infra;
 
 public sealed record class DbFieldValue
 {
     public DbFieldValue(string fieldName, object? fieldValue)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         FieldValue = fieldValue;
         ParameterName = FieldName;
     }
 
     public DbFieldValue(string fieldName, object? fieldValue, string parameterName)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         FieldValue = fieldValue;
-        ParameterName = parameterName ?? string.Empty;
+        ParameterName = parameterName.OrEmpty();
     }
 
     public string FieldName { get; }

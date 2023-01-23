@@ -6,7 +6,7 @@ public sealed record class DbLikeFilter : IDbFilter
 {
     public DbLikeFilter(string fieldName, string? fieldValue, string parameterName)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         FieldValue = fieldValue;
         ParameterName = string.IsNullOrEmpty(parameterName) ? FieldName : parameterName;
     }

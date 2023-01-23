@@ -6,7 +6,7 @@ public sealed record class DbParameterArrayFilter : IDbFilter
 {
     public DbParameterArrayFilter(string fieldName, DbArrayFilterOperator @operator, FlatArray<object?> fieldValues)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         Operator = @operator;
         FieldValues = fieldValues;
         ParameterPrefix = FieldName;
@@ -14,7 +14,7 @@ public sealed record class DbParameterArrayFilter : IDbFilter
 
     public DbParameterArrayFilter(string fieldName, DbArrayFilterOperator @operator, FlatArray<object?> fieldValues, string parameterPrefix)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         Operator = @operator;
         FieldValues = fieldValues;
         ParameterPrefix = string.IsNullOrEmpty(parameterPrefix) ? FieldName : parameterPrefix;

@@ -7,6 +7,45 @@ namespace GGroupp.Infra;
 
 internal static partial class DbQueryExtensions
 {
+    private static FlatArray<TResult> Map<TSource, TResult>(this FlatArray<TSource> source, Func<TSource, TResult> map)
+    {
+        var builder = FlatArray<TResult>.Builder.OfLength(source.Length);
+
+        for (var i = 0; i < source.Length; i++)
+        {
+            builder[i] = map.Invoke(source[i]);
+        }
+
+        return builder.MoveToFlatArray();
+    }
+
+    private static FlatArray<T> Concat<T>(this FlatArray<T> source, FlatArray<T> other)
+    {
+        if (other.IsEmpty)
+        {
+            return source;
+        }
+
+        if (source.IsEmpty)
+        {
+            return other;
+        }
+
+        var builder = FlatArray<T>.Builder.OfLength(source.Length + other.Length);
+
+        for (var i = 0; i < source.Length; i++)
+        {
+            builder[i] = source[i];
+        }
+
+        for (var i = 0; i < other.Length; i++)
+        {
+            builder[source.Length + i] = other[i];
+        }
+
+        return builder.MoveToFlatArray();
+    }
+
     private static string BuildSqlQuery(this FlatArray<IDbFilter> filters)
     {
         if (filters.IsEmpty)
@@ -74,6 +113,14 @@ internal static partial class DbQueryExtensions
             =>
             string.IsNullOrWhiteSpace(source) is false;
     }
+
+    private static StringBuilder AppendSeparator(this StringBuilder builder, string separator = ", ")
+        =>
+        builder.Length > 0 ? builder.Append(separator) : builder;
+
+    private static DbParameter MapFieldValue(DbFieldValue fieldValue)
+        =>
+        new(fieldValue.ParameterName, fieldValue.FieldValue);
 
     private static string GetSign(this DbArrayFilterOperator @operator)
         =>
