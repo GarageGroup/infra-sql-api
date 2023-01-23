@@ -30,11 +30,11 @@ public sealed record class DbSelectQuery : IDbQuery
 
     public FlatArray<DbOrder> Orders { get; init; }
 
-    string IDbQuery.GetSqlQuery()
+    public string GetSqlQuery()
         =>
         this.BuildSqlQuery();
 
-    FlatArray<DbParameter> IDbQuery.GetParameters()
+    public FlatArray<DbParameter> GetParameters()
         =>
         this.BuildParameters();
 }

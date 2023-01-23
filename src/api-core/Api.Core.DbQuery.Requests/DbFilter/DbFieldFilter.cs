@@ -19,11 +19,11 @@ public sealed record class DbFieldFilter : IDbFilter
 
     public string RawFieldValue { get; }
 
-    string IDbFilter.GetFilterSqlQuery()
+    public string GetFilterSqlQuery()
         =>
         this.BuildFilterSqlQuery();
 
-    FlatArray<DbParameter> IDbFilter.GetFilterParameters()
+    public FlatArray<DbParameter> GetFilterParameters()
         =>
         default;
 }

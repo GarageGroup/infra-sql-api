@@ -14,11 +14,11 @@ public sealed record class DbCombinedFilter : IDbFilter
 
     public FlatArray<IDbFilter> Filters { get; }
 
-    string IDbFilter.GetFilterSqlQuery()
+    public string GetFilterSqlQuery()
         =>
         this.BuildFilterSqlQuery();
 
-    FlatArray<DbParameter> IDbFilter.GetFilterParameters()
+    public FlatArray<DbParameter> GetFilterParameters()
         =>
         this.BuildFilterParameters();
 }

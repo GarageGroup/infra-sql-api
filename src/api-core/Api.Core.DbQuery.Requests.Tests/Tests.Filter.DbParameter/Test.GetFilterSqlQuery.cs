@@ -9,9 +9,7 @@ partial class DbParameterFilterTest
     [MemberData(nameof(GetFilterSqlQueryTestData))]
     public static void GetFilterSqlQuery_OperatorIsInRange_ExpectCorrectSqlQuery(DbParameterFilter source, string expected)
     {
-        var filter = (IDbFilter)source;
-        var actual = filter.GetFilterSqlQuery();
-
+        var actual = source.GetFilterSqlQuery();
         Assert.Equal(expected, actual);
     }
 
@@ -19,13 +17,13 @@ partial class DbParameterFilterTest
     public static void GetFilterSqlQuery_OperatorIsOutOfRange_ExpectArgumentOutOfRangeException()
     {
         const int @operator = -1;
-        IDbFilter filter = new DbParameterFilter("Id", (DbFilterOperator)@operator, 15);
+        var source = new DbParameterFilter("Id", (DbFilterOperator)@operator, 15);
 
         var ex = Assert.Throws<ArgumentOutOfRangeException>(Test);
         Assert.Contains(@operator.ToString(), ex.Message, StringComparison.InvariantCulture);
 
         void Test()
             =>
-            filter.GetFilterSqlQuery();
+            source.GetFilterSqlQuery();
     }
 }

@@ -6,11 +6,9 @@ partial class DbLikeFilterTest
 {
     [Theory]
     [MemberData(nameof(GetFilterSqlQueryTestData))]
-    public static void GetFilterSqlQuery_ExpectCorrectQuery(DbLikeFilter filter, string expected)
+    public static void GetFilterSqlQuery_ExpectCorrectQuery(DbLikeFilter source, string expected)
     {
-        var source = (IDbFilter)filter;
         var actual = source.GetFilterSqlQuery();
-
         Assert.Equal(expected, actual);
     }
 }

@@ -28,11 +28,11 @@ public sealed record class DbParameterArrayFilter : IDbFilter
 
     public string ParameterPrefix { get; }
 
-    string IDbFilter.GetFilterSqlQuery()
+    public string GetFilterSqlQuery()
         =>
         this.BuildFilterSqlQuery();
 
-    FlatArray<DbParameter> IDbFilter.GetFilterParameters()
+    public FlatArray<DbParameter> GetFilterParameters()
         =>
         this.BuildFilterParameters();
 }

@@ -9,9 +9,7 @@ partial class DbParameterArrayFilterTest
     [MemberData(nameof(GetFilterParametersTestData))]
     public static void GetFilterParameters_ExpectCorrectParameters(DbParameterArrayFilter source, FlatArray<DbParameter> expected)
     {
-        var filter = (IDbFilter)source;
-        var actual = filter.GetFilterParameters();
-
+        var actual = source.GetFilterParameters();
         Assert.StrictEqual(expected, actual);
     }
 }

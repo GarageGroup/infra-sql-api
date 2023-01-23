@@ -9,9 +9,7 @@ partial class DbSelectQueryTest
     [MemberData(nameof(GetParametersTestData))]
     public static void GetFilterParameters_ExpectCorrectParameters(DbSelectQuery source, FlatArray<DbParameter> expected)
     {
-        var query = (IDbQuery)source;
-        var actual = query.GetParameters();
-
+        var actual = source.GetParameters();
         Assert.StrictEqual(expected, actual);
     }
 }
