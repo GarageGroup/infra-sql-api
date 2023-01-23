@@ -18,14 +18,13 @@ internal sealed partial class SqlApi : ISqlApi
         =>
         this.dbProvider = dbProvider;
 
-    private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
+    private static DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
     {
         var dbCommand = dbConnection.CreateCommand();
         dbCommand.CommandText = query.GetSqlQuery();
 
-        foreach (var dbParameter in query.GetParameters())
+        foreach (var sqlParameter in query.GetParameters().AsEnumerable().Distinct())
         {
-            var sqlParameter = dbProvider.GetSqlParameter(dbParameter);
             dbCommand.Parameters.Add(sqlParameter);
         }
 
