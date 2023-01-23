@@ -6,11 +6,9 @@ partial class DbCombinedFilterTest
 {
     [Theory]
     [MemberData(nameof(GetFilterSqlQueryTestData))]
-    public static void GetFilterSqlQuery_ExpectCorrectQuery(DbCombinedFilter filter, string expected)
+    public static void GetFilterSqlQuery_ExpectCorrectQuery(DbCombinedFilter source, string expected)
     {
-        var source = (IDbFilter)filter;
         var actual = source.GetFilterSqlQuery();
-
         Assert.Equal(expected, actual);
     }
 }

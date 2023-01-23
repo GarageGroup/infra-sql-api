@@ -23,13 +23,25 @@ internal sealed partial class SqlApi : ISqlApi
         var dbCommand = dbConnection.CreateCommand();
         dbCommand.CommandText = query.GetSqlQuery();
 
-        foreach (var dbParameter in query.GetParameters())
+        foreach (var sqlParameter in GetDbParameters(query).Select(dbProvider.GetSqlParameter))
         {
-            var sqlParameter = dbProvider.GetSqlParameter(dbParameter);
             dbCommand.Parameters.Add(sqlParameter);
         }
 
         return dbCommand;
+    }
+
+    private static IEnumerable<DbParameter> GetDbParameters(IDbQuery query)
+    {
+        var dbParameters = query.GetParameters();
+        var dbNameParameters = new Dictionary<string, DbParameter>(dbParameters.Length);
+
+        foreach (var dbParameter in dbParameters)
+        {
+            dbNameParameters[dbParameter.Name] = dbParameter;
+        }
+
+        return dbNameParameters.Values;
     }
 
     private static IReadOnlyDictionary<string, int> CreateFieldIndexes(DbDataReader dbDataReader)

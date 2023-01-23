@@ -6,11 +6,11 @@ public sealed record class DbSelectQuery : IDbQuery
 {
     public DbSelectQuery(string tableName)
         =>
-        TableName = tableName ?? string.Empty;
+        TableName = tableName.OrEmpty();
 
     public DbSelectQuery(string tableName, string shortName)
     {
-        TableName = tableName ?? string.Empty;
+        TableName = tableName.OrEmpty();
         ShortName = string.IsNullOrWhiteSpace(shortName) ? null : shortName;
     }
 
@@ -30,11 +30,11 @@ public sealed record class DbSelectQuery : IDbQuery
 
     public FlatArray<DbOrder> Orders { get; init; }
 
-    string IDbQuery.GetSqlQuery()
+    public string GetSqlQuery()
         =>
         this.BuildSqlQuery();
 
-    FlatArray<DbParameter> IDbQuery.GetParameters()
+    public FlatArray<DbParameter> GetParameters()
         =>
         this.BuildParameters();
 }

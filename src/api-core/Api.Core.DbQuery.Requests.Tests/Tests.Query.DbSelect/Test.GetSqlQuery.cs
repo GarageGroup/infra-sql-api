@@ -9,9 +9,7 @@ partial class DbSelectQueryTest
     [MemberData(nameof(GetSqlQueryTestData))]
     public static void GetFilterSqlQuery_TypesAreInRange_ExpectCorrectSqlQuery(DbSelectQuery source, string expected)
     {
-        var query = (IDbQuery)source;
-        var actual = query.GetSqlQuery();
-
+        var actual = source.GetSqlQuery();
         Assert.Equal(expected, actual);
     }
 
@@ -20,7 +18,7 @@ partial class DbSelectQueryTest
     {
         const int joinType = -5;
 
-        IDbQuery query = new DbSelectQuery("City")
+        var source = new DbSelectQuery("City")
         {
             JoinedTables = new FlatArray<DbJoinedTable>(
                 new DbJoinedTable((DbJoinType)joinType, "Country", "c", new StubDbFilter("c.Id = 1")))
@@ -31,7 +29,7 @@ partial class DbSelectQueryTest
 
         void Test()
             =>
-            query.GetSqlQuery();
+            source.GetSqlQuery();
     }
 
     [Fact]
@@ -39,7 +37,7 @@ partial class DbSelectQueryTest
     {
         const int orderType = -3;
 
-        IDbQuery query = new DbSelectQuery("Country")
+        var source = new DbSelectQuery("Country")
         {
             Orders = new FlatArray<DbOrder>(
                 new DbOrder("Name", (DbOrderType)orderType))
@@ -50,6 +48,6 @@ partial class DbSelectQueryTest
 
         void Test()
             =>
-            query.GetSqlQuery();
+            source.GetSqlQuery();
     }
 }

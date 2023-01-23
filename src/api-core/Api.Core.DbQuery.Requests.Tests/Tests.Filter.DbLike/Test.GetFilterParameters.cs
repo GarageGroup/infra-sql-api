@@ -7,11 +7,9 @@ partial class DbLikeFilterTest
 {
     [Theory]
     [MemberData(nameof(GetFilterParametersTestData))]
-    public static void GetFilterParameters_ExpectCorrectParameters(DbLikeFilter filter, FlatArray<DbParameter> expected)
+    public static void GetFilterParameters_ExpectCorrectParameters(DbLikeFilter source, FlatArray<DbParameter> expected)
     {
-        var source = (IDbFilter)filter;
         var actual = source.GetFilterParameters();
-
         Assert.Equal(expected, actual);
     }
 }

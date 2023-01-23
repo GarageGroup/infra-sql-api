@@ -6,7 +6,7 @@ public sealed record class DbParameterFilter : IDbFilter
 {
     public DbParameterFilter(string fieldName, DbFilterOperator @operator, object? fieldValue)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         Operator = @operator;
         FieldValue = fieldValue;
         ParameterName = FieldName;
@@ -14,7 +14,7 @@ public sealed record class DbParameterFilter : IDbFilter
 
     public DbParameterFilter(string fieldName, DbFilterOperator @operator, object? fieldValue, string parameterName)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         Operator = @operator;
         FieldValue = fieldValue;
         ParameterName = string.IsNullOrEmpty(parameterName) ? FieldName : parameterName;
@@ -28,11 +28,11 @@ public sealed record class DbParameterFilter : IDbFilter
 
     public string ParameterName { get; }
 
-    string IDbFilter.GetFilterSqlQuery()
+    public string GetFilterSqlQuery()
         =>
         this.BuildFilterSqlQuery();
 
-    FlatArray<DbParameter> IDbFilter.GetFilterParameters()
+    public FlatArray<DbParameter> GetFilterParameters()
         =>
         this.BuildFilterParameters();
 }

@@ -8,7 +8,7 @@ public sealed record class DbFieldFilter : IDbFilter
 
     public DbFieldFilter(string fieldName, DbFilterOperator @operator, string rawFieldValue)
     {
-        FieldName = fieldName ?? string.Empty;
+        FieldName = fieldName.OrEmpty();
         Operator = @operator;
         RawFieldValue = string.IsNullOrWhiteSpace(rawFieldValue) ? DefaultRawValue : rawFieldValue;
     }
@@ -19,11 +19,11 @@ public sealed record class DbFieldFilter : IDbFilter
 
     public string RawFieldValue { get; }
 
-    string IDbFilter.GetFilterSqlQuery()
+    public string GetFilterSqlQuery()
         =>
         this.BuildFilterSqlQuery();
 
-    FlatArray<DbParameter> IDbFilter.GetFilterParameters()
+    public FlatArray<DbParameter> GetFilterParameters()
         =>
         default;
 }
