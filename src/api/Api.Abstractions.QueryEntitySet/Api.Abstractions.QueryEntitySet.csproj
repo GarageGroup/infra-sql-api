@@ -3,11 +3,11 @@
   <PropertyGroup>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions.QueryEntitySet</AssemblyName>
-    <Version>0.10.0</Version>
+    <Version>0.10.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbEntity" Version="0.1.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbEntity" Version="0.1.1" />
     <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbQuery" Version="0.1.0" />
   </ItemGroup>
 
