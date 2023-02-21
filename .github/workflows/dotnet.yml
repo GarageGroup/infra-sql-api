@@ -129,46 +129,46 @@ jobs:
     # Api.Abstractions.ExecuteNonQuery
 
     - name: Restore Api.Abstractions.ExecuteNonQuery
-      run: dotnet restore ./src/*/*/Api.Abstractions.ExecuteNonQuery.csproj
+      run: dotnet restore ./src/*/*/Abstractions.ExecuteNonQuery.csproj
 
     - name: Build Api.Abstractions.ExecuteNonQuery
-      run: dotnet build ./src/*/*/Api.Abstractions.ExecuteNonQuery.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Abstractions.ExecuteNonQuery.csproj --no-restore  -c Release
 
     - name: Pack Api.Abstractions.ExecuteNonQuery
-      run: dotnet pack ./src/*/*/Api.Abstractions.ExecuteNonQuery.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Abstractions.ExecuteNonQuery.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Abstractions.QueryEntity
 
     - name: Restore Api.Abstractions.QueryEntity
-      run: dotnet restore ./src/*/*/Api.Abstractions.QueryEntity.csproj
+      run: dotnet restore ./src/*/*/Abstractions.QueryEntity.csproj
 
     - name: Build Api.Abstractions.QueryEntity
-      run: dotnet build ./src/*/*/Api.Abstractions.QueryEntity.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Abstractions.QueryEntity.csproj --no-restore  -c Release
 
     - name: Pack Api.Abstractions.QueryEntity
-      run: dotnet pack ./src/*/*/Api.Abstractions.QueryEntity.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Abstractions.QueryEntity.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Abstractions.QueryEntitySet
 
     - name: Restore Api.Abstractions.QueryEntitySet
-      run: dotnet restore ./src/*/*/Api.Abstractions.QueryEntitySet.csproj
+      run: dotnet restore ./src/*/*/Abstractions.QueryEntitySet.csproj
 
     - name: Build Api.Abstractions.QueryEntitySet
-      run: dotnet build ./src/*/*/Api.Abstractions.QueryEntitySet.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Abstractions.QueryEntitySet.csproj --no-restore  -c Release
 
     - name: Pack Api.Abstractions.QueryEntitySet
-      run: dotnet pack ./src/*/*/Api.Abstractions.QueryEntitySet.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Abstractions.QueryEntitySet.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Abstractions
 
     - name: Restore Api.Abstractions
-      run: dotnet restore ./src/*/*/Api.Abstractions.csproj
+      run: dotnet restore ./src/*/*/Abstractions.csproj
 
     - name: Build Api.Abstractions
-      run: dotnet build ./src/*/*/Api.Abstractions.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Abstractions.csproj --no-restore  -c Release
 
     - name: Pack Api.Abstractions
-      run: dotnet pack ./src/*/*/Api.Abstractions.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
     # Api
 

@@ -4,17 +4,13 @@ using System.Threading.Tasks;
 
 namespace GGroupp.Infra;
 
-public interface ISqlQueryEntitySupplier
+public interface ISqlQueryEntitySetSupplier
 {
 #if NET7_0_OR_GREATER
-
-    ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
+    ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>;
-
 #else
-
-    ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(
+    ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
         IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default);
-
 #endif
 }
