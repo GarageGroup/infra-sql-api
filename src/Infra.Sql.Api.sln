@@ -17,17 +17,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Abstractions.QueryEntit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-core", "api-core", "{B7B90C3A-69EB-44A8-8C26-CFD4BDDDDC37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbEntity", "api-core\Api.Core.DbEntity\Api.Core.DbEntity.csproj", "{E0123567-49A3-4301-94D6-857DB8CC741A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbEntity", "api-core\DbEntity\DbEntity.csproj", "{E0123567-49A3-4301-94D6-857DB8CC741A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbParameter", "api-core\Api.Core.DbParameter\Api.Core.DbParameter.csproj", "{F1A2BDDF-F7DD-4DFF-B789-8522845AD641}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbParameter", "api-core\DbParameter\DbParameter.csproj", "{F1A2BDDF-F7DD-4DFF-B789-8522845AD641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbQuery.Requests", "api-core\Api.Core.DbQuery.Requests\Api.Core.DbQuery.Requests.csproj", "{474C041E-F2A0-4121-A1AC-783A4F2C9BEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQuery.Requests", "api-core\DbQuery.Requests\DbQuery.Requests.csproj", "{474C041E-F2A0-4121-A1AC-783A4F2C9BEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-provider", "api-provider", "{0082E854-6B4D-4742-936B-A5DA365661AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Provider.Abstractions", "api-provider\Api.Provider.Abstractions\Api.Provider.Abstractions.csproj", "{448B9ACD-DC4C-4016-880F-BE55AE3C9A3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "api-provider\Abstractions\Abstractions.csproj", "{448B9ACD-DC4C-4016-880F-BE55AE3C9A3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Provider.Microsoft", "api-provider\Api.Provider.Microsoft\Api.Provider.Microsoft.csproj", "{4F640E5B-90EC-4FFE-87F9-B40FEF2A3D6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft", "api-provider\Microsoft\Microsoft.csproj", "{4F640E5B-90EC-4FFE-87F9-B40FEF2A3D6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".settings", ".settings", "{5A4BF435-88F0-4091-90F4-C6385C0FD01C}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,9 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".settings", ".settings", "{
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbQuery", "api-core\Api.Core.DbQuery\Api.Core.DbQuery.csproj", "{C63FF588-5196-4F93-8C25-8073CD7FB4EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQuery", "api-core\DbQuery\DbQuery.csproj", "{C63FF588-5196-4F93-8C25-8073CD7FB4EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Core.DbQuery.Requests.Tests", "api-core\Api.Core.DbQuery.Requests.Tests\Api.Core.DbQuery.Requests.Tests.csproj", "{6E1D3F98-E937-4BE6-A073-F86638958560}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQuery.Requests.Test", "api-core\DbQuery.Requests.Test\DbQuery.Requests.Test.csproj", "{6E1D3F98-E937-4BE6-A073-F86638958560}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

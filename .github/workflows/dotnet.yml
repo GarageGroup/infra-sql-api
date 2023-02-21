@@ -34,76 +34,76 @@ jobs:
     # Api.Core.DbEntity
 
     - name: Restore Api.Core.DbEntity
-      run: dotnet restore ./src/*/*/Api.Core.DbEntity.csproj
+      run: dotnet restore ./src/*/*/DbEntity.csproj
 
     - name: Build Api.Core.DbEntity
-      run: dotnet build ./src/*/*/Api.Core.DbEntity.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/DbEntity.csproj --no-restore  -c Release
 
     - name: Pack Api.Core.DbEntity
-      run: dotnet pack ./src/*/*/Api.Core.DbEntity.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/DbEntity.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Core.DbParameter
 
     - name: Restore Api.Core.DbParameter
-      run: dotnet restore ./src/*/*/Api.Core.DbParameter.csproj
+      run: dotnet restore ./src/*/*/DbParameter.csproj
 
     - name: Build Api.Core.DbParameter
-      run: dotnet build ./src/*/*/Api.Core.DbParameter.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/DbParameter.csproj --no-restore  -c Release
 
     - name: Pack Api.Core.DbParameter
-      run: dotnet pack ./src/*/*/Api.Core.DbParameter.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/DbParameter.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Core.DbQuery
 
     - name: Restore Api.Core.DbQuery
-      run: dotnet restore ./src/*/*/Api.Core.DbQuery.csproj
+      run: dotnet restore ./src/*/*/DbQuery.csproj
 
     - name: Build Api.Core.DbQuery
-      run: dotnet build ./src/*/*/Api.Core.DbQuery.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/DbQuery.csproj --no-restore  -c Release
 
     - name: Pack Api.Core.DbQuery
-      run: dotnet pack ./src/*/*/Api.Core.DbQuery.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/DbQuery.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Core.DbQuery.Requests
 
     - name: Restore Api.Core.DbQuery.Requests
-      run: dotnet restore ./src/*/*/Api.Core.DbQuery.Requests.csproj
+      run: dotnet restore ./src/*/*/DbQuery.Requests.csproj
 
     - name: Build Api.Core.DbQuery.Requests
-      run: dotnet build ./src/*/*/Api.Core.DbQuery.Requests.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/DbQuery.Requests.csproj --no-restore  -c Release
 
     - name: Pack Api.Core.DbQuery.Requests
-      run: dotnet pack ./src/*/*/Api.Core.DbQuery.Requests.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/DbQuery.Requests.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbQuery.Requests.Tests
+    # Api.Core.DbQuery.Requests.Test
 
-    - name: Restore Api.Core.DbQuery.Requests.Tests
-      run: dotnet restore ./src/*/*/Api.Core.DbQuery.Requests.Tests.csproj
+    - name: Restore Api.Core.DbQuery.Requests.Test
+      run: dotnet restore ./src/*/*/DbQuery.Requests.Test.csproj
 
-    - name: Test Api.Core.DbQuery.Requests.Tests
-      run: dotnet test ./src/*/*/Api.Core.DbQuery.Requests.Tests.csproj --no-restore  -c Release
+    - name: Test Api.Core.DbQuery.Requests.Test
+      run: dotnet test ./src/*/*/DbQuery.Requests.Test.csproj --no-restore  -c Release
       
     # Api.Provider.Abstractions
 
     - name: Restore Api.Provider.Abstractions
-      run: dotnet restore ./src/*/*/Api.Provider.Abstractions.csproj
+      run: dotnet restore ./src/*/*/Abstractions.csproj
 
     - name: Build Api.Provider.Abstractions
-      run: dotnet build ./src/*/*/Api.Provider.Abstractions.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Abstractions.csproj --no-restore  -c Release
 
     - name: Pack Api.Provider.Abstractions
-      run: dotnet pack ./src/*/*/Api.Provider.Abstractions.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Provider.Microsoft
 
     - name: Restore Api.Provider.Microsoft
-      run: dotnet restore ./src/*/*/Api.Provider.Microsoft.csproj
+      run: dotnet restore ./src/*/*/Microsoft.csproj
 
     - name: Build Api.Provider.Microsoft
-      run: dotnet build ./src/*/*/Api.Provider.Microsoft.csproj --no-restore  -c Release
+      run: dotnet build ./src/*/*/Microsoft.csproj --no-restore  -c Release
 
     - name: Pack Api.Provider.Microsoft
-      run: dotnet pack ./src/*/*/Api.Provider.Microsoft.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/*/*/Microsoft.csproj --no-restore -o ~/nuget  -c Release
 
     # Api.Abstractions.ExecuteNonQuery
 
