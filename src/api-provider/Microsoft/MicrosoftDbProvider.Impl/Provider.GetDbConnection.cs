@@ -9,6 +9,6 @@ partial class MicrosoftDbProviderImpl
         =>
         new SqlConnection(connectionString)
         {
-            RetryLogicProvider = retryLogicBaseProvider
+            RetryLogicProvider = retryLogicProvider
         };
 }

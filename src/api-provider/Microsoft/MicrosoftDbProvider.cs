@@ -1,9 +1,12 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using PrimeFuncPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using PrimeFuncPack;
+
+[assembly: InternalsVisibleTo("GGroupp.Infra.Sql.Api.Provider.Microsoft.Test")]
 
 namespace GGroupp.Infra;
 
@@ -57,7 +60,7 @@ public static class MicrosoftDbProvider
 
         return new(
             connectionString: connectionString,
-            retryOption: new SqlRetryLogicOption
+            retryOption: new()
             {
                 NumberOfTries = retrySection.GetInt32(nameof(SqlRetryLogicOption.NumberOfTries)),
                 DeltaTime = retrySection.GetTimeSpan(nameof(SqlRetryLogicOption.DeltaTime)),

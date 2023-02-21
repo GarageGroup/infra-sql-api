@@ -8,6 +8,7 @@ partial class MicrosoftDbProviderImpl
     public object GetSqlParameter(DbParameter parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
+
         return new SqlParameter
         {
             ParameterName = parameter.Name,
