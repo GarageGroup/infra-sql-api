@@ -31,6 +31,14 @@ jobs:
         -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
         --store-password-in-clear-text
 
+    # Api.Core.DbEntity.Test
+
+    - name: Restore Api.Core.DbEntity.Test
+      run: dotnet restore ./src/*/*/DbEntity.Test.csproj
+
+    - name: Test Api.Core.DbEntity.Test
+      run: dotnet test ./src/*/*/DbEntity.Test.csproj --no-restore  -c Release
+
     # Api.Core.DbEntity
 
     - name: Restore Api.Core.DbEntity
@@ -53,6 +61,14 @@ jobs:
     - name: Pack Api.Core.DbParameter
       run: dotnet pack ./src/*/*/DbParameter.csproj --no-restore -o ~/nuget  -c Release
 
+    # Api.Core.DbQuery.Test
+
+    - name: Restore Api.Core.DbQuery.Test
+      run: dotnet restore ./src/*/*/DbQuery.Test.csproj
+
+    - name: Test Api.Core.DbQuery.Test
+      run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
+
     # Api.Core.DbQuery
 
     - name: Restore Api.Core.DbQuery
@@ -64,24 +80,24 @@ jobs:
     - name: Pack Api.Core.DbQuery
       run: dotnet pack ./src/*/*/DbQuery.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbQuery.Requests
+    # Api.Core.DbRequests.Test
 
-    - name: Restore Api.Core.DbQuery.Requests
-      run: dotnet restore ./src/*/*/DbQuery.Requests.csproj
+    - name: Restore Api.Core.DbRequests.Test
+      run: dotnet restore ./src/*/*/DbRequests.Test.csproj
 
-    - name: Build Api.Core.DbQuery.Requests
-      run: dotnet build ./src/*/*/DbQuery.Requests.csproj --no-restore  -c Release
+    - name: Test Api.Core.DbRequests.Test
+      run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
 
-    - name: Pack Api.Core.DbQuery.Requests
-      run: dotnet pack ./src/*/*/DbQuery.Requests.csproj --no-restore -o ~/nuget  -c Release
+    # Api.Core.DbRequests
 
-    # Api.Core.DbQuery.Requests.Test
+    - name: Restore Api.Core.DbRequests
+      run: dotnet restore ./src/*/*/DbRequests.csproj
 
-    - name: Restore Api.Core.DbQuery.Requests.Test
-      run: dotnet restore ./src/*/*/DbQuery.Requests.Test.csproj
+    - name: Build Api.Core.DbRequests
+      run: dotnet build ./src/*/*/DbRequests.csproj --no-restore  -c Release
 
-    - name: Test Api.Core.DbQuery.Requests.Test
-      run: dotnet test ./src/*/*/DbQuery.Requests.Test.csproj --no-restore  -c Release
+    - name: Pack Api.Core.DbRequests
+      run: dotnet pack ./src/*/*/DbRequests.csproj --no-restore -o ~/nuget  -c Release
       
     # Api.Provider.Abstractions
 

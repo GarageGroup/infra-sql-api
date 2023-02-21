@@ -15,7 +15,7 @@ partial class DbValue
 
     public static implicit operator DateOnly(DbValue dbValue)
     {
-        _ = dbValue ?? throw new ArgumentNullException(nameof(dbValue));
+        ArgumentNullException.ThrowIfNull(dbValue);
         return dbValue.CastToDateOnly();
     }
 

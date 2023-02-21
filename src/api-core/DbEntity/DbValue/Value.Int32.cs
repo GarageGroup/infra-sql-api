@@ -15,7 +15,7 @@ partial class DbValue
 
     public static implicit operator int(DbValue dbValue)
     {
-        _ = dbValue ?? throw new ArgumentNullException(nameof(dbValue));
+        ArgumentNullException.ThrowIfNull(dbValue);
         return dbValue.CastToInt32();
     }
 

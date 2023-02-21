@@ -3,9 +3,9 @@
 partial class DbValue
 {
     public T? CastTo<T>()
-        where T : notnull
+        where T : class
         =>
-        dbValueProvider.Get<T>();
+        dbValueProvider.IsNull() ? null : dbValueProvider.Get<T>();
 
     public T? CastToNullable<T>()
         where T : struct

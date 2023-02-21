@@ -20,11 +20,11 @@ public sealed record class DbQuery : IDbQuery
 
     public FlatArray<DbParameter> Parameters { get; }
 
-    string IDbQuery.GetSqlQuery()
+    public string GetSqlQuery()
         =>
         Query;
 
-    FlatArray<DbParameter> IDbQuery.GetParameters()
+    public FlatArray<DbParameter> GetParameters()
         =>
         Parameters;
 }

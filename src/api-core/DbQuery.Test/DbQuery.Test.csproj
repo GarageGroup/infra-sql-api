@@ -3,11 +3,11 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <RootNamespace>GGroupp.Infra.Sql.Api.Core.Test</RootNamespace>
-    <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbQuery.Requests.Test</AssemblyName>
+    <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbQuery.Test</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbQuery.Requests\DbQuery.Requests.csproj" />
+    <ProjectReference Include="..\DbQuery\DbQuery.csproj" />
   </ItemGroup>
 
   <ItemGroup>
