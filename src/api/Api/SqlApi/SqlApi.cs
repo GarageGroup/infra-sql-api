@@ -7,7 +7,7 @@ namespace GGroupp.Infra;
 
 internal sealed partial class SqlApi : ISqlApi
 {
-    internal static SqlApi Create(IDbProvider dbProvider)
+    public static SqlApi Create(IDbProvider dbProvider)
         =>
         new(
             dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)));
@@ -23,7 +23,7 @@ internal sealed partial class SqlApi : ISqlApi
         var dbCommand = dbConnection.CreateCommand();
         dbCommand.CommandText = query.GetSqlQuery();
 
-        foreach (var sqlParameter in GetDbParameters(query).Select(dbProvider.GetSqlParameter))
+        foreach (var sqlParameter in GetDistinctDbParameters(query).Select(dbProvider.GetSqlParameter))
         {
             dbCommand.Parameters.Add(sqlParameter);
         }
@@ -31,7 +31,7 @@ internal sealed partial class SqlApi : ISqlApi
         return dbCommand;
     }
 
-    private static IEnumerable<DbParameter> GetDbParameters(IDbQuery query)
+    private static IEnumerable<DbParameter> GetDistinctDbParameters(IDbQuery query)
     {
         var dbParameters = query.GetParameters();
         var dbNameParameters = new Dictionary<string, DbParameter>(dbParameters.Length);
