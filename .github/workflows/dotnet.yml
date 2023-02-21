@@ -107,13 +107,21 @@ jobs:
     # Api.Provider.Abstractions
 
     - name: Restore Api.Provider.Abstractions
-      run: dotnet restore ./src/*/api-provider/Abstractions.csproj
+      run: dotnet restore ./src/api-provider/*/Abstractions.csproj
 
     - name: Build Api.Provider.Abstractions
-      run: dotnet build ./src/*/api-provider/Abstractions.csproj --no-restore  -c Release
+      run: dotnet build ./src/api-provider/*/Abstractions.csproj --no-restore  -c Release
 
     - name: Pack Api.Provider.Abstractions
-      run: dotnet pack ./src/*/api-provider/Abstractions.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/api-provider/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Provider.Microsoft.Test
+
+    - name: Restore Api.Provider.Microsoft.Test
+      run: dotnet restore ./src/*/*/Microsoft.Test.csproj
+
+    - name: Test Api.Provider.Microsoft.Test
+      run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
 
     # Api.Provider.Microsoft
 
@@ -162,13 +170,13 @@ jobs:
     # Api.Abstractions
 
     - name: Restore Api.Abstractions
-      run: dotnet restore ./src/*/api-abstractions/Abstractions.csproj
+      run: dotnet restore ./src/api-abstractions/*/Abstractions.csproj
 
     - name: Build Api.Abstractions
-      run: dotnet build ./src/*/api-abstractions/Abstractions.csproj --no-restore  -c Release
+      run: dotnet build ./src/api-abstractions/*/Abstractions.csproj --no-restore  -c Release
 
     - name: Pack Api.Abstractions
-      run: dotnet pack ./src/*/api-abstractions/Abstractions.csproj --no-restore -o ~/nuget  -c Release
+      run: dotnet pack ./src/api-abstractions/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
     # Api
 
