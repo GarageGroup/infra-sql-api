@@ -8,7 +8,6 @@ namespace GGroupp.Infra;
 partial class SqlApi
 {
 #if NET7_0_OR_GREATER
-
     public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
@@ -21,9 +20,7 @@ partial class SqlApi
 
         return InnerQueryEntitySetAsync<T>(query, T.ReadEntity, cancellationToken);
     }
-
 #else
-
     public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
         IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
     {
@@ -37,7 +34,6 @@ partial class SqlApi
 
         return InnerQueryEntitySetAsync(query, mapper, cancellationToken);
     }
-
 #endif
 
     private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(
@@ -61,6 +57,8 @@ partial class SqlApi
 
         while (true)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var dbItem = new DbItem(dbReader, fieldIndexes);
             var dbEntity = mapper.Invoke(dbItem);
 

@@ -178,6 +178,14 @@ jobs:
     - name: Pack Api.Abstractions
       run: dotnet pack ./src/api-abstractions/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
+    # Api.Test
+
+    - name: Restore Api.Test
+      run: dotnet restore ./src/*/*/Api.Test.csproj
+
+    - name: Test Api.Test
+      run: dotnet test ./src/*/*/Api.Test.csproj --no-restore  -c Release
+
     # Api
 
     - name: Restore Api

@@ -11,7 +11,7 @@ partial class DbItem
 
         if (fieldIndex is null)
         {
-            throw new InvalidOperationException($"Field {name} must be present in the data reader");
+            throw new InvalidOperationException($"Field '{name}' must be present in the data reader");
         }
 
         return GetDbValue(fieldIndex.Value, name);

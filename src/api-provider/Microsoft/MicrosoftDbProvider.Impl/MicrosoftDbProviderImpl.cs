@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using Microsoft.Data.SqlClient;
 
 namespace GGroupp.Infra;
 
 internal sealed partial class MicrosoftDbProviderImpl : IDbProvider
 {
+    private static readonly ConcurrentDictionary<string, SqlRetryLogicBaseProvider> RetryProviders;
+
     static MicrosoftDbProviderImpl()
         =>
         RetryProviders = new();
@@ -16,33 +18,21 @@ internal sealed partial class MicrosoftDbProviderImpl : IDbProvider
             return new(option.ConnectionString, null);
         }
 
-        var retryLogicBaseProvider = GetRetryLogicBaseProvider(option.ConnectionString, option.RetryOption);
-        return new(option.ConnectionString, retryLogicBaseProvider);
+        var retryLogicProvider = RetryProviders.GetOrAdd(option.ConnectionString, CreateRetryLogicProvider);
+        return new(option.ConnectionString, retryLogicProvider);
+
+        SqlRetryLogicBaseProvider CreateRetryLogicProvider(string connectionString)
+            =>
+            SqlConfigurableRetryFactory.CreateExponentialRetryProvider(option.RetryOption);
     }
-
-    private static SqlRetryLogicBaseProvider GetRetryLogicBaseProvider(
-        string connectionString, SqlRetryLogicOption retryOption)
-    {
-        if (RetryProviders.TryGetValue(connectionString, out var existedProvider))
-        {
-            return existedProvider;
-        }
-
-        var newProvider = SqlConfigurableRetryFactory.CreateExponentialRetryProvider(retryOption);
-        RetryProviders[connectionString] = newProvider;
-
-        return newProvider;
-    }
-
-    private static readonly Dictionary<string, SqlRetryLogicBaseProvider> RetryProviders;
 
     private readonly string connectionString;
 
-    private readonly SqlRetryLogicBaseProvider? retryLogicBaseProvider;
+    private readonly SqlRetryLogicBaseProvider? retryLogicProvider;
 
-    private MicrosoftDbProviderImpl(string connectionString, SqlRetryLogicBaseProvider? retryLogicBaseProvider)
+    private MicrosoftDbProviderImpl(string connectionString, SqlRetryLogicBaseProvider? retryLogicProvider)
     {
         this.connectionString = connectionString;
-        this.retryLogicBaseProvider = retryLogicBaseProvider;
+        this.retryLogicProvider = retryLogicProvider;
     }
 }
