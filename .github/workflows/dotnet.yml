@@ -2,11 +2,6 @@ name: .NET
 
 on:
   push:
-    branches: [ '**' ]
-
-  release:
-    types:
-      - created
 
 jobs:
   build:
@@ -200,7 +195,7 @@ jobs:
     # Push
 
     - name: Push Packages
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: ${{ github.ref == 'refs/heads/main' }}
       run: >
         dotnet nuget push "../../../nuget/*.nupkg"
         -s ${{ secrets.GG_NUGET_SOURCE_URL }}
