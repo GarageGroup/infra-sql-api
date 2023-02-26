@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  api-core:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -98,43 +98,6 @@ jobs:
     - name: Test Api.Core.DbRequests.Test
       run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
 
-    # Push
-
-    - name: Push Packages
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: >
-        dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --skip-duplicate
-
-  api-core-generator:
-    needs: api-core
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.0.x'
-
-     # Add NuGet Sources
-
-    - name: Create Local NuGet Directory
-      run: mkdir ~/nuget
-
-    - name: Add Local Nuget Source
-      run: dotnet nuget add source ~/nuget
-
-    - name: Add GGroupp NuGet Source
-      run: >
-        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
-        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --store-password-in-clear-text
-
     # DbEntity.Generator
 
     - name: Restore DbEntity.Generator
@@ -153,43 +116,6 @@ jobs:
 
     - name: Test DbEntity.Generator.Test
       run: dotnet test ./src/*/*/DbEntity.Generator.Test.csproj --no-restore  -c Release
-
-    # Push
-
-    - name: Push Packages
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: >
-        dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --skip-duplicate
-
-  api-abstractions:
-    needs: api-core
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.0.x'
-
-     # Add NuGet Sources
-
-    - name: Create Local NuGet Directory
-      run: mkdir ~/nuget
-
-    - name: Add Local Nuget Source
-      run: dotnet nuget add source ~/nuget
-
-    - name: Add GGroupp NuGet Source
-      run: >
-        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
-        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --store-password-in-clear-text
 
     # Api.Abstractions.ExecuteNonQuery
 
@@ -235,43 +161,6 @@ jobs:
     - name: Pack Api.Abstractions
       run: dotnet pack ./src/api-abstractions/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
-    # Push
-
-    - name: Push Packages
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: >
-        dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --skip-duplicate
-
-  api-provider:
-    needs: api-core
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.0.x'
-
-     # Add NuGet Sources
-
-    - name: Create Local NuGet Directory
-      run: mkdir ~/nuget
-
-    - name: Add Local Nuget Source
-      run: dotnet nuget add source ~/nuget
-
-    - name: Add GGroupp NuGet Source
-      run: >
-        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
-        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --store-password-in-clear-text
-
     # Api.Provider.Abstractions
 
     - name: Restore Api.Provider.Abstractions
@@ -301,43 +190,6 @@ jobs:
 
     - name: Test Api.Provider.Microsoft.Test
       run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
-
-    # Push
-
-    - name: Push Packages
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: >
-        dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --skip-duplicate
-
-  api:
-    needs: [api-abstractions, api-provider]
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.0.x'
-
-     # Add NuGet Sources
-
-    - name: Create Local NuGet Directory
-      run: mkdir ~/nuget
-
-    - name: Add Local Nuget Source
-      run: dotnet nuget add source ~/nuget
-
-    - name: Add GGroupp NuGet Source
-      run: >
-        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
-        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --store-password-in-clear-text
 
     # Api
 
