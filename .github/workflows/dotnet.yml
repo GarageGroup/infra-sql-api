@@ -192,6 +192,25 @@ jobs:
     - name: Pack Api
       run: dotnet pack ./src/*/*/Api.csproj --no-restore -o ~/nuget  -c Release
 
+    # DbEntity.Generator.Test
+
+    - name: Restore DbEntity.Generator.Test
+      run: dotnet restore ./src/*/*/DbEntity.Generator.Test.csproj
+
+    - name: Test DbEntity.Generator.Test
+      run: dotnet test ./src/*/*/DbEntity.Generator.Test.csproj --no-restore  -c Release
+
+    # DbEntity.Generator
+
+    - name: Restore DbEntity.Generator
+      run: dotnet restore ./src/*/*/DbEntity.Generator.csproj
+
+    - name: Build DbEntity.Generator
+      run: dotnet build ./src/*/*/DbEntity.Generator.csproj --no-restore  -c Release
+
+    - name: Pack DbEntity.Generator
+      run: dotnet pack ./src/*/*/DbEntity.Generator.csproj --no-restore -o ~/nuget  -c Release
+
     # Push
 
     - name: Push Packages
