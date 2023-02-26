@@ -4,8 +4,112 @@ on:
   push:
 
 jobs:
-  build:
+  api-core:
+    runs-on: ubuntu-latest
 
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    # Add NuGet Sources
+
+    - name: Create Local NuGet Directory
+      run: mkdir ~/nuget
+
+    - name: Add Local Nuget Source
+      run: dotnet nuget add source ~/nuget
+
+    - name: Add GGroupp NuGet Source
+      run: >
+        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
+        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --store-password-in-clear-text
+
+    # Api.Core.DbEntity
+
+    - name: Restore Api.Core.DbEntity
+      run: dotnet restore ./src/*/*/DbEntity.csproj
+
+    - name: Build Api.Core.DbEntity
+      run: dotnet build ./src/*/*/DbEntity.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.DbEntity
+      run: dotnet pack ./src/*/*/DbEntity.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbEntity.Test
+
+    - name: Restore Api.Core.DbEntity.Test
+      run: dotnet restore ./src/*/*/DbEntity.Test.csproj
+
+    - name: Test Api.Core.DbEntity.Test
+      run: dotnet test ./src/*/*/DbEntity.Test.csproj --no-restore  -c Release
+
+    # Api.Core.DbParameter
+
+    - name: Restore Api.Core.DbParameter
+      run: dotnet restore ./src/*/*/DbParameter.csproj
+
+    - name: Build Api.Core.DbParameter
+      run: dotnet build ./src/*/*/DbParameter.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.DbParameter
+      run: dotnet pack ./src/*/*/DbParameter.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbQuery
+
+    - name: Restore Api.Core.DbQuery
+      run: dotnet restore ./src/*/*/DbQuery.csproj
+
+    - name: Build Api.Core.DbQuery
+      run: dotnet build ./src/*/*/DbQuery.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.DbQuery
+      run: dotnet pack ./src/*/*/DbQuery.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbQuery.Test
+
+    - name: Restore Api.Core.DbQuery.Test
+      run: dotnet restore ./src/*/*/DbQuery.Test.csproj
+
+    - name: Test Api.Core.DbQuery.Test
+      run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
+
+    # Api.Core.DbRequests
+
+    - name: Restore Api.Core.DbRequests
+      run: dotnet restore ./src/*/*/DbRequests.csproj
+
+    - name: Build Api.Core.DbRequests
+      run: dotnet build ./src/*/*/DbRequests.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.DbRequests
+      run: dotnet pack ./src/*/*/DbRequests.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbRequests.Test
+
+    - name: Restore Api.Core.DbRequests.Test
+      run: dotnet restore ./src/*/*/DbRequests.Test.csproj
+
+    - name: Test Api.Core.DbRequests.Test
+      run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
+
+    # Push
+
+    - name: Push Packages
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: >
+        dotnet nuget push "../../../nuget/*.nupkg"
+        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --skip-duplicate
+
+  api-core-generator:
+    needs: api-core
     runs-on: ubuntu-latest
 
     steps:
@@ -31,103 +135,61 @@ jobs:
         -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
         --store-password-in-clear-text
 
-    # Api.Core.DbEntity.Test
+    # DbEntity.Generator
 
-    - name: Restore Api.Core.DbEntity.Test
-      run: dotnet restore ./src/*/*/DbEntity.Test.csproj
+    - name: Restore DbEntity.Generator
+      run: dotnet restore ./src/*/*/DbEntity.Generator.csproj
 
-    - name: Test Api.Core.DbEntity.Test
-      run: dotnet test ./src/*/*/DbEntity.Test.csproj --no-restore  -c Release
+    - name: Build DbEntity.Generator
+      run: dotnet build ./src/*/*/DbEntity.Generator.csproj --no-restore  -c Release
 
-    # Api.Core.DbEntity
+    - name: Pack DbEntity.Generator
+      run: dotnet pack ./src/*/*/DbEntity.Generator.csproj --no-restore -o ~/nuget  -c Release
 
-    - name: Restore Api.Core.DbEntity
-      run: dotnet restore ./src/*/*/DbEntity.csproj
+    # DbEntity.Generator.Test
 
-    - name: Build Api.Core.DbEntity
-      run: dotnet build ./src/*/*/DbEntity.csproj --no-restore  -c Release
+    - name: Restore DbEntity.Generator.Test
+      run: dotnet restore ./src/*/*/DbEntity.Generator.Test.csproj
 
-    - name: Pack Api.Core.DbEntity
-      run: dotnet pack ./src/*/*/DbEntity.csproj --no-restore -o ~/nuget  -c Release
+    - name: Test DbEntity.Generator.Test
+      run: dotnet test ./src/*/*/DbEntity.Generator.Test.csproj --no-restore  -c Release
 
-    # Api.Core.DbParameter
+    # Push
 
-    - name: Restore Api.Core.DbParameter
-      run: dotnet restore ./src/*/*/DbParameter.csproj
+    - name: Push Packages
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: >
+        dotnet nuget push "../../../nuget/*.nupkg"
+        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --skip-duplicate
 
-    - name: Build Api.Core.DbParameter
-      run: dotnet build ./src/*/*/DbParameter.csproj --no-restore  -c Release
+  api-abstractions:
+    needs: api-core
+    runs-on: ubuntu-latest
 
-    - name: Pack Api.Core.DbParameter
-      run: dotnet pack ./src/*/*/DbParameter.csproj --no-restore -o ~/nuget  -c Release
+    steps:
+    - uses: actions/checkout@v3
 
-    # Api.Core.DbQuery.Test
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
 
-    - name: Restore Api.Core.DbQuery.Test
-      run: dotnet restore ./src/*/*/DbQuery.Test.csproj
+     # Add NuGet Sources
 
-    - name: Test Api.Core.DbQuery.Test
-      run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
+    - name: Create Local NuGet Directory
+      run: mkdir ~/nuget
 
-    # Api.Core.DbQuery
+    - name: Add Local Nuget Source
+      run: dotnet nuget add source ~/nuget
 
-    - name: Restore Api.Core.DbQuery
-      run: dotnet restore ./src/*/*/DbQuery.csproj
-
-    - name: Build Api.Core.DbQuery
-      run: dotnet build ./src/*/*/DbQuery.csproj --no-restore  -c Release
-
-    - name: Pack Api.Core.DbQuery
-      run: dotnet pack ./src/*/*/DbQuery.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Core.DbRequests.Test
-
-    - name: Restore Api.Core.DbRequests.Test
-      run: dotnet restore ./src/*/*/DbRequests.Test.csproj
-
-    - name: Test Api.Core.DbRequests.Test
-      run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
-
-    # Api.Core.DbRequests
-
-    - name: Restore Api.Core.DbRequests
-      run: dotnet restore ./src/*/*/DbRequests.csproj
-
-    - name: Build Api.Core.DbRequests
-      run: dotnet build ./src/*/*/DbRequests.csproj --no-restore  -c Release
-
-    - name: Pack Api.Core.DbRequests
-      run: dotnet pack ./src/*/*/DbRequests.csproj --no-restore -o ~/nuget  -c Release
-      
-    # Api.Provider.Abstractions
-
-    - name: Restore Api.Provider.Abstractions
-      run: dotnet restore ./src/api-provider/*/Abstractions.csproj
-
-    - name: Build Api.Provider.Abstractions
-      run: dotnet build ./src/api-provider/*/Abstractions.csproj --no-restore  -c Release
-
-    - name: Pack Api.Provider.Abstractions
-      run: dotnet pack ./src/api-provider/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Provider.Microsoft.Test
-
-    - name: Restore Api.Provider.Microsoft.Test
-      run: dotnet restore ./src/*/*/Microsoft.Test.csproj
-
-    - name: Test Api.Provider.Microsoft.Test
-      run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
-
-    # Api.Provider.Microsoft
-
-    - name: Restore Api.Provider.Microsoft
-      run: dotnet restore ./src/*/*/Microsoft.csproj
-
-    - name: Build Api.Provider.Microsoft
-      run: dotnet build ./src/*/*/Microsoft.csproj --no-restore  -c Release
-
-    - name: Pack Api.Provider.Microsoft
-      run: dotnet pack ./src/*/*/Microsoft.csproj --no-restore -o ~/nuget  -c Release
+    - name: Add GGroupp NuGet Source
+      run: >
+        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
+        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --store-password-in-clear-text
 
     # Api.Abstractions.ExecuteNonQuery
 
@@ -173,13 +235,109 @@ jobs:
     - name: Pack Api.Abstractions
       run: dotnet pack ./src/api-abstractions/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Test
+    # Push
 
-    - name: Restore Api.Test
-      run: dotnet restore ./src/*/*/Api.Test.csproj
+    - name: Push Packages
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: >
+        dotnet nuget push "../../../nuget/*.nupkg"
+        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --skip-duplicate
 
-    - name: Test Api.Test
-      run: dotnet test ./src/*/*/Api.Test.csproj --no-restore  -c Release
+  api-provider:
+    needs: api-core
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+     # Add NuGet Sources
+
+    - name: Create Local NuGet Directory
+      run: mkdir ~/nuget
+
+    - name: Add Local Nuget Source
+      run: dotnet nuget add source ~/nuget
+
+    - name: Add GGroupp NuGet Source
+      run: >
+        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
+        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --store-password-in-clear-text
+
+    # Api.Provider.Abstractions
+
+    - name: Restore Api.Provider.Abstractions
+      run: dotnet restore ./src/api-provider/*/Abstractions.csproj
+
+    - name: Build Api.Provider.Abstractions
+      run: dotnet build ./src/api-provider/*/Abstractions.csproj --no-restore  -c Release
+
+    - name: Pack Api.Provider.Abstractions
+      run: dotnet pack ./src/api-provider/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Provider.Microsoft
+
+    - name: Restore Api.Provider.Microsoft
+      run: dotnet restore ./src/*/*/Microsoft.csproj
+
+    - name: Build Api.Provider.Microsoft
+      run: dotnet build ./src/*/*/Microsoft.csproj --no-restore  -c Release
+
+    - name: Pack Api.Provider.Microsoft
+      run: dotnet pack ./src/*/*/Microsoft.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Provider.Microsoft.Test
+
+    - name: Restore Api.Provider.Microsoft.Test
+      run: dotnet restore ./src/*/*/Microsoft.Test.csproj
+
+    - name: Test Api.Provider.Microsoft.Test
+      run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
+
+    # Push
+
+    - name: Push Packages
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: >
+        dotnet nuget push "../../../nuget/*.nupkg"
+        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --skip-duplicate
+
+  api:
+    needs: [api-abstractions, api-provider]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+     # Add NuGet Sources
+
+    - name: Create Local NuGet Directory
+      run: mkdir ~/nuget
+
+    - name: Add Local Nuget Source
+      run: dotnet nuget add source ~/nuget
+
+    - name: Add GGroupp NuGet Source
+      run: >
+        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
+        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        --store-password-in-clear-text
 
     # Api
 
@@ -192,24 +350,13 @@ jobs:
     - name: Pack Api
       run: dotnet pack ./src/*/*/Api.csproj --no-restore -o ~/nuget  -c Release
 
-    # DbEntity.Generator.Test
+    # Api.Test
 
-    - name: Restore DbEntity.Generator.Test
-      run: dotnet restore ./src/*/*/DbEntity.Generator.Test.csproj
+    - name: Restore Api.Test
+      run: dotnet restore ./src/*/*/Api.Test.csproj
 
-    - name: Test DbEntity.Generator.Test
-      run: dotnet test ./src/*/*/DbEntity.Generator.Test.csproj --no-restore  -c Release
-
-    # DbEntity.Generator
-
-    - name: Restore DbEntity.Generator
-      run: dotnet restore ./src/*/*/DbEntity.Generator.csproj
-
-    - name: Build DbEntity.Generator
-      run: dotnet build ./src/*/*/DbEntity.Generator.csproj --no-restore  -c Release
-
-    - name: Pack DbEntity.Generator
-      run: dotnet pack ./src/*/*/DbEntity.Generator.csproj --no-restore -o ~/nuget  -c Release
+    - name: Test Api.Test
+      run: dotnet test ./src/*/*/Api.Test.csproj --no-restore  -c Release
 
     # Push
 
