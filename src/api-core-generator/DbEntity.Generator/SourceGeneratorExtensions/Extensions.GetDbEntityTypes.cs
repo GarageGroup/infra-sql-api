@@ -10,7 +10,7 @@ partial class SourceGeneratorExtensions
     internal static IReadOnlyCollection<DbEntityMetadata> GetDbEntityTypes(this GeneratorExecutionContext context)
     {
         var visitor = new ExportedTypesCollector(context.CancellationToken);
-        visitor.VisitNamespace(context.Compilation.GlobalNamespace);
+        visitor.VisitAssembly(context.Compilation.Assembly);
 
         return visitor.GetNonPrivateTypes().Select(GetDbEntityMetadata).NotNull().ToArray();
     }
@@ -35,6 +35,8 @@ partial class SourceGeneratorExtensions
         return new(
             fileName: typeSymbol.Name,
             entityType: typeSymbol.GetDisplayedData(),
+            isRecordType: typeSymbol.IsRecord,
+            isValueType: typeSymbol.IsValueType,
             fields: typeSymbol.GetMembers().OfType<IPropertySymbol>().Select(GetDbFieldMetadata).NotNull().ToArray());
 
         static bool IsDbEntityAttribute(AttributeData attributeData)
