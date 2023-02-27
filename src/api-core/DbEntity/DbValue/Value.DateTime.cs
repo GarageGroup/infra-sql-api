@@ -5,21 +5,21 @@ namespace GGroupp.Infra;
 
 partial class DbValue
 {
-    public DateTimeOffset CastToDateTimeOffset()
+    public DateTime CastToDateTime()
         =>
-        dbValueProvider.GetDateTimeOffset();
+        dbValueProvider.GetDateTime();
 
-    public DateTimeOffset? CastToNullableDateTimeOffset()
+    public DateTime? CastToNullableDateTime()
         =>
-        dbValueProvider.IsNull() ? null : dbValueProvider.GetDateTimeOffset();
+        dbValueProvider.IsNull() ? null : dbValueProvider.GetDateTime();
 
-    public static implicit operator DateTimeOffset(DbValue dbValue)
+    public static implicit operator DateTime(DbValue dbValue)
     {
         ArgumentNullException.ThrowIfNull(dbValue);
-        return dbValue.CastToDateTimeOffset();
+        return dbValue.CastToDateTime();
     }
 
-    public static implicit operator DateTimeOffset?([AllowNull] DbValue dbValue)
+    public static implicit operator DateTime?([AllowNull] DbValue dbValue)
         =>
-        dbValue?.CastToNullableDateTimeOffset();
+        dbValue?.CastToNullableDateTime();
 }

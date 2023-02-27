@@ -2,15 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ '**' ]
-
-  release:
-    types:
-      - created
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +15,7 @@ jobs:
       with:
         dotnet-version: '7.0.x'
 
-     # Add NuGet Sources
+    # Add NuGet Sources
 
     - name: Create Local NuGet Directory
       run: mkdir ~/nuget
@@ -36,14 +30,6 @@ jobs:
         -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
         --store-password-in-clear-text
 
-    # Api.Core.DbEntity.Test
-
-    - name: Restore Api.Core.DbEntity.Test
-      run: dotnet restore ./src/*/*/DbEntity.Test.csproj
-
-    - name: Test Api.Core.DbEntity.Test
-      run: dotnet test ./src/*/*/DbEntity.Test.csproj --no-restore  -c Release
-
     # Api.Core.DbEntity
 
     - name: Restore Api.Core.DbEntity
@@ -54,6 +40,14 @@ jobs:
 
     - name: Pack Api.Core.DbEntity
       run: dotnet pack ./src/*/*/DbEntity.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Core.DbEntity.Test
+
+    - name: Restore Api.Core.DbEntity.Test
+      run: dotnet restore ./src/*/*/DbEntity.Test.csproj
+
+    - name: Test Api.Core.DbEntity.Test
+      run: dotnet test ./src/*/*/DbEntity.Test.csproj --no-restore  -c Release
 
     # Api.Core.DbParameter
 
@@ -66,14 +60,6 @@ jobs:
     - name: Pack Api.Core.DbParameter
       run: dotnet pack ./src/*/*/DbParameter.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbQuery.Test
-
-    - name: Restore Api.Core.DbQuery.Test
-      run: dotnet restore ./src/*/*/DbQuery.Test.csproj
-
-    - name: Test Api.Core.DbQuery.Test
-      run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
-
     # Api.Core.DbQuery
 
     - name: Restore Api.Core.DbQuery
@@ -85,13 +71,13 @@ jobs:
     - name: Pack Api.Core.DbQuery
       run: dotnet pack ./src/*/*/DbQuery.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbRequests.Test
+    # Api.Core.DbQuery.Test
 
-    - name: Restore Api.Core.DbRequests.Test
-      run: dotnet restore ./src/*/*/DbRequests.Test.csproj
+    - name: Restore Api.Core.DbQuery.Test
+      run: dotnet restore ./src/*/*/DbQuery.Test.csproj
 
-    - name: Test Api.Core.DbRequests.Test
-      run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
+    - name: Test Api.Core.DbQuery.Test
+      run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
 
     # Api.Core.DbRequests
 
@@ -103,36 +89,33 @@ jobs:
 
     - name: Pack Api.Core.DbRequests
       run: dotnet pack ./src/*/*/DbRequests.csproj --no-restore -o ~/nuget  -c Release
-      
-    # Api.Provider.Abstractions
 
-    - name: Restore Api.Provider.Abstractions
-      run: dotnet restore ./src/api-provider/*/Abstractions.csproj
+    # Api.Core.DbRequests.Test
 
-    - name: Build Api.Provider.Abstractions
-      run: dotnet build ./src/api-provider/*/Abstractions.csproj --no-restore  -c Release
+    - name: Restore Api.Core.DbRequests.Test
+      run: dotnet restore ./src/*/*/DbRequests.Test.csproj
 
-    - name: Pack Api.Provider.Abstractions
-      run: dotnet pack ./src/api-provider/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
+    - name: Test Api.Core.DbRequests.Test
+      run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
 
-    # Api.Provider.Microsoft.Test
+    # DbEntity.Generator
 
-    - name: Restore Api.Provider.Microsoft.Test
-      run: dotnet restore ./src/*/*/Microsoft.Test.csproj
+    - name: Restore DbEntity.Generator
+      run: dotnet restore ./src/*/*/DbEntity.Generator.csproj
 
-    - name: Test Api.Provider.Microsoft.Test
-      run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
+    - name: Build DbEntity.Generator
+      run: dotnet build ./src/*/*/DbEntity.Generator.csproj --no-restore  -c Release
 
-    # Api.Provider.Microsoft
+    - name: Pack DbEntity.Generator
+      run: dotnet pack ./src/*/*/DbEntity.Generator.csproj --no-restore -o ~/nuget  -c Release
 
-    - name: Restore Api.Provider.Microsoft
-      run: dotnet restore ./src/*/*/Microsoft.csproj
+    # DbEntity.Generator.Test
 
-    - name: Build Api.Provider.Microsoft
-      run: dotnet build ./src/*/*/Microsoft.csproj --no-restore  -c Release
+    - name: Restore DbEntity.Generator.Test
+      run: dotnet restore ./src/*/*/DbEntity.Generator.Test.csproj
 
-    - name: Pack Api.Provider.Microsoft
-      run: dotnet pack ./src/*/*/Microsoft.csproj --no-restore -o ~/nuget  -c Release
+    - name: Test DbEntity.Generator.Test
+      run: dotnet test ./src/*/*/DbEntity.Generator.Test.csproj --no-restore  -c Release
 
     # Api.Abstractions.ExecuteNonQuery
 
@@ -178,13 +161,35 @@ jobs:
     - name: Pack Api.Abstractions
       run: dotnet pack ./src/api-abstractions/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Test
+    # Api.Provider.Abstractions
 
-    - name: Restore Api.Test
-      run: dotnet restore ./src/*/*/Api.Test.csproj
+    - name: Restore Api.Provider.Abstractions
+      run: dotnet restore ./src/api-provider/*/Abstractions.csproj
 
-    - name: Test Api.Test
-      run: dotnet test ./src/*/*/Api.Test.csproj --no-restore  -c Release
+    - name: Build Api.Provider.Abstractions
+      run: dotnet build ./src/api-provider/*/Abstractions.csproj --no-restore  -c Release
+
+    - name: Pack Api.Provider.Abstractions
+      run: dotnet pack ./src/api-provider/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Provider.Microsoft
+
+    - name: Restore Api.Provider.Microsoft
+      run: dotnet restore ./src/*/*/Microsoft.csproj
+
+    - name: Build Api.Provider.Microsoft
+      run: dotnet build ./src/*/*/Microsoft.csproj --no-restore  -c Release
+
+    - name: Pack Api.Provider.Microsoft
+      run: dotnet pack ./src/*/*/Microsoft.csproj --no-restore -o ~/nuget  -c Release
+
+    # Api.Provider.Microsoft.Test
+
+    - name: Restore Api.Provider.Microsoft.Test
+      run: dotnet restore ./src/*/*/Microsoft.Test.csproj
+
+    - name: Test Api.Provider.Microsoft.Test
+      run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
 
     # Api
 
@@ -197,10 +202,18 @@ jobs:
     - name: Pack Api
       run: dotnet pack ./src/*/*/Api.csproj --no-restore -o ~/nuget  -c Release
 
+    # Api.Test
+
+    - name: Restore Api.Test
+      run: dotnet restore ./src/*/*/Api.Test.csproj
+
+    - name: Test Api.Test
+      run: dotnet test ./src/*/*/Api.Test.csproj --no-restore  -c Release
+
     # Push
 
     - name: Push Packages
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: ${{ github.ref == 'refs/heads/main' }}
       run: >
         dotnet nuget push "../../../nuget/*.nupkg"
         -s ${{ secrets.GG_NUGET_SOURCE_URL }}

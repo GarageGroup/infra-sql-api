@@ -7,14 +7,27 @@ namespace GGroupp.Infra.Sql.Api.Core.Test;
 partial class DbValueTest
 {
     [Theory]
+    [InlineData(null, TestData.EmptyString)]
+    [InlineData(TestData.AnotherString, TestData.AnotherString)]
+    public static void CastToString_ExpectValueFromProvider(string? value, string expected)
+    {
+        var dbValueProvider = Mock.Of<IDbValueProvider>(db => db.GetString() == value);
+
+        var dbValue = new DbValue(dbValueProvider);
+        var actual = dbValue.CastToString();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
     [InlineData(null)]
     [InlineData(TestData.SomeString)]
-    public static void CastToString_IsNullReturnsTrue_ExpectNull(string? value)
+    public static void CastToNullableString_IsNullReturnsTrue_ExpectNull(string? value)
     {
         var dbValueProvider = Mock.Of<IDbValueProvider>(db => db.IsNull() == true && db.GetString() == value);
 
         var dbValue = new DbValue(dbValueProvider);
-        var actual = dbValue.CastToString();
+        var actual = dbValue.CastToNullableString();
 
         Assert.Null(actual);
     }
@@ -22,12 +35,12 @@ partial class DbValueTest
     [Theory]
     [InlineData(null)]
     [InlineData(TestData.AnotherString)]
-    public static void CastToString_IsNullReturnsFalse_ExpectStringValueFromProvider(string? value)
+    public static void CastToNullableString_IsNullReturnsFalse_ExpectValueFromProvider(string? value)
     {
         var dbValueProvider = Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetString() == value);
 
         var dbValue = new DbValue(dbValueProvider);
-        var actual = dbValue.CastToString();
+        var actual = dbValue.CastToNullableString();
 
         Assert.Equal(value, actual);
     }
@@ -57,7 +70,7 @@ partial class DbValueTest
     [Theory]
     [InlineData(null)]
     [InlineData(TestData.SomeString)]
-    public static void ImplicitToString_IsNullReturnsFalse_ExpectStringValueFromProvider(string? value)
+    public static void ImplicitToString_IsNullReturnsFalse_ExpectValueFromProvider(string? value)
     {
         var dbValueProvider = Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetString() == value);
 
