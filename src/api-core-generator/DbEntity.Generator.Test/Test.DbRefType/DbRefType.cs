@@ -5,7 +5,7 @@ using PrimeFuncPack.UnitTest;
 namespace GGroupp.TestType;
 
 [DbEntity]
-internal sealed partial class DbRefType
+internal sealed class DbRefType
 {
     [DbField]
     public int Id { get; init; }

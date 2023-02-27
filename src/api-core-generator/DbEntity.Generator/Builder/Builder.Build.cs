@@ -16,10 +16,10 @@ partial class DbEntityBuilder
             "System",
             "GGroupp.Infra")
         .AppendCodeLine(
-            metadata.BuildHeaderLine())
+            $"internal static class {metadata.EntityType.DisplayedTypeName}Entity")
         .BeginCodeBlock()
         .AppendCodeLine(
-            $"public static {metadata.EntityType.DisplayedTypeName} ReadEntity(IDbItem dbItem)")
+            $"public static {metadata.EntityType.DisplayedTypeName} From(IDbItem dbItem)")
         .BeginCodeBlock()
         .AppendCodeLine(
             "ArgumentNullException.ThrowIfNull(dbItem);")
