@@ -10,18 +10,18 @@ namespace GGroupp.Infra.Sql.Api.Core.DbEntity.Generator.Test;
 public static class DbRefTypeTest
 {
     [Fact]
-    public static void EntityFrom_DbItemIsNull_ExpectArgumentNullException()
+    public static void ReadEntity_DbItemIsNull_ExpectArgumentNullException()
     {
         var ex = Assert.Throws<ArgumentNullException>(Test);
         Assert.Equal("dbItem", ex.ParamName);
 
         static void Test()
             =>
-            _ = DbRefTypeEntity.From(null!);
+            _ = DbRefType.ReadEntity(null!);
     }
 
     [Fact]
-    public static void EntityFrom_DbItemIsNotNull_ExpectCorrectInitializedEntity()
+    public static void ReadEntity_DbItemIsNotNull_ExpectCorrectInitializedEntity()
     {
         var orThrowValues = new Dictionary<string, DbValue>
         {
@@ -39,7 +39,7 @@ public static class DbRefTypeTest
         };
 
         var dbItem = StubDbItem.Create(orThrowValues, orDefaultValues);
-        var actual = DbRefTypeEntity.From(dbItem);
+        var actual = DbRefType.ReadEntity(dbItem);
 
         var expected = new DbRefType
         {

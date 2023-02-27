@@ -9,18 +9,18 @@ namespace GGroupp.Infra.Sql.Api.Core.DbEntity.Generator.Test;
 public static class DbStructTypeTest
 {
     [Fact]
-    public static void EntityFrom_DbItemIsNull_ExpectArgumentNullException()
+    public static void ReadEntity_DbItemIsNull_ExpectArgumentNullException()
     {
         var ex = Assert.Throws<ArgumentNullException>(Test);
         Assert.Equal("dbItem", ex.ParamName);
 
         static void Test()
             =>
-            _ = DbStructTypeEntity.From(null!);
+            _ = DbStructType.ReadEntity(null!);
     }
 
     [Fact]
-    public static void EntityFrom_DbItemIsNotNull_ExpectCorrectInitializedEntity()
+    public static void ReadEntity_DbItemIsNotNull_ExpectCorrectInitializedEntity()
     {
         var orThrowValues = new Dictionary<string, DbValue>
         {
@@ -38,7 +38,7 @@ public static class DbStructTypeTest
         };
 
         var dbItem = StubDbItem.Create(orThrowValues, orDefaultValues);
-        var actual = DbStructTypeEntity.From(dbItem);
+        var actual = DbStructType.ReadEntity(dbItem);
 
         var expected = new DbStructType
         {
