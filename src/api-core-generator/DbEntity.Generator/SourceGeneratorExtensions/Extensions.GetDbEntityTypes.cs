@@ -27,11 +27,14 @@ partial class SourceGeneratorExtensions
             throw new InvalidOperationException($"DbEntity type {typeSymbol.Name} must not be abstract");
         }
 
+        if (typeSymbol.IsStatic)
+        {
+            throw new InvalidOperationException($"DbEntity type {typeSymbol.Name} must not be static");
+        }
+
         return new(
             fileName: typeSymbol.Name,
             entityType: typeSymbol.GetDisplayedData(),
-            isRecordType: typeSymbol.IsRecord,
-            isValueType: typeSymbol.IsValueType,
             fields: typeSymbol.GetMembers().OfType<IPropertySymbol>().Select(GetDbFieldMetadata).NotNull().ToArray());
 
         static bool IsDbEntityAttribute(AttributeData attributeData)

@@ -6,7 +6,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Core.DbEntity.Generator</AssemblyName>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

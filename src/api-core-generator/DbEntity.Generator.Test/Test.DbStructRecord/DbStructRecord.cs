@@ -5,7 +5,7 @@ using PrimeFuncPack.UnitTest;
 namespace GGroupp.TestType;
 
 [DbEntity]
-internal readonly partial record struct DbStructRecord
+internal readonly record struct DbStructRecord
 {
     [DbField]
     public byte Id { get; init; }
