@@ -14,6 +14,8 @@ public sealed record class DbDeleteQuery : IDbQuery
 
     public IDbFilter Filter { get; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         this.BuildSqlQuery();

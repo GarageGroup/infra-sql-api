@@ -17,6 +17,8 @@ public sealed record class DbIfQuery : IDbQuery
 
     public IDbQuery? ElseQuery { get; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         this.BuildSqlQuery();

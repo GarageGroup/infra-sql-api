@@ -14,6 +14,8 @@ internal sealed record class StubDbQuery : IDbQuery
         this.parameters = parameters;
     }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         query;

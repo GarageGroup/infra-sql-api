@@ -175,6 +175,33 @@ partial class SqlApiTest
         Assert.StrictEqual(expected, actual);
     }
 
+    [Theory]
+    [InlineData(TestData.MinusOne)]
+    [InlineData(TestData.Zero)]
+    [InlineData(TestData.PlusFifteen)]
+    public static async Task QueryEntityOrAbsentAsync_TimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
+        int timeout)
+    {
+        using var dbDataReader = CreateDbDataReader(0, SomeFieldNames);
+        using var dbCommand = CreateDbCommand(dbDataReader);
+
+        var mockDbConnection = CreateMockDbConnection(dbCommand);
+        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
+
+        var dbProvider = CreateDbProvider(dbConnection);
+        var sqlApi = SqlApi.Create(dbProvider);
+
+        var dbQuery = new StubDbQuery(
+            query: "SELECT * From Product",
+            parameters: default)
+        {
+            TimeoutInSeconds = timeout
+        };
+
+        _ = await sqlApi.QueryStubDbEntityOrAbsentAsync(dbQuery, default);
+        Assert.Equal(timeout, dbCommand.CommandTimeout);
+    }
+
     [Fact]
     public static async Task QueryEntityOrAbsentAsync_DbDataReaderIsNotEmpty_ExpectSuccessFirstResult()
     {

@@ -158,6 +158,33 @@ partial class SqlApiTest
     }
 
     [Theory]
+    [InlineData(TestData.MinusOne)]
+    [InlineData(TestData.Zero)]
+    [InlineData(TestData.PlusFifteen)]
+    public static async Task QueryEntitySetAsync_TimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
+        int timeout)
+    {
+        using var dbDataReader = CreateDbDataReader(3, "Field01", "Field02");
+        using var dbCommand = CreateDbCommand(dbDataReader);
+
+        var mockDbConnection = CreateMockDbConnection(dbCommand);
+        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
+
+        var dbProvider = CreateDbProvider(dbConnection);
+        var sqlApi = SqlApi.Create(dbProvider);
+
+        var dbQuery = new StubDbQuery(
+            query: "SELECT * From Product",
+            parameters: default)
+        {
+            TimeoutInSeconds = timeout
+        };
+
+        _ = await sqlApi.QueryStubDbEntitySetAsync(dbQuery, default);
+        Assert.Equal(timeout, dbCommand.CommandTimeout);
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(5)]
     public static async Task QueryEntitySetAsync_CancellationTokenIsNotCanceled_ExpectExpectedLengthEntitySet(
