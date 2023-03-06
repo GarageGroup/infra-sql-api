@@ -20,6 +20,8 @@ public sealed record class DbQuery : IDbQuery
 
     public FlatArray<DbParameter> Parameters { get; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         Query;

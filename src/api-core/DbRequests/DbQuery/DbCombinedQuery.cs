@@ -10,6 +10,8 @@ public sealed record class DbCombinedQuery : IDbQuery
 
     public FlatArray<IDbQuery> Queries { get; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         this.BuildSqlQuery();

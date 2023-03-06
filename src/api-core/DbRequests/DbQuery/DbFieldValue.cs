@@ -23,4 +23,6 @@ public sealed record class DbFieldValue
     public object? FieldValue { get; }
 
     public string ParameterName { get; }
+
+    public int? TimeoutInSeconds { get; init; }
 }

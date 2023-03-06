@@ -28,6 +28,11 @@ internal sealed partial class SqlApi : ISqlApi
             dbCommand.Parameters.Add(sqlParameter);
         }
 
+        if (query.TimeoutInSeconds is not null)
+        {
+            dbCommand.CommandTimeout = query.TimeoutInSeconds.Value;
+        }
+
         return dbCommand;
     }
 

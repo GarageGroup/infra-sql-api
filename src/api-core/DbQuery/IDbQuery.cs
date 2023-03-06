@@ -7,4 +7,6 @@ public interface IDbQuery
     string GetSqlQuery();
 
     FlatArray<DbParameter> GetParameters();
+
+    int? TimeoutInSeconds { get; }
 }

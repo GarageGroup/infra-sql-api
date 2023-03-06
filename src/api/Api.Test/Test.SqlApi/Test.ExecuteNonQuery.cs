@@ -129,6 +129,35 @@ partial class SqlApiTest
     }
 
     [Theory]
+    [InlineData(TestData.MinusOne)]
+    [InlineData(TestData.Zero)]
+    [InlineData(TestData.PlusFifteen)]
+    public static async Task ExecuteNonQueryAsync_TimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
+        int timeout)
+    {
+        using var dbCommand = CreateDbCommand(73);
+
+        var mockDbConnection = CreateMockDbConnection(dbCommand);
+        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
+
+        var dbProvider = CreateDbProvider(dbConnection);
+        var sqlApi = SqlApi.Create(dbProvider);
+
+        var dbQuery = new StubDbQuery(
+            query: "SELECT * From Product",
+            parameters: new DbParameter[]
+            {
+                new("SomeParameterName", TestData.PlusFifteenIdRefType)
+            })
+        {
+            TimeoutInSeconds = timeout
+        };
+
+        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
+        Assert.Equal(timeout, dbCommand.CommandTimeout);
+    }
+
+    [Theory]
     [InlineData(TestData.MinusFifteen)]
     [InlineData(TestData.Zero)]
     [InlineData(int.MaxValue)]

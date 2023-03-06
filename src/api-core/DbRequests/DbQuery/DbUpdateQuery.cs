@@ -17,6 +17,8 @@ public sealed record class DbUpdateQuery : IDbQuery
 
     public IDbFilter Filter { get; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         this.BuildSqlQuery();

@@ -30,6 +30,8 @@ public sealed record class DbSelectQuery : IDbQuery
 
     public FlatArray<DbOrder> Orders { get; init; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         this.BuildSqlQuery();

@@ -14,6 +14,8 @@ public sealed record class DbInsertQuery : IDbQuery
 
     public FlatArray<DbFieldValue> FieldValues { get; }
 
+    public int? TimeoutInSeconds { get; init; }
+
     public string GetSqlQuery()
         =>
         this.BuildSqlQuery();
