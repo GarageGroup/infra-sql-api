@@ -4,30 +4,31 @@ using PrimeFuncPack.UnitTest;
 
 namespace GGroupp.TestType;
 
-[DbEntity]
+[DbEntity("Product", "p")]
+[DbJoin(DbJoinType.Inner, "Unit", "u", "u.Id = p.UnitId")]
 public sealed partial record class DbRefRecord
 {
-    [DbField("GG_Id")]
+    [DbSelect("QueryAll")]
+    [DbSelect("QueryId", FieldName = "p.Id")]
     public long Id { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public byte? Byte { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "p", "Time")]
     public DateTime EntityTime { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public DateTimeOffset? UpdatedAt { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", TableName = "Product")]
     public double? Price { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "u")]
     public float Sum { get; init; }
 
-    [DbField]
     public StructType AdditionalStructData { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public RecordType? AdditionalRefData { get; init; }
 }

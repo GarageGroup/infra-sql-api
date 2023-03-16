@@ -24,7 +24,7 @@ public static class DbRefRecordTest
     {
         var orThrowValues = new Dictionary<string, DbValue>
         {
-            ["GG_Id"] = StubDbValue.CreateInt64(-780119823712),
+            ["Id"] = StubDbValue.CreateInt64(-780119823712),
             ["EntityTime"] = StubDbValue.CreateDateTime(new(2023, 02, 25, 11, 47, 01)),
             ["Sum"] = StubDbValue.CreateFloat(134.45E-2f),
             ["AdditionalStructData"] = StubDbValue.Create(TestData.SomeTextStructType)
@@ -54,5 +54,32 @@ public static class DbRefRecordTest
         };
 
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public static void GetQueryAll_ExpectCorrectQuery()
+    {
+        var actual = DbRefRecord.QueryAll;
+
+        var expected = new DbSelectQuery("Product", "p")
+        {
+            JoinedTables = new DbJoinedTable(DbJoinType.Inner, "Unit", "u", new DbRawFilter("u.Id = p.UnitId")).AsFlatArray(),
+            SelectedFields = new("Id", "Byte", "Time AS EntityTime", "UpdatedAt", "Product.Price", "u.Sum", "AdditionalRefData")
+        };
+
+        Assert.StrictEqual(expected, actual);
+    }
+
+    [Fact]
+    public static void GetQueryId_ExpectCorrectQuery()
+    {
+        var actual = DbRefRecord.QueryId;
+
+        var expected = new DbSelectQuery("Product", "p")
+        {
+            SelectedFields = new("p.Id AS Id")
+        };
+
+        Assert.StrictEqual(expected, actual);
     }
 }

@@ -4,11 +4,15 @@ namespace GGroupp.Infra;
 
 public sealed record class DbCombinedQuery : IDbQuery
 {
+    public DbCombinedQuery()
+    {
+    }
+
     public DbCombinedQuery(FlatArray<IDbQuery> queries)
         =>
         Queries = queries;
 
-    public FlatArray<IDbQuery> Queries { get; }
+    public FlatArray<IDbQuery> Queries { get; init; }
 
     public int? TimeoutInSeconds { get; init; }
 

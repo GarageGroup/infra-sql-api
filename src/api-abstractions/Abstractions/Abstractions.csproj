@@ -4,13 +4,13 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions</AssemblyName>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.ExecuteNonQuery" Version="1.1.0" />
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntity" Version="1.2.0" />
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="1.2.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntity" Version="1.3.0" />
+    <PackageReference Include="GGroupp.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="1.3.0" />
   </ItemGroup>
 
 </Project>

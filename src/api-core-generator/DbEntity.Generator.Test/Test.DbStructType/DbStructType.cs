@@ -7,24 +7,24 @@ namespace GGroupp.TestType;
 [DbEntity]
 internal readonly partial struct DbStructType
 {
-    [DbField]
+    [DbSelect("QueryAll")]
     public short Id { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public bool? IsActual { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     internal DateTimeOffset CreateAt { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public DateOnly? ProductDate { get; init; }
 
-    [DbField("c.Count")]
+    [DbSelect("QueryTotalCount", FieldName = "COUNT(*)")]
     public int? TotalCount { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public decimal Price { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll")]
     public RefType AddionalData { get; init; }
 }

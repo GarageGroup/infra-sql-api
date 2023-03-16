@@ -4,16 +4,22 @@ namespace GGroupp.Infra;
 
 internal static partial class DbEntityBuilder
 {
+    private const string InnerQueryBuilderClassName = "InnerQueryBuilder";
+
+    private static string GetQueryBuildMethodName(this DbSelectQueryData queryData)
+        =>
+        "Build" + queryData.QueryName;
+
     private static string BuildHeaderLine(this DbEntityMetadata metadata)
     {
         var builder = new StringBuilder("partial ");
 
-        if (metadata.IsRecordType)
+        if (metadata.EntityType.IsRecordType)
         {
             builder = builder.Append("record ");
         }
 
-        if (metadata.IsValueType)
+        if (metadata.EntityType.IsValueType)
         {
             builder = builder.Append("struct");
         }
@@ -21,7 +27,7 @@ internal static partial class DbEntityBuilder
         {
             builder = builder.Append("class");
         }
-        return builder.Append(' ').Append(metadata.EntityType.DisplayedTypeName).ToString();
+        return builder.Append(' ').Append(metadata.EntityType.DisplayedData.DisplayedTypeName).ToString();
     }
 
     private static string AsStringSourceCode(this string? source, string defaultSourceCode = "string.Empty")
