@@ -55,4 +55,56 @@ public static class DbStructRecordTest
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public static void GetQueryAll_ExpectCorrectQuery()
+    {
+        var actual = DbStructRecord.QueryAll;
+
+        var expected = new DbSelectQuery("Product", "p")
+        {
+            JoinedTables = new DbJoinedTable[]
+            {
+                new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId")),
+                new(DbJoinType.Right, "Right", "r", new DbRawFilter("r.Id = p.RightId"))
+            },
+            SelectedFields = new("Id", "p.IsActive", "l.Date", "r.ModifiedAt", "c.Price AS Price", "p.Sum", "p.Name", "p.AdditionalData")
+        };
+
+        Assert.StrictEqual(expected, actual);
+    }
+
+    [Fact]
+    public static void GetQueryLeft_ExpectCorrectQuery()
+    {
+        var actual = DbStructRecord.QueryLeft;
+
+        var expected = new DbSelectQuery("Product", "p")
+        {
+            JoinedTables = new DbJoinedTable[]
+            {
+                new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId"))
+            },
+            SelectedFields = new("Id", "p.IsActive", "l.Date")
+        };
+
+        Assert.StrictEqual(expected, actual);
+    }
+
+    [Fact]
+    public static void GetQueryRight_ExpectCorrectQuery()
+    {
+        var actual = DbStructRecord.QueryRight;
+
+        var expected = new DbSelectQuery("Product", "p")
+        {
+            JoinedTables = new DbJoinedTable[]
+            {
+                new(DbJoinType.Right, "Right", "r", new DbRawFilter("r.Id = p.RightId"))
+            },
+            SelectedFields = new("Id", "p.IsActive", "r.ModifiedAt")
+        };
+
+        Assert.StrictEqual(expected, actual);
+    }
 }

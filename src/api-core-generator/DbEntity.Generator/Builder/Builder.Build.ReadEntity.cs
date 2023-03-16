@@ -6,12 +6,12 @@ namespace GGroupp.Infra;
 
 partial class DbEntityBuilder
 {
-    internal static string BuildSourceCode(this DbEntityMetadata metadata)
+    internal static string BuildReadEntitySourceCode(this DbEntityMetadata metadata)
         =>
         new SourceBuilder(
-            metadata.EntityType.AllNamespaces.FirstOrDefault())
+            metadata.EntityType.DisplayedData.AllNamespaces.FirstOrDefault())
         .AddUsings(
-            metadata.EntityType.AllNamespaces)
+            metadata.EntityType.DisplayedData.AllNamespaces)
         .AddUsing(
             "System",
             "GGroupp.Infra")
@@ -19,7 +19,7 @@ partial class DbEntityBuilder
             metadata.BuildHeaderLine())
         .BeginCodeBlock()
         .AppendCodeLine(
-            $"public static {metadata.EntityType.DisplayedTypeName} ReadEntity(IDbItem dbItem)")
+            $"public static {metadata.EntityType.DisplayedData.DisplayedTypeName} ReadEntity(IDbItem dbItem)")
         .BeginCodeBlock()
         .AppendCodeLine(
             "ArgumentNullException.ThrowIfNull(dbItem);")

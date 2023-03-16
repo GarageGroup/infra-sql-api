@@ -26,9 +26,9 @@ partial class DbQueryExtensions
         }
 
         queryBuilder = queryBuilder.Append(" FROM ").Append(query.TableName);
-        if (string.IsNullOrWhiteSpace(query.ShortName) is false)
+        if (string.IsNullOrWhiteSpace(query.TableAlias) is false)
         {
-            queryBuilder = queryBuilder.Append(' ').Append(query.ShortName);
+            queryBuilder = queryBuilder.Append(' ').Append(query.TableAlias);
         }
 
         var joinQuery = query.JoinedTables.BuildSqlQuery();
@@ -117,7 +117,7 @@ partial class DbQueryExtensions
         .Append(
             ' ')
         .Append(
-            joinedTable.ShortName)
+            joinedTable.TableAlias)
         .Append(
             " ON ")
         .Append(

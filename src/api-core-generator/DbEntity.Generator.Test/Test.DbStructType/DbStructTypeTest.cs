@@ -34,7 +34,7 @@ public static class DbStructTypeTest
         {
             ["IsActual"] = StubDbValue.CreateNullableBoolean(true),
             ["ProductDate"] = StubDbValue.CreateNullableDateOnly(new(2019, 01, 27)),
-            ["c.Count"] = StubDbValue.CreateNullableInt32(861723)
+            ["TotalCount"] = StubDbValue.CreateNullableInt32(861723)
         };
 
         var dbItem = StubDbItem.Create(orThrowValues, orDefaultValues);
@@ -49,6 +49,32 @@ public static class DbStructTypeTest
             TotalCount = 861723,
             Price = 207.5m,
             AddionalData = TestData.MinusFifteenIdRefType
+        };
+
+        Assert.StrictEqual(expected, actual);
+    }
+
+    [Fact]
+    public static void GetQueryAll_ExpectCorrectQuery()
+    {
+        var actual = DbStructType.QueryAll;
+
+        var expected = new DbSelectQuery("DbStructType")
+        {
+            SelectedFields = new("Id", "IsActual", "CreateAt", "ProductDate", "Price", "AddionalData")
+        };
+
+        Assert.StrictEqual(expected, actual);
+    }
+
+    [Fact]
+    public static void GetQueryTotalCount_ExpectCorrectQuery()
+    {
+        var actual = DbStructType.QueryTotalCount;
+
+        var expected = new DbSelectQuery("DbStructType")
+        {
+            SelectedFields = new("COUNT(*) AS TotalCount")
         };
 
         Assert.StrictEqual(expected, actual);

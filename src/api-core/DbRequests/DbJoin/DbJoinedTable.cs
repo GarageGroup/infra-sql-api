@@ -4,11 +4,11 @@ namespace GGroupp.Infra;
 
 public sealed record class DbJoinedTable
 {
-    public DbJoinedTable(DbJoinType type, string tableName, string shortName, IDbFilter filter)
+    public DbJoinedTable(DbJoinType type, string tableName, string tableAlias, IDbFilter filter)
     {
         Type = type;
         TableName = tableName.OrEmpty();
-        ShortName = shortName.OrEmpty();
+        TableAlias = tableAlias.OrEmpty();
         Filter = filter;
     }
 
@@ -16,7 +16,10 @@ public sealed record class DbJoinedTable
 
     public string TableName { get; }
 
-    public string ShortName { get; }
+    [Obsolete("Use TableAlias instead")]
+    public string? ShortName => TableAlias;
+
+    public string? TableAlias { get; }
 
     public IDbFilter Filter { get; }
 }

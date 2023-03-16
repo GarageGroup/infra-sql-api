@@ -36,9 +36,9 @@ public static partial class DbCombinedFilterTest
             },
             new object[]
             {
-                new DbCombinedFilter(
-                    DbLogicalOperator.Or,
-                    new StubDbFilter[]
+                new DbCombinedFilter(DbLogicalOperator.Or)
+                {
+                    Filters = new StubDbFilter[]
                     {
                         new(
                             string.Empty,
@@ -46,7 +46,8 @@ public static partial class DbCombinedFilterTest
                             {
                                 new("Name", "Some string")
                             })
-                    }),
+                    }
+                },
                 string.Empty
             },
             new object[]
@@ -81,9 +82,9 @@ public static partial class DbCombinedFilterTest
             },
             new object[]
             {
-                new DbCombinedFilter(
-                    DbLogicalOperator.And,
-                    new StubDbFilter[]
+                new DbCombinedFilter(DbLogicalOperator.And)
+                {
+                    Filters = new StubDbFilter[]
                     {
                         new(
                             "Name <> @Name",
@@ -105,7 +106,8 @@ public static partial class DbCombinedFilterTest
                             {
                                 new("Id", 275)
                             }),
-                    }),
+                    }
+                },
                 "(Name <> @Name AND Id = @Id OR Sum = NULL)"
             },
             new object[]

@@ -8,15 +8,18 @@ public sealed record class DbSelectQuery : IDbQuery
         =>
         TableName = tableName.OrEmpty();
 
-    public DbSelectQuery(string tableName, string shortName)
+    public DbSelectQuery(string tableName, string tableAlias)
     {
         TableName = tableName.OrEmpty();
-        ShortName = string.IsNullOrWhiteSpace(shortName) ? null : shortName;
+        TableAlias = string.IsNullOrWhiteSpace(tableAlias) ? null : tableAlias;
     }
 
     public string TableName { get; }
 
-    public string? ShortName { get; }
+    [Obsolete("Use TableAlias instead")]
+    public string? ShortName => TableAlias;
+
+    public string? TableAlias { get; }
 
     public int? Top { get; init; }
 

@@ -4,30 +4,32 @@ using PrimeFuncPack.UnitTest;
 
 namespace GGroupp.TestType;
 
-[DbEntity]
+[DbEntity("Product", "p")]
+[DbJoin(DbJoinType.Left, "Left", "l", "l.Id = p.LeftId")]
+[DbJoin(DbJoinType.Right, "Right", "r", "r.Id = p.RightId")]
 internal readonly partial record struct DbStructRecord
 {
-    [DbField]
+    [DbSelect("QueryAll"), DbSelect("QueryLeft"), DbSelect("QueryRight")]
     public byte Id { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "p"), DbSelect("QueryLeft", "p"), DbSelect("QueryRight", "p")]
     public bool IsActive { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "l"), DbSelect("QueryLeft", "l")]
     public DateOnly Date { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "r"), DbSelect("QueryRight", "r")]
     public DateTime? ModifiedAt { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", FieldName = "c.Price")]
     public decimal? Price { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "p")]
     public short? Sum { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "p")]
     public string Name { get; init; }
 
-    [DbField]
+    [DbSelect("QueryAll", "p")]
     public RecordStruct? AdditionalData { get; init; }
 }

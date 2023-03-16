@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace GGroupp.Infra;
@@ -9,8 +10,16 @@ internal sealed class DbEntitySourceGenerator : ISourceGenerator
     {
         foreach (var dbEntityType in context.GetDbEntityTypes())
         {
-            var constructorSourceCode = dbEntityType.BuildSourceCode();
-            context.AddSource($"{dbEntityType.FileName}.g.cs", constructorSourceCode);
+            var readEntitySourceCode = dbEntityType.BuildReadEntitySourceCode();
+            context.AddSource($"{dbEntityType.FileName}.ReadEntity.g.cs", readEntitySourceCode);
+
+            if (dbEntityType.SelectQueries.Any() is false)
+            {
+                continue;
+            }
+
+            var querySourceCode = dbEntityType.BuildQuerySourceCode();
+            context.AddSource($"{dbEntityType.FileName}.Query.g.cs", querySourceCode);
         }
     }
 

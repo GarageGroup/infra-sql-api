@@ -32,7 +32,7 @@ public static class DbRefTypeTest
 
         var orDefaultValues = new Dictionary<string, DbValue?>
         {
-            ["p.CrmId"] = StubDbValue.CreateNullableGuid(Guid.Parse("4a0e47b9-0e8c-4bcc-96d6-e2f5263f8a0a")),
+            ["PropertyCrmId"] = StubDbValue.CreateNullableGuid(Guid.Parse("4a0e47b9-0e8c-4bcc-96d6-e2f5263f8a0a")),
             ["Name"] = StubDbValue.CreateNullableString(TestData.SomeString),
             ["Sum"] = StubDbValue.CreateNullableFloat(-17895),
             ["ExternalId"] = StubDbValue.CreateNullableInt64(12391298712)

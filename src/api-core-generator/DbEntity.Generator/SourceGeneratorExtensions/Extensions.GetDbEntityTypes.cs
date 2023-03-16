@@ -17,7 +17,8 @@ partial class SourceGeneratorExtensions
 
     private static DbEntityMetadata? GetDbEntityMetadata(INamedTypeSymbol typeSymbol)
     {
-        if (typeSymbol.GetAttributes().Any(IsDbEntityAttribute) is false)
+        var dbEntityAttribute = typeSymbol.GetAttributes().FirstOrDefault(IsDbEntityAttribute);
+        if (dbEntityAttribute is null)
         {
             return null;
         }
@@ -32,40 +33,154 @@ partial class SourceGeneratorExtensions
             throw new InvalidOperationException($"DbEntity type {typeSymbol.Name} must not be static");
         }
 
+        var joinData = typeSymbol.GetDbJoinData();
+
+        var tableData = new DbTableData(
+            tableName: dbEntityAttribute.GetAttributeValue(0).ToStringOrElse(typeSymbol.Name),
+            tableAlias: dbEntityAttribute.GetAttributeValue(1)?.ToString());
+
         return new(
             fileName: typeSymbol.Name,
-            entityType: typeSymbol.GetDisplayedData(),
-            isRecordType: typeSymbol.IsRecord,
-            isValueType: typeSymbol.IsValueType,
-            fields: typeSymbol.GetMembers().OfType<IPropertySymbol>().Select(GetDbFieldMetadata).NotNull().ToArray());
+            entityType: new(
+                displayedData: typeSymbol.GetDisplayedData(),
+                isRecordType: typeSymbol.IsRecord,
+                isValueType: typeSymbol.IsValueType),
+            fields: typeSymbol.GetPropertySymbols().Select(GetDbFieldMetadata).NotNull().ToArray(),
+            selectQueries: typeSymbol.GetPropertySymbols().SelectMany(InnerGetData).GroupBy(GetQueryName).Select(GetQueryData).ToArray());
 
         static bool IsDbEntityAttribute(AttributeData attributeData)
             =>
             attributeData.AttributeClass?.IsType(DefaultNamespace, "DbEntityAttribute") is true;
+
+        IEnumerable<DbSelectData> InnerGetData(IPropertySymbol propertySymbol)
+            =>
+            GetDbSelectData(propertySymbol, tableData, joinData);
+
+        DbSelectQueryData GetQueryData(IGrouping<string, DbSelectData> queryGroup)
+            =>
+            new(
+                queryName: queryGroup.Key,
+                tableData: tableData,
+                joinedTables: queryGroup.Select(GetJoinTable).NotNull().Distinct().ToArray(),
+                fieldNames: queryGroup.Select(GetFieldName).ToArray());
+
+        static string GetQueryName(DbSelectData data)
+            =>
+            data.QueryName;
+
+        static string GetFieldName(DbSelectData data)
+            =>
+            data.FieldName;
+
+        static DbJoinData? GetJoinTable(DbSelectData data)
+            =>
+            data.JoinTable;
+    }
+
+    private static IReadOnlyList<DbJoinData> GetDbJoinData(this INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.GetAttributes().Where(IsDbJoinAttribute).Select(GetDbJoinData).ToArray();
+
+        DbJoinData GetDbJoinData(AttributeData attributeData)
+            =>
+            new(
+                joinType: attributeData.GetAttributeValue(0) switch
+                {
+                    int value => value,
+                    var unexpected => throw new InvalidOperationException($"An unexpected join type value: {unexpected}")
+                },
+                tableName: attributeData.GetAttributeValue(1).ToStringOrThrow(NotSpecifiedDbJoinTableName, true),
+                tableAlias: attributeData.GetAttributeValue(2)?.ToString(),
+                rawFilter: attributeData.GetAttributeValue(3).ToStringOrThrow(NotSpecifiedDbJoinRawFilter, true));
+
+
+        InvalidOperationException NotSpecifiedDbJoinTableName()
+            =>
+            new($"DbJoin table name of DbEntity {typeSymbol.Name} must be specified");
+
+        InvalidOperationException NotSpecifiedDbJoinRawFilter()
+            =>
+            new($"DbJoin raw filter value of DbEntity {typeSymbol.Name} must be specified");
+
+        static bool IsDbJoinAttribute(AttributeData attributeData)
+            =>
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbJoinAttribute") is true;
+    }
+
+    private static IEnumerable<DbSelectData> GetDbSelectData(
+        IPropertySymbol propertySymbol, DbTableData tableData, IReadOnlyList<DbJoinData> joinData)
+    {
+        foreach (var dbSelectAttribute in propertySymbol.GetAttributes().Where(IsDbSelectAttribute))
+        {
+            var tableName = dbSelectAttribute.GetAttributeValue(1, "TableName")?.ToString();
+            DbJoinData? joinTable = null;
+
+            if (string.IsNullOrEmpty(tableName) is false && tableData.IsNameMatched(tableName) is false)
+            {
+                joinTable = joinData.FirstOrDefault(IsNameMatched) ?? throw NotFoundTableException();
+            }
+
+            var fieldName = dbSelectAttribute.GetAttributeValue(2, "FieldName")?.ToString();
+            if (string.IsNullOrEmpty(fieldName))
+            {
+                if (string.IsNullOrEmpty(tableName))
+                {
+                    fieldName = propertySymbol.Name;
+                }
+                else
+                {
+                    fieldName = tableName + "." + propertySymbol.Name;
+                }
+            }
+            else if (string.Equals(fieldName, propertySymbol.Name, StringComparison.InvariantCulture) is false)
+            {
+                fieldName += " AS " + propertySymbol.Name;
+            }
+
+            yield return new(
+                queryName: dbSelectAttribute.GetAttributeValue(0).ToStringOrThrow(NotSpecifiedQueryNameException, true),
+                joinTable: joinTable,
+                fieldName: fieldName ?? string.Empty);
+
+            bool IsNameMatched(DbJoinData data)
+                =>
+                data.IsNameMatched(tableName);
+
+            InvalidOperationException NotFoundTableException()
+                =>
+                new($"Table '{tableName}' was not found for the DbEntity {propertySymbol.ContainingType.Name}");
+        }
+
+        static bool IsDbSelectAttribute(AttributeData attributeData)
+            =>
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbSelectAttribute") is true;
+
+        InvalidOperationException NotSpecifiedQueryNameException()
+            =>
+            new($"DbSelect query name of property {propertySymbol.Name} must be specified");
     }
 
     private static DbFieldMetadata? GetDbFieldMetadata(IPropertySymbol propertySymbol)
     {
-        var dbFieldAttribute = propertySymbol.GetAttributes().FirstOrDefault(IsDbFieldAttribute);
-        if (dbFieldAttribute is null)
+        if (propertySymbol.GetAttributes().Any(IsDbFieldIgnoreAttribute))
         {
             return null;
         }
 
         if (propertySymbol.SetMethod is null)
         {
-            throw new InvalidOperationException($"DbField property {propertySymbol.Name} must not be readonly");
+            return null;
         }
 
         return new(
             propertyName: propertySymbol.Name,
-            fieldName: dbFieldAttribute.GetAttributeValue(0).ToStringOr(propertySymbol.Name),
+            fieldName: propertySymbol.Name,
             isNullable: propertySymbol.Type.IsNullableType(),
             castToMethod: propertySymbol.Type?.GetCastToMethod());
 
-        static bool IsDbFieldAttribute(AttributeData attributeData)
+        static bool IsDbFieldIgnoreAttribute(AttributeData attributeData)
             =>
-            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbFieldAttribute") is true;
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbFieldIgnoreAttribute") is true;
     }
 
     private static DisplayedMethodData? GetCastToMethod(this ITypeSymbol typeSymbol)
