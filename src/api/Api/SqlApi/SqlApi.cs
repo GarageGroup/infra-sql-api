@@ -9,11 +9,11 @@ namespace GGroupp.Infra;
 
 internal sealed partial class SqlApi : ISqlApi
 {
-    public static SqlApi Create(IDbProvider dbProvider, bool needLogging, ILoggerFactory? loggerFactory)
+    public static SqlApi Create(IDbProvider dbProvider, ILoggerFactory? loggerFactory)
         =>
         new(
             dbProvider: dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)),
-            logger: needLogging ? loggerFactory?.CreateLogger<SqlApi>() : default);
+            logger: loggerFactory?.CreateLogger<SqlApi>());
 
     private readonly IDbProvider dbProvider;
 
@@ -27,11 +27,11 @@ internal sealed partial class SqlApi : ISqlApi
     {
         var dbCommand = dbConnection.CreateCommand();
         dbCommand.CommandText = query.GetSqlQuery();
-        var parametersLogBuilder = new StringBuilder();
+        var parameterLogBuilder = logger is null ? null : new StringBuilder();
 
         foreach (var sqlParameter in GetDistinctDbParameters(query))
         {
-            AppendParameter(parametersLogBuilder, sqlParameter);
+            AppendParameter(sqlParameter);
             dbCommand.Parameters.Add(dbProvider.GetSqlParameter(sqlParameter));
         }
 
@@ -40,23 +40,23 @@ internal sealed partial class SqlApi : ISqlApi
             dbCommand.CommandTimeout = query.TimeoutInSeconds.Value;
         }
 
-        logger?.LogDebug("SQL: {0}, Parameters: {1}", dbCommand.CommandText, parametersLogBuilder.ToString());  
+        logger?.LogDebug("SQL: {0}, Parameters: {1}", dbCommand.CommandText, parameterLogBuilder?.ToString());  
 
         return dbCommand;
 
-        void AppendParameter(StringBuilder builder, DbParameter dbParameter)
+        void AppendParameter(DbParameter dbParameter)
         {
-            if (logger is null)
+            if (parameterLogBuilder is null)
             {
                 return;
             }
 
-            if (builder.Length > 0)
+            if (parameterLogBuilder.Length > 0)
             {
-                builder.Append(", ");
+                parameterLogBuilder.Append(", ");
             }
 
-            builder
+            parameterLogBuilder
                 .Append(dbParameter.Name)
                 .Append(": ")
                 .Append(dbParameter.Value)

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Moq;
 using PrimeFuncPack.UnitTest;
 using Xunit;
 
@@ -21,7 +23,7 @@ partial class SqlApiTest
 
         var dbProvider = CreateDbProvider(dbConnection);
 
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
         var cancellationToken = new CancellationToken(canceled: false);
 
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
@@ -44,7 +46,7 @@ partial class SqlApiTest
 
         var dbProvider = CreateDbProvider(dbConnection);
 
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
         var cancellationToken = new CancellationToken(canceled: false);
 
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
@@ -67,7 +69,7 @@ partial class SqlApiTest
 
         var dbProvider = CreateDbProvider(dbConnection);
 
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
         var cancellationToken = new CancellationToken(canceled: true);
 
         var actual = sqlApi.QueryStubDbEntitySetAsync(SomeDbQuery, cancellationToken);
@@ -84,7 +86,7 @@ partial class SqlApiTest
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
         var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
 
         _ = await sqlApi.QueryStubDbEntitySetAsync(SomeDbQuery, default);
         mockDbConnection.Verify(static db => db.Open());
@@ -103,7 +105,7 @@ partial class SqlApiTest
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
         var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
 
         var dbQuery = new StubDbQuery(
             query: sqlQuery,
@@ -136,7 +138,7 @@ partial class SqlApiTest
         };
 
         var dbProvider = CreateDbProvider(dbConnection, parameters);
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
 
         var dbQuery = new StubDbQuery(
             query: "Some SQL",
@@ -171,7 +173,7 @@ partial class SqlApiTest
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
         var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
 
         var dbQuery = new StubDbQuery(
             query: "SELECT * From Product",
@@ -197,7 +199,7 @@ partial class SqlApiTest
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
         var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = SqlApi.Create(dbProvider, false, SomeLoggerFactory.Object);
+        var sqlApi = SqlApi.Create(dbProvider, false, Mock.Of<ILoggerFactory>());
 
         var actual = await sqlApi.QueryStubDbEntitySetAsync(SomeDbQuery, default);
 

@@ -28,10 +28,6 @@ public static partial class SqlApiTest
             "First", "Second", "Third"
         };
 
-    private static readonly Mock<ILoggerFactory> SomeLoggerFactory
-        =
-        new Mock<ILoggerFactory>();
-
     private static StubDbCommand CreateDbCommand(int nonQueryResult)
         =>
         new(
