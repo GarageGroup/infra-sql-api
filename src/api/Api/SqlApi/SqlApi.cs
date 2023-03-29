@@ -15,8 +15,7 @@ internal sealed partial class SqlApi : ISqlApi
 
     internal SqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory = null)
         =>
-        (this.dbProvider, this.logger)
-            = (dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)), loggerFactory?.CreateLogger<SqlApi>());
+        (this.dbProvider, this.logger) = (dbProvider, loggerFactory?.CreateLogger<SqlApi>());
 
     private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
     {

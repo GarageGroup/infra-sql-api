@@ -9,17 +9,23 @@ namespace GGroupp.Infra;
 
 public static class SqlApiDependency
 {
-    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency)
+    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency, bool useLogging = false)
     {
         ArgumentNullException.ThrowIfNull(dependency);
-        return dependency.With(GetLoggerFactory).Fold<ISqlApi>(CreateSqlApi);
+        return dependency.With(serviceProvider => GetLoggerFactory(serviceProvider, useLogging)).Fold<ISqlApi>(CreateSqlApi);
     }
 
-    private static ILoggerFactory? GetLoggerFactory(this IServiceProvider serviceProvider)
+    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider, ILoggerFactory> dependency)
+    {
+        ArgumentNullException.ThrowIfNull(dependency);
+        return dependency.Fold<ISqlApi>(CreateSqlApi);
+    }
+
+    private static ILoggerFactory? GetLoggerFactory(this IServiceProvider serviceProvider, bool useLogging)
         =>
-        serviceProvider.GetServiceOrAbsent<ILoggerFactory>().OrDefault();
+        useLogging ? serviceProvider.GetServiceOrAbsent<ILoggerFactory>().OrDefault() : null;
 
     private static SqlApi CreateSqlApi(IDbProvider provider, ILoggerFactory? loggerFactory)
         =>
-        new(provider, loggerFactory);
+        new(provider ?? throw new ArgumentNullException(nameof(provider)), loggerFactory);
 }
