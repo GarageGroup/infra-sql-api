@@ -9,19 +9,14 @@ namespace GGroupp.Infra;
 
 internal sealed partial class SqlApi : ISqlApi
 {
-    public static SqlApi Create(IDbProvider dbProvider, ILoggerFactory? loggerFactory)
-        =>
-        new(
-            dbProvider: dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)),
-            logger: loggerFactory?.CreateLogger<SqlApi>());
-
     private readonly IDbProvider dbProvider;
 
     private readonly ILogger? logger;
 
-    private SqlApi(IDbProvider dbProvider, ILogger? logger)
+    internal SqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory = null)
         =>
-        (this.dbProvider, this.logger) = (dbProvider, logger);
+        (this.dbProvider, this.logger)
+            = (dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)), loggerFactory?.CreateLogger<SqlApi>());
 
     private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
     {
