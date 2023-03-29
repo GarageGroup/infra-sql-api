@@ -12,7 +12,11 @@ public static class SqlApiDependency
     public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency, bool useLogging = false)
     {
         ArgumentNullException.ThrowIfNull(dependency);
-        return dependency.With(serviceProvider => GetLoggerFactory(serviceProvider, useLogging)).Fold<ISqlApi>(CreateSqlApi);
+        return dependency.With(GetLoggerFactory).Fold<ISqlApi>(CreateSqlApi);
+
+        ILoggerFactory? GetLoggerFactory(IServiceProvider serviceProvider)
+            =>
+            useLogging ? serviceProvider.GetServiceOrAbsent<ILoggerFactory>().OrDefault() : null;
     }
 
     public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider, ILoggerFactory> dependency)
@@ -20,10 +24,6 @@ public static class SqlApiDependency
         ArgumentNullException.ThrowIfNull(dependency);
         return dependency.Fold<ISqlApi>(CreateSqlApi);
     }
-
-    private static ILoggerFactory? GetLoggerFactory(this IServiceProvider serviceProvider, bool useLogging)
-        =>
-        useLogging ? serviceProvider.GetServiceOrAbsent<ILoggerFactory>().OrDefault() : null;
 
     private static SqlApi CreateSqlApi(IDbProvider provider, ILoggerFactory? loggerFactory)
         =>
