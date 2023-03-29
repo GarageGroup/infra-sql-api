@@ -1,4 +1,5 @@
-﻿using PrimeFuncPack;
+﻿using Microsoft.Extensions.Logging;
+using PrimeFuncPack;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -8,9 +9,13 @@ namespace GGroupp.Infra;
 
 public static class SqlApiDependency
 {
-    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency)
+    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider, bool> dependency)
     {
         ArgumentNullException.ThrowIfNull(dependency);
-        return dependency.Map<ISqlApi>(SqlApi.Create);
+        return dependency.With(GetLoggerFactory).Fold<ISqlApi>(SqlApi.Create);
     }
+
+    private static ILoggerFactory? GetLoggerFactory(this IServiceProvider serviceProvider)
+        =>
+        serviceProvider.GetServiceOrAbsent<ILoggerFactory>().OrDefault();
 }
