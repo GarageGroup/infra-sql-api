@@ -2,30 +2,31 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace GGroupp.Infra;
 
 internal sealed partial class SqlApi : ISqlApi
 {
-    public static SqlApi Create(IDbProvider dbProvider)
-        =>
-        new(
-            dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)));
-
     private readonly IDbProvider dbProvider;
 
-    private SqlApi(IDbProvider dbProvider)
+    private readonly ILogger? logger;
+
+    internal SqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory = null)
         =>
-        this.dbProvider = dbProvider;
+        (this.dbProvider, this.logger) = (dbProvider, loggerFactory?.CreateLogger<SqlApi>());
 
     private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
     {
         var dbCommand = dbConnection.CreateCommand();
         dbCommand.CommandText = query.GetSqlQuery();
+        var parameterLogBuilder = logger is null ? null : new StringBuilder();
 
-        foreach (var sqlParameter in GetDistinctDbParameters(query).Select(dbProvider.GetSqlParameter))
+        foreach (var sqlParameter in GetDistinctDbParameters(query))
         {
-            dbCommand.Parameters.Add(sqlParameter);
+            AppendParameter(sqlParameter);
+            dbCommand.Parameters.Add(dbProvider.GetSqlParameter(sqlParameter));
         }
 
         if (query.TimeoutInSeconds is not null)
@@ -33,7 +34,28 @@ internal sealed partial class SqlApi : ISqlApi
             dbCommand.CommandTimeout = query.TimeoutInSeconds.Value;
         }
 
+        logger?.LogDebug("SQL: {0}, Parameters: {1}", dbCommand.CommandText, parameterLogBuilder?.ToString());  
+
         return dbCommand;
+
+        void AppendParameter(DbParameter dbParameter)
+        {
+            if (parameterLogBuilder is null)
+            {
+                return;
+            }
+
+            if (parameterLogBuilder.Length > 0)
+            {
+                parameterLogBuilder.Append(", ");
+            }
+
+            parameterLogBuilder
+                .Append(dbParameter.Name)
+                .Append(": ")
+                .Append(dbParameter.Value)
+                .Append("");
+        }
     }
 
     private static IEnumerable<DbParameter> GetDistinctDbParameters(IDbQuery query)
