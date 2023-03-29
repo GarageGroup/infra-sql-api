@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace GGroupp.Infra.Sql.Api.Provider.Api.Test;
@@ -26,6 +27,10 @@ public static partial class SqlApiTest
         {
             "First", "Second", "Third"
         };
+
+    private static readonly Mock<ILoggerFactory> SomeLoggerFactory
+        =
+        new Mock<ILoggerFactory>();
 
     private static StubDbCommand CreateDbCommand(int nonQueryResult)
         =>
