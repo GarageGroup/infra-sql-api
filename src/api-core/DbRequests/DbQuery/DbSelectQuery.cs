@@ -31,6 +31,8 @@ public sealed record class DbSelectQuery : IDbQuery
 
     public FlatArray<DbJoinedTable> JoinedTables { get; init; }
 
+    public FlatArray<DbAppliedTable> AppliedTables { get; init; }
+
     public FlatArray<DbOrder> Orders { get; init; }
 
     public int? TimeoutInSeconds { get; init; }

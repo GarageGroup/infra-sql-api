@@ -37,6 +37,12 @@ partial class DbQueryExtensions
             queryBuilder = queryBuilder.Append(' ').Append(joinQuery);
         }
 
+        var applyQuery = query.AppliedTables.BuildSqlQuery();
+        if (string.IsNullOrWhiteSpace(applyQuery) is false)
+        {
+            queryBuilder = queryBuilder.Append(' ').Append(applyQuery);
+        }
+
         var filterQuery = query.Filter?.GetFilterSqlQuery();
         if (string.IsNullOrWhiteSpace(filterQuery) is false)
         {
@@ -65,15 +71,16 @@ partial class DbQueryExtensions
 
     internal static FlatArray<DbParameter> BuildParameters(this DbSelectQuery query)
     {
-        if (query.Filter is null && query.JoinedTables.IsEmpty)
+        if (query.Filter is null && query.JoinedTables.IsEmpty && query.AppliedTables.IsEmpty)
         {
             return default;
         }
 
         var filterParameters = query.Filter?.GetFilterParameters().AsEnumerable() ?? Enumerable.Empty<DbParameter>();
         var joinFilters = query.JoinedTables.AsEnumerable().Select(GetFilter).SelectMany(GetParameters);
+        var applyParameters = query.AppliedTables.AsEnumerable().SelectMany(GetAppliedParameters);
 
-        return filterParameters.Concat(joinFilters).ToFlatArray();
+        return filterParameters.Concat(joinFilters).Concat(applyParameters).ToFlatArray();
 
         static IDbFilter GetFilter(DbJoinedTable dbJoinedTable)
             =>
@@ -82,6 +89,10 @@ partial class DbQueryExtensions
         static IEnumerable<DbParameter> GetParameters(IDbFilter dbFilter)
             =>
             dbFilter.GetFilterParameters().AsEnumerable();
+
+        static IEnumerable<DbParameter> GetAppliedParameters(DbAppliedTable dbAppliedTable)
+            =>
+            dbAppliedTable.SelectQuery.BuildParameters().AsEnumerable();
     }
 
     private static string BuildSqlQuery(this FlatArray<DbJoinedTable> joinedTables)
@@ -106,6 +117,28 @@ partial class DbQueryExtensions
         return builder.ToString();
     }
 
+    private static string BuildSqlQuery(this FlatArray<DbAppliedTable> appliedTables)
+    {
+        if (appliedTables.IsEmpty)
+        {
+            return string.Empty;
+        }
+
+        var builder = new StringBuilder();
+
+        foreach (var appliedTable in appliedTables)
+        {
+            if (builder.Length > 0)
+            {
+                builder = builder.Append(' ');
+            }
+
+            builder = builder.AppendAppliedTable(appliedTable);
+        }
+
+        return builder.ToString();
+    }
+
     private static StringBuilder AppendJoinedTable(this StringBuilder builder, DbJoinedTable joinedTable)
         =>
         builder.Append(
@@ -122,4 +155,17 @@ partial class DbQueryExtensions
             " ON ")
         .Append(
             joinedTable.Filter.GetFilterSqlQuery());
+
+    private static StringBuilder AppendAppliedTable(this StringBuilder builder, DbAppliedTable appliedTable)
+        =>
+        builder.Append(
+            appliedTable.Type.GetName())
+        .Append(
+            " APPLY (")
+        .Append(
+            appliedTable.SelectQuery.GetSqlQuery())
+        .Append(
+            ") ")
+        .Append(
+            appliedTable.Alias);
 }

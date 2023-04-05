@@ -173,23 +173,16 @@ internal static partial class DbQueryExtensions
             _ => throw OutOfRangeException(orderType),
         };
 
-    private static ArgumentOutOfRangeException OutOfRangeException(DbFilterOperator @operator)
+    private static string GetName(this DbApplyType applyType)
         =>
-        new($"An unexpected {nameof(DbFilterOperator)} value: {@operator}");
+        applyType switch
+        {
+            DbApplyType.Outer => "OUTER",
+            DbApplyType.Cross => "CROSS",
+            _ => throw OutOfRangeException(applyType),
+        };
 
-    private static ArgumentOutOfRangeException OutOfRangeException(DbLogicalOperator @operator)
+    private static ArgumentOutOfRangeException OutOfRangeException<T>(T orderType)
         =>
-        new($"An unexpected {nameof(DbLogicalOperator)} value: {@operator}");
-
-    private static ArgumentOutOfRangeException OutOfRangeException(DbArrayFilterOperator @operator)
-        =>
-        new($"An unexpected {nameof(DbArrayFilterOperator)} value: {@operator}");
-
-    private static ArgumentOutOfRangeException OutOfRangeException(DbJoinType joinType)
-        =>
-        new($"An unexpected {nameof(DbJoinType)} value: {joinType}");
-    
-    private static ArgumentOutOfRangeException OutOfRangeException(DbOrderType orderType)
-        =>
-        new($"An unexpected {nameof(DbOrderType)} value: {orderType}");
+        new($"An unexpected {typeof(T).FullName} value: {orderType}");
 }
