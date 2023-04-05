@@ -78,6 +78,31 @@ public static partial class DbSelectQueryTest
             },
             new object[]
             {
+                new DbSelectQuery("Property", "p")
+                {
+                    AppliedTables = new(
+                        new DbAppliedTable(
+                            DbApplyType.Outer, new("PropertyOwner", "po"), "po"),
+                        new DbAppliedTable(
+                            DbApplyType.Cross, new("PropertyType", "pt"), "pt"))
+                },
+                "SELECT * FROM Property p OUTER APPLY (SELECT * FROM PropertyOwner po) po " +
+                "CROSS APPLY (SELECT * FROM PropertyType pt) pt"
+            },
+            new object[]
+            {
+                new DbSelectQuery("Property", "p")
+                {
+                    Filter = new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15)),
+                    AppliedTables = new(
+                        new DbAppliedTable(
+                            DbApplyType.Cross, new("PropertyOwner", "po"), "po"))
+                },
+                "SELECT * FROM Property p CROSS APPLY (SELECT * FROM PropertyOwner po) po" +
+                " WHERE p.Id > @Id"
+            },
+            new object[]
+            {
                 new DbSelectQuery("Property")
                 {
                     Orders = new(
@@ -196,6 +221,24 @@ public static partial class DbSelectQueryTest
                     new("Price1", 10.51m),
                     new("Value", null),
                     new("CityValue", "Some value"))
-            }
+            },
+            new object[]
+            {
+                new DbSelectQuery("Property", "p")
+                {
+                    AppliedTables = new(
+                        new DbAppliedTable(
+                            type: DbApplyType.Cross,
+                            selectQuery: new("PropertyType", "pt")
+                            {
+                                Filter = new StubDbFilter(
+                                    "Name = @Name", new("Id", 5), new("Name", "Test"))
+                            },
+                            alias: "pt"))
+                },
+                new FlatArray<DbParameter>(
+                    new DbParameter("Id", 5),
+                    new DbParameter("Name", "Test"))
+            },
         };
 }
