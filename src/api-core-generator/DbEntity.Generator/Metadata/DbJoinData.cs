@@ -1,6 +1,6 @@
 using System;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 internal sealed record class DbJoinData
 {

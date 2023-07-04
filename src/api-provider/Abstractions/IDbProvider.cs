@@ -1,6 +1,6 @@
 using System.Data.Common;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public interface IDbProvider
 {

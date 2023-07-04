@@ -1,4 +1,4 @@
-namespace GGroupp.Infra.Sql.Api.Core.Test;
+namespace GarageGroup.Infra.Sql.Api.Core.Test;
 
 public static partial class DbValueTest
 {

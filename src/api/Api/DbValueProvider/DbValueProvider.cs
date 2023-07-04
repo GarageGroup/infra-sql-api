@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 internal sealed partial class DbValueProvider : IDbValueProvider
 {

@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <RootNamespace>GGroupp.Infra</RootNamespace>
-    <AssemblyName>GGroupp.Infra.Sql.Api.Abstractions.ExecuteNonQuery</AssemblyName>
+    <RootNamespace>GarageGroup.Infra</RootNamespace>
+    <AssemblyName>GarageGroup.Infra.Sql.Api.Abstractions.ExecuteNonQuery</AssemblyName>
     <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Sql.Api.Core.DbQuery" Version="1.1.0" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbQuery" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

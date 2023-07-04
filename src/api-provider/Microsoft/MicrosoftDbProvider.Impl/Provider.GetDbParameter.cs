@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 partial class MicrosoftDbProviderImpl
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public sealed record class MicrosoftDbProviderOption
 {

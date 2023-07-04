@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using GGroupp.TestType;
+using GarageGroup.TestType;
 using PrimeFuncPack.UnitTest;
 using Xunit;
 
-namespace GGroupp.Infra.Sql.Api.Core.DbEntity.Generator.Test;
+namespace GarageGroup.Infra.Sql.Api.Core.DbEntity.Generator.Test;
 
 public static class DbStructRecordTest
 {

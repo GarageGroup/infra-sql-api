@@ -1,7 +1,7 @@
 using System;
-using GGroupp.Infra;
+using GarageGroup.Infra;
 
-namespace GGroupp.TestType;
+namespace GarageGroup.TestType;
 
 [DbEntity]
 internal sealed partial class DbRefType

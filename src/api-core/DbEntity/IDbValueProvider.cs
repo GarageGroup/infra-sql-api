@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public interface IDbValueProvider
 {

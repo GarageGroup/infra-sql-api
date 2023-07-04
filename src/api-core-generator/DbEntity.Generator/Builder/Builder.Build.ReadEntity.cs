@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 partial class DbEntityBuilder
 {
@@ -14,7 +14,7 @@ partial class DbEntityBuilder
             metadata.EntityType.DisplayedData.AllNamespaces)
         .AddUsing(
             "System",
-            "GGroupp.Infra")
+            "GarageGroup.Infra")
         .AppendCodeLine(
             metadata.BuildHeaderLine())
         .BeginCodeBlock()

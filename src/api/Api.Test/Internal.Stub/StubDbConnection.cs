@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace GGroupp.Infra.Sql.Api.Provider.Api.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 internal sealed class StubDbConnection : DbConnection
 {

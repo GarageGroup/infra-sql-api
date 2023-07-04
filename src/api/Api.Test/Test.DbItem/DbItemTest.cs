@@ -1,7 +1,7 @@
 using System.Data.Common;
 using Xunit;
 
-namespace GGroupp.Infra.Sql.Api.Provider.Api.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 public static partial class DbItemTest
 {
