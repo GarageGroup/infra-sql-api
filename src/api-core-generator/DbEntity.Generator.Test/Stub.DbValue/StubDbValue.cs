@@ -1,6 +1,6 @@
 using Moq;
 
-namespace GGroupp.Infra.Sql.Api.Core.DbEntity.Generator.Test;
+namespace GarageGroup.Infra.Sql.Api.Core.DbEntity.Generator.Test;
 
 internal static partial class StubDbValue
 {

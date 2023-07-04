@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 internal static partial class DbEntityBuilder
 {

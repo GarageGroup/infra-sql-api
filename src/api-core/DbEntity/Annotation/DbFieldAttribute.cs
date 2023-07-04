@@ -1,6 +1,6 @@
 using System;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 [Obsolete("Not to use this attribute. Use DbFieldIgnoreAttribute to ignore property if it's necessary")]
 [AttributeUsage(AttributeTargets.Property)]

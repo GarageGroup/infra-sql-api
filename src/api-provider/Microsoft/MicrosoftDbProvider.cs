@@ -6,9 +6,9 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using PrimeFuncPack;
 
-[assembly: InternalsVisibleTo("GGroupp.Infra.Sql.Api.Provider.Microsoft.Test")]
+[assembly: InternalsVisibleTo("GarageGroup.Infra.Sql.Api.Provider.Microsoft.Test")]
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public static class MicrosoftDbProvider
 {

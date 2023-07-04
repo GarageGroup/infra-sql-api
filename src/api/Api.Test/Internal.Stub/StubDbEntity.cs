@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 
-namespace GGroupp.Infra.Sql.Api.Provider.Api.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 internal sealed record class StubDbEntity : IDbEntity<StubDbEntity>
 {

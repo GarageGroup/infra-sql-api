@@ -5,7 +5,7 @@
 {
     "Logging" :{
         "LogLevel": {
-            "GGroupp.Infra.SqlApi": "Debug"
+            "GarageGroup.Infra.SqlApi": "Debug"
         }
     }
 }

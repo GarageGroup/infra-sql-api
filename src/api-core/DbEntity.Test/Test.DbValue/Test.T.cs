@@ -2,7 +2,7 @@ using Moq;
 using PrimeFuncPack.UnitTest;
 using Xunit;
 
-namespace GGroupp.Infra.Sql.Api.Core.Test;
+namespace GarageGroup.Infra.Sql.Api.Core.Test;
 
 partial class DbValueTest
 {

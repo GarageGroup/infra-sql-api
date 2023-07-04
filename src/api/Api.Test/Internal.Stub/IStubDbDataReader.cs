@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
-namespace GGroupp.Infra.Sql.Api.Provider.Api.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 internal interface IStubDbDataReader
 {

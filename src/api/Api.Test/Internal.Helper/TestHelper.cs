@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace GGroupp.Infra.Sql.Api.Provider.Api.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 internal static class TestHelper
 {

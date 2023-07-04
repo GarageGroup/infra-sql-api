@@ -1,8 +1,8 @@
 using System;
-using GGroupp.Infra;
+using GarageGroup.Infra;
 using PrimeFuncPack.UnitTest;
 
-namespace GGroupp.TestType;
+namespace GarageGroup.TestType;
 
 [DbEntity("Product", "p")]
 [DbJoin(DbJoinType.Inner, "Unit", "u", "u.Id = p.UnitId")]

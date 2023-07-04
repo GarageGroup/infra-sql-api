@@ -23,10 +23,11 @@ jobs:
     - name: Add Local Nuget Source
       run: dotnet nuget add source ~/nuget
 
-    - name: Add GGroupp NuGet Source
+    - name: Add GarageGroup NuGet Source
       run: >
         dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
-        -n ggroupp -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
+        -n garage
+        -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
         -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
         --store-password-in-clear-text
 
@@ -79,24 +80,24 @@ jobs:
     - name: Test Api.Core.DbQuery.Test
       run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
 
-    # Api.Core.DbRequests
+    # Api.Core.DbRequest
 
-    - name: Restore Api.Core.DbRequests
-      run: dotnet restore ./src/*/*/DbRequests.csproj
+    - name: Restore Api.Core.DbRequest
+      run: dotnet restore ./src/*/*/DbRequest.csproj
 
-    - name: Build Api.Core.DbRequests
-      run: dotnet build ./src/*/*/DbRequests.csproj --no-restore  -c Release
+    - name: Build Api.Core.DbRequest
+      run: dotnet build ./src/*/*/DbRequest.csproj --no-restore  -c Release
 
-    - name: Pack Api.Core.DbRequests
-      run: dotnet pack ./src/*/*/DbRequests.csproj --no-restore -o ~/nuget  -c Release
+    - name: Pack Api.Core.DbRequest
+      run: dotnet pack ./src/*/*/DbRequest.csproj --no-restore -o ~/nuget  -c Release
 
-    # Api.Core.DbRequests.Test
+    # Api.Core.DbRequest.Test
 
-    - name: Restore Api.Core.DbRequests.Test
-      run: dotnet restore ./src/*/*/DbRequests.Test.csproj
+    - name: Restore Api.Core.DbRequest.Test
+      run: dotnet restore ./src/*/*/DbRequest.Test.csproj
 
-    - name: Test Api.Core.DbRequests.Test
-      run: dotnet test ./src/*/*/DbRequests.Test.csproj --no-restore  -c Release
+    - name: Test Api.Core.DbRequest.Test
+      run: dotnet test ./src/*/*/DbRequest.Test.csproj --no-restore  -c Release
 
     # DbEntity.Generator
 

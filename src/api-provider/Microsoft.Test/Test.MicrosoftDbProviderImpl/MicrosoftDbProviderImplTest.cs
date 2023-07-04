@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Data.SqlClient;
 
-namespace GGroupp.Infra.Sql.Api.Provider.Microsoft.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Microsoft.Test;
 
 public static partial class MicrosoftDbProviderImplTest
 {

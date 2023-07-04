@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 internal sealed record class DbEntityMetadata
 {

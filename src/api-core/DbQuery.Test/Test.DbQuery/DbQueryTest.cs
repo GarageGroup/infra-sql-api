@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GGroupp.Infra.Sql.Api.Core.Test;
+namespace GarageGroup.Infra.Sql.Api.Core.Test;
 
 public static partial class DbQueryTest
 {

@@ -1,4 +1,4 @@
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public sealed record class DbParameter
 {

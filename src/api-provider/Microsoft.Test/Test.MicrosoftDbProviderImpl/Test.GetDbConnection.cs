@@ -1,7 +1,7 @@
 using Microsoft.Data.SqlClient;
 using Xunit;
 
-namespace GGroupp.Infra.Sql.Api.Provider.Microsoft.Test;
+namespace GarageGroup.Infra.Sql.Api.Provider.Microsoft.Test;
 
 partial class MicrosoftDbProviderImplTest
 {
