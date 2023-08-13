@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api</AssemblyName>
-    <Version>1.4.1</Version>
+    <Version>1.4.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
