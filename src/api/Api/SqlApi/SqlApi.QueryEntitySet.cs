@@ -69,7 +69,7 @@ partial class SqlApi
                 continue;
             }
 
-            return collection.ToArray();
+            return collection.ToFlatArray();
         }
     }
 }
