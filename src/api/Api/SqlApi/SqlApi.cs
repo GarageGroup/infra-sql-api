@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -15,7 +14,7 @@ internal sealed partial class SqlApi : ISqlApi
 
     internal SqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory = null)
         =>
-        (this.dbProvider, this.logger) = (dbProvider, loggerFactory?.CreateLogger<SqlApi>());
+        (this.dbProvider, logger) = (dbProvider, loggerFactory?.CreateLogger<SqlApi>());
 
     private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
     {

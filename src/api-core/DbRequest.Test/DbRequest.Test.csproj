@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
     <RootNamespace>GarageGroup.Infra.Sql.Api.Core.Test</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbQuery.Request.Test</AssemblyName>

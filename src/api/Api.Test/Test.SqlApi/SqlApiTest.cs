@@ -37,6 +37,16 @@ public static partial class SqlApiTest
         new(
             Mock.Of<IStubDbCommand>(db => db.ExecuteDbDataReader(CommandBehavior.Default) == dbDataReader));
 
+    private static StubDbCommand CreateDbCommand(Exception exception)
+    {
+        var mock = new Mock<IStubDbCommand>();
+
+        _ = mock.Setup(c => c.ExecuteNonQuery()).Throws(exception);
+        _ = mock.Setup(c => c.ExecuteDbDataReader(It.IsAny<CommandBehavior>())).Throws(exception);
+
+        return new(mock.Object);
+    }
+
     private static StubDbDataReader CreateDbDataReader(int readCount, params string[] fieldNames)
     {
         var mock = new Mock<IStubDbDataReader>();
@@ -63,6 +73,15 @@ public static partial class SqlApiTest
         var mock = new Mock<IStubDbConnection>();
 
         _ = mock.Setup(db => db.CreateDbCommand()).Returns(dbCommand);
+
+        return mock;
+    }
+
+    private static Mock<IStubDbConnection> CreateMockDbConnection(Exception exception)
+    {
+        var mock = new Mock<IStubDbConnection>();
+
+        _ = mock.Setup(db => db.CreateDbCommand()).Throws(exception);
 
         return mock;
     }
@@ -98,6 +117,15 @@ public static partial class SqlApiTest
         sqlApi.QueryEntitySetAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
 #endif
 
+    private static ValueTask<Result<FlatArray<StubDbEntity>, Failure<Unit>>> QueryStubDbEntitySetOrFailureAsync(
+        this ISqlQueryEntitySetSupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
+        =>
+#if NET7_0_OR_GREATER
+        sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(dbQuery, cancellationToken);
+#else
+        sqlApi.QueryEntitySetOrFailureAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
+#endif
+
     private static ValueTask<Result<StubDbEntity, Unit>> QueryStubDbEntityOrAbsentAsync(
         this ISqlQueryEntitySupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
         =>
@@ -105,5 +133,14 @@ public static partial class SqlApiTest
         sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(dbQuery, cancellationToken);
 #else
         sqlApi.QueryEntityOrAbsentAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
+#endif
+
+    private static ValueTask<Result<StubDbEntity, Failure<EntityQueryFailureCode>>> QueryStubDbEntityOrFailureAsync(
+        this ISqlQueryEntitySupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
+        =>
+#if NET7_0_OR_GREATER
+        sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(dbQuery, cancellationToken);
+#else
+        sqlApi.QueryEntityOrFailureAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
 #endif
 }

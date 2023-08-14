@@ -12,9 +12,9 @@ namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 partial class SqlApiTest
 {
     [Fact]
-    public static async Task ExecuteNonQueryAsync_QueryIsNull_ExpectArgumentNullException()
+    public static async Task ExecuteNonQueryOrFailureAsync_QueryIsNull_ExpectArgumentNullException()
     {
-        using var dbCommand = CreateDbCommand(53);
+        using var dbCommand = CreateDbCommand(35);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
@@ -29,13 +29,13 @@ partial class SqlApiTest
 
         async Task TestAsync()
             =>
-            _ = await sqlApi.ExecuteNonQueryAsync(null!, cancellationToken);
+            _ = await sqlApi.ExecuteNonQueryOrFailureAsync(null!, cancellationToken);
     }
 
     [Fact]
-    public static void ExecuteNonQueryAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
+    public static void ExecuteNonQueryOrFailureAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
     {
-        using var dbCommand = CreateDbCommand(21);
+        using var dbCommand = CreateDbCommand(7);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
@@ -45,15 +45,15 @@ partial class SqlApiTest
         var sqlApi = new SqlApi(dbProvider);
 
         var cancellationToken = new CancellationToken(canceled: true);
-        var actual = sqlApi.ExecuteNonQueryAsync(SomeDbQuery, cancellationToken);
+        var actual = sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, cancellationToken);
 
         Assert.True(actual.IsCanceled);
     }
 
     [Fact]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectConnectionOpenCalledOnce()
+    public static async Task ExecuteNonQueryOrFailureAsync_CancellationTokenIsNotCanceled_ExpectConnectionOpenCalledOnce()
     {
-        using var dbCommand = CreateDbCommand(21);
+        using var dbCommand = CreateDbCommand(347);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
@@ -61,17 +61,36 @@ partial class SqlApiTest
         var dbProvider = CreateDbProvider(dbConnection);
         var sqlApi = new SqlApi(dbProvider);
 
-        _ = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, default);
+        var cancellationToken = new CancellationToken(canceled: false);
+        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, cancellationToken);
+
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
+    }
+
+    [Fact]
+    public static async Task ExecuteNonQueryOrFailureAsync_ConnectionThrowsException_ExpectFailure()
+    {
+        var dbConnectionException = new StubException("Some error message");
+
+        var mockDbConnection = CreateMockDbConnection(dbConnectionException);
+        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
+
+        var dbProvider = CreateDbProvider(dbConnection);
+        var sqlApi = new SqlApi(dbProvider);
+
+        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
+        var expected = Failure.Create("An unexpected exception was thrown when executing the input query", dbConnectionException);
+
+        Assert.StrictEqual(expected, actual);
     }
 
     [Theory]
     [InlineData(TestData.EmptyString)]
     [InlineData(TestData.SomeString)]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectCommandTextIsSqlQuery(
+    public static async Task ExecuteNonQueryOrFailureAsync_ConnectionDoesNotThrowException_ExpectCommandTextIsSqlQuery(
         string sqlQuery)
     {
-        using var dbCommand = CreateDbCommand(73);
+        using var dbCommand = CreateDbCommand(573);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
@@ -83,15 +102,15 @@ partial class SqlApiTest
             query: sqlQuery,
             parameters: new DbParameter[]
             {
-                new("SomeParameterName", TestData.PlusFifteenIdRefType)
+                new("SomeParameter", TestData.MinusOne)
             });
 
-        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
+        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, default);
         Assert.Equal(sqlQuery, dbCommand.CommandText);
     }
 
     [Fact]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectCommandParametersAreDistinct()
+    public static async Task ExecuteNonQueryOrFailureAsync_ConnectionDoesNotThrowException_ExpectCommandParametersAreDistinct()
     {
         using var dbCommand = CreateDbCommand(73);
 
@@ -114,7 +133,7 @@ partial class SqlApiTest
             query: "SELECT * From Product",
             parameters: parameters.Select(GetKey).ToFlatArray());
 
-        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
+        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, default);
         var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? new();
 
         var expected = new object[]
@@ -133,7 +152,7 @@ partial class SqlApiTest
     [InlineData(TestData.MinusOne)]
     [InlineData(TestData.Zero)]
     [InlineData(TestData.PlusFifteen)]
-    public static async Task ExecuteNonQueryAsync_TimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
+    public static async Task ExecuteNonQueryOrFailureAsync_ConnectionDoesNotThrowExceptionAndTimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
         int timeout)
     {
         using var dbCommand = CreateDbCommand(73);
@@ -154,15 +173,33 @@ partial class SqlApiTest
             TimeoutInSeconds = timeout
         };
 
-        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
+        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, default);
         Assert.Equal(timeout, dbCommand.CommandTimeout);
+    }
+
+    [Fact]
+    public static async Task ExecuteNonQueryOrFailureAsync_CommandThrowsException_ExpectFailure()
+    {
+        var dbCommandException = new InvalidOperationException("Some Exception Message");
+        using var dbCommand = CreateDbCommand(dbCommandException);
+
+        var mockDbConnection = CreateMockDbConnection(dbCommand);
+        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
+
+        var dbProvider = CreateDbProvider(dbConnection);
+        var sqlApi = new SqlApi(dbProvider);
+
+        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
+        var expected = Failure.Create("An unexpected exception was thrown when executing the input query", dbCommandException);
+
+        Assert.StrictEqual(expected, actual);
     }
 
     [Theory]
     [InlineData(TestData.MinusFifteen)]
     [InlineData(TestData.Zero)]
     [InlineData(int.MaxValue)]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectNonQueryResult(
+    public static async Task ExecuteNonQueryOrFailureAsync_CommandDoesNotThrowException_ExpectSuccessResult(
         int nonQueryResult)
     {
         using var dbCommand = CreateDbCommand(nonQueryResult);
@@ -173,7 +210,9 @@ partial class SqlApiTest
         var dbProvider = CreateDbProvider(dbConnection);
         var sqlApi = new SqlApi(dbProvider);
 
-        var actual = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, default);
-        Assert.StrictEqual(nonQueryResult, actual);
+        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
+        var expected = nonQueryResult;
+
+        Assert.StrictEqual(expected, actual);
     }
 }
