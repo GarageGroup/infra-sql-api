@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Moq;
 using PrimeFuncPack.UnitTest;
 using Xunit;
 
@@ -87,7 +88,7 @@ partial class SqlApiTest
         var sqlApi = new SqlApi(dbProvider);
 
         _ = await sqlApi.QueryStubDbEntitySetAsync(SomeDbQuery, default);
-        mockDbConnection.Verify(static db => db.Open());
+        mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
 
     [Theory]

@@ -4,12 +4,12 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbQuery</AssemblyName>
-    <Version>1.1.0</Version>
+    <Version>1.2.0-preview.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbParameter" Version="1.0.0" />
-    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.1.0" />
+    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.2.0-preview.1" />
   </ItemGroup>
 
 </Project>
