@@ -43,7 +43,7 @@ partial class SqlApi
         {
             return await InnerQueryEntitySetAsync(query, mapper, cancellationToken).ConfigureAwait(false);
         }
-        catch (Exception exception)
+        catch (Exception exception) when (exception is not TaskCanceledException)
         {
             return exception.ToFailure("An unexpected exception was thrown when executing the input query");
         }
