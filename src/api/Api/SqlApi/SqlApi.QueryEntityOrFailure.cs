@@ -44,7 +44,7 @@ partial class SqlApi
             var result = await InnerQueryDbItemOrAbsentAsync(query, mapper, cancellationToken).ConfigureAwait(false);
             return result.MapFailure(NotFoundFailure);
         }
-        catch (Exception exception) when (exception is not TaskCanceledException)
+        catch (Exception exception) when (exception is not OperationCanceledException)
         {
             return exception.ToFailure(EntityQueryFailureCode.Unknown, "An unexpected exception was thrown when executing the input query");
         }
