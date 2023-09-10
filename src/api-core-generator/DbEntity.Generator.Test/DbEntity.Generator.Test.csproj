@@ -13,7 +13,7 @@
     <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbEntity" Version="*-*" />
     <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbEntity.Generator" Version="*-*" />
     <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbQuery.Request" Version="*-*" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
     <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="PrimeFuncPack.UnitTest.Data" Version="3.0.0" />
     <PackageReference Include="xunit" Version="2.5.0" />

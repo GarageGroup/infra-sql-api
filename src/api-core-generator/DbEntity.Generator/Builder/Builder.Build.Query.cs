@@ -103,7 +103,7 @@ partial class DbEntityBuilder
 
         if (queryData.FieldNames.Count is 1)
         {
-            builder = builder.AppendCodeLine($"SelectedFields = new({queryData.FieldNames[0].AsStringSourceCode()}){finalSymbol}");
+            builder = builder.AppendCodeLine($"SelectedFields = new({queryData.FieldNames[0].AsStringSourceCodeOrStringEmpty()}){finalSymbol}");
         }
         else if (queryData.FieldNames.Count > 1)
         {
@@ -127,7 +127,7 @@ partial class DbEntityBuilder
 
             for (var i = 0; i < queryData.FieldNames.Count; i++)
             {
-                builder = builder.AppendCodeLine($"builder[{i}] = {queryData.FieldNames[i].AsStringSourceCode()};");
+                builder = builder.AppendCodeLine($"builder[{i}] = {queryData.FieldNames[i].AsStringSourceCodeOrStringEmpty()};");
             }
 
             builder = builder.AppendCodeLine("return builder.MoveToFlatArray();").EndCodeBlock();
@@ -166,24 +166,24 @@ partial class DbEntityBuilder
 
         return builder
             .Append(", ")
-            .Append(dbJoinData.TableName.AsStringSourceCode())
+            .Append(dbJoinData.TableName.AsStringSourceCodeOrStringEmpty())
             .Append(", ")
-            .Append(dbJoinData.TableAlias.AsStringSourceCode())
+            .Append(dbJoinData.TableAlias.AsStringSourceCodeOrStringEmpty())
             .Append(", ")
             .Append("new DbRawFilter(")
-            .Append(dbJoinData.RawFilter.AsStringSourceCode())
+            .Append(dbJoinData.RawFilter.AsStringSourceCodeOrStringEmpty())
             .Append("))")
             .ToString();
     }
 
     private static string BuildDbSelectQueryArguments(this DbSelectQueryData queryData)
     {
-        var builder = new StringBuilder(queryData.TableData.TableName.AsStringSourceCode());
+        var builder = new StringBuilder(queryData.TableData.TableName.AsStringSourceCodeOrStringEmpty());
         if (string.IsNullOrEmpty(queryData.TableData.TableAlias))
         {
             return builder.ToString();
         }
 
-        return builder.Append(", ").Append(queryData.TableData.TableAlias.AsStringSourceCode()).ToString();
+        return builder.Append(", ").Append(queryData.TableData.TableAlias.AsStringSourceCodeOrStringEmpty()).ToString();
     }
 }
