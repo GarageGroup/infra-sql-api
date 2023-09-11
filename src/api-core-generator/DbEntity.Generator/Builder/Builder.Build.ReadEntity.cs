@@ -55,7 +55,7 @@ partial class DbEntityBuilder
             builder = builder.Append("Throw");
         }
 
-        builder = builder.Append('(').Append(dbField.FieldName.AsStringSourceCode()).Append(')');
+        builder = builder.Append('(').Append(dbField.FieldName.AsStringSourceCodeOrStringEmpty()).Append(')');
         if (dbField.CastToMethod is null)
         {
             return sourceBuilder.AppendCodeLine(builder.AppendComma(isLast).ToString());
