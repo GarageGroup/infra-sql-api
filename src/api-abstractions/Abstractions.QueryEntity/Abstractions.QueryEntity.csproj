@@ -4,12 +4,12 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Abstractions.QueryEntity</AssemblyName>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbEntity" Version="1.2.0" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbQuery" Version="1.2.0" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbQuery" Version="1.2.1" />
     <PackageReference Include="PrimeFuncPack.Core.Failure" Version="2.1.0" />
     <PackageReference Include="PrimeFuncPack.Core.Result" Version="2.0.2" />
   </ItemGroup>
