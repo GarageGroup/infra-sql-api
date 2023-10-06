@@ -33,7 +33,7 @@ internal sealed partial class SqlApi : ISqlApi
             dbCommand.CommandTimeout = query.TimeoutInSeconds.Value;
         }
 
-        logger?.LogDebug("SQL: {0}, Parameters: {1}", dbCommand.CommandText, parameterLogBuilder?.ToString());  
+        logger?.LogDebug("SQL: {0}, Parameters: {1}", dbCommand.CommandText, parameterLogBuilder?.ToString());
 
         return dbCommand;
 

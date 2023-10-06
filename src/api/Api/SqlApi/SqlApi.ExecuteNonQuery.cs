@@ -23,7 +23,7 @@ partial class SqlApi
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-        var dbCommand = CreateDbCommand(dbConnection, query);
+        using var dbCommand = CreateDbCommand(dbConnection, query);
         return await dbCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 }
