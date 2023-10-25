@@ -27,6 +27,8 @@ public sealed record class DbSelectQuery : IDbQuery
 
     public FlatArray<string> SelectedFields { get; init; }
 
+    public FlatArray<string> GroupByFields { get; init; }
+
     public IDbFilter? Filter { get; init; }
 
     public FlatArray<DbJoinedTable> JoinedTables { get; init; }

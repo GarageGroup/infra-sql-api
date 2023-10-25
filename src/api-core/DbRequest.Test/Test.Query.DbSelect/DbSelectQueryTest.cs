@@ -5,7 +5,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 
 public static partial class DbSelectQueryTest
 {
-    public static IEnumerable<object[]> GetSqlQueryTestData()
+    public static IEnumerable<object[]> SqlQueryTestData
         =>
         new[]
         {
@@ -34,13 +34,14 @@ public static partial class DbSelectQueryTest
             {
                 new DbSelectQuery("Property", "\t")
                 {
-                    SelectedFields = new("Id", "Name"),
+                    SelectedFields = new("Id", "SUM(Price) AS Price"),
                     Filter = new StubDbFilter(
                         "Id > @Id AND Name = @Name AND Price > 0",
                         new("HasBalcony", false),
-                        new("Name", null))
+                        new("Name", null)),
+                    GroupByFields = new("Id")
                 },
-                "SELECT Id, Name FROM Property WHERE Id > @Id AND Name = @Name AND Price > 0"
+                "SELECT Id, SUM(Price) AS Price FROM Property WHERE Id > @Id AND Name = @Name AND Price > 0 GROUP BY Id"
             },
             new object[]
             {
@@ -71,10 +72,12 @@ public static partial class DbSelectQueryTest
                     Filter = new StubDbFilter("p.Id > @Id", new DbParameter("Id", 15)),
                     JoinedTables = new(
                         new(DbJoinType.Left, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id")),
-                        new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId")))
+                        new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId"))),
+                    GroupByFields = new("p.Id", null!, "t.Id", "\n\r"),
+                    Orders = new DbOrder("Date").AsFlatArray()
                 },
                 "SELECT p.Id, t.Id FROM Property p LEFT JOIN Translation t ON t.PropertyId = p.Id RIGHT JOIN City c ON c.Id <> p.CityId" +
-                " WHERE p.Id > @Id"
+                " WHERE p.Id > @Id GROUP BY p.Id, t.Id ORDER BY Date"
             },
             new object[]
             {
@@ -150,7 +153,7 @@ public static partial class DbSelectQueryTest
             }
         };
 
-    public static IEnumerable<object[]> GetParametersTestData()
+    public static IEnumerable<object[]> ParametersTestData
         =>
         new[]
         {
@@ -186,7 +189,8 @@ public static partial class DbSelectQueryTest
                 new DbSelectQuery("Property", "\t")
                 {
                     SelectedFields = new("Id", "Name"),
-                    Filter = new StubDbFilter("Id > @Id", new("Id", 15), new("Name", null))
+                    Filter = new StubDbFilter("Id > @Id", new("Id", 15), new("Name", null)),
+                    GroupByFields = new("Id", "Name")
                 },
                 new FlatArray<DbParameter>(
                     new("Id", 15), new("Name", null))
@@ -212,7 +216,8 @@ public static partial class DbSelectQueryTest
                         "Id > @Id", new("Id", 15), new("Name", "Some string"), new("Price0", null), new("Price1", 10.51m)),
                     JoinedTables = new(
                         new(DbJoinType.Left, "Translation", "t", new StubDbFilter("t.PropertyId = p.Id", new DbParameter("Value", null))),
-                        new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId", new DbParameter("CityValue", "Some value"))))
+                        new(DbJoinType.Right, "City", "c", new StubDbFilter("c.Id <> p.CityId", new DbParameter("CityValue", "Some value")))),
+                    GroupByFields = new("p.Id")
                 },
                 new FlatArray<DbParameter>(
                     new("Id", 15),

@@ -6,7 +6,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 partial class DbFieldFilterTest
 {
     [Theory]
-    [MemberData(nameof(GetFilterSqlQueryTestData))]
+    [MemberData(nameof(FilterSqlQueryTestData))]
     public static void GetFilterSqlQuery_OperatorIsInRange_ExpectCorrectSqlQuery(DbFieldFilter source, string expected)
     {
         var actual = source.GetFilterSqlQuery();

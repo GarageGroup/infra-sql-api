@@ -6,7 +6,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 partial class DbInsertQueryTest
 {
     [Theory]
-    [MemberData(nameof(GetParametersTestData))]
+    [MemberData(nameof(ParametersTestData))]
     public static void GetFilterParameters_ExpectCorrectParameters(DbInsertQuery source, FlatArray<DbParameter> expected)
     {
         var actual = source.GetParameters();

@@ -49,6 +49,11 @@ partial class DbQueryExtensions
             queryBuilder = queryBuilder.Append(" WHERE ").Append(filterQuery);
         }
 
+        if (query.GroupByFields.IsNotEmpty)
+        {
+            queryBuilder = queryBuilder.Append(" GROUP BY ").AppendJoined(query.GroupByFields.AsEnumerable());
+        }
+
         var orderByQuery = query.Orders.BuildSqlQuery();
         if (string.IsNullOrWhiteSpace(orderByQuery) is false)
         {

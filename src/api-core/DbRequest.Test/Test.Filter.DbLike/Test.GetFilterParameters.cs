@@ -6,7 +6,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 partial class DbLikeFilterTest
 {
     [Theory]
-    [MemberData(nameof(GetFilterParametersTestData))]
+    [MemberData(nameof(FilterParametersTestData))]
     public static void GetFilterParameters_ExpectCorrectParameters(DbLikeFilter source, FlatArray<DbParameter> expected)
     {
         var actual = source.GetFilterParameters();

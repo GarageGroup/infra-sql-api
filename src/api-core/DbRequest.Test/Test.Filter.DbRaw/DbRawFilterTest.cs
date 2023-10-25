@@ -5,7 +5,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 
 public static partial class DbRawFilterTest
 {
-    public static IEnumerable<object[]> GetFilterSqlQueryTestData()
+    public static IEnumerable<object[]> FilterSqlQueryTestData
         =>
         new[]
         {
@@ -32,7 +32,7 @@ public static partial class DbRawFilterTest
             }
         };
 
-    public static IEnumerable<object[]> GetFilterParametersTestData()
+    public static IEnumerable<object[]> FilterParametersTestData
         =>
         new[]
         {

@@ -5,7 +5,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 
 public static partial class DbInsertQueryTest
 {
-    public static IEnumerable<object[]> GetSqlQueryTestData()
+    public static IEnumerable<object[]> SqlQueryTestData
         =>
         new[]
         {
@@ -39,7 +39,7 @@ public static partial class DbInsertQueryTest
             }
         };
 
-    public static IEnumerable<object[]> GetParametersTestData()
+    public static IEnumerable<object[]> ParametersTestData
         =>
         new[]
         {
