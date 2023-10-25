@@ -34,6 +34,12 @@ partial class SourceGeneratorExtensions
         }
 
         var joinData = typeSymbol.GetDbJoinData();
+        var joinDataOrder = new Dictionary<DbJoinData, int>(joinData.Count);
+
+        for (var i = 0; i < joinData.Count; i++)
+        {
+            joinDataOrder[joinData[i]] = i;
+        }
 
         var tableData = new DbTableData(
             tableName: dbEntityAttribute.GetAttributeValue(0).ToStringOrElse(typeSymbol.Name),
@@ -61,8 +67,12 @@ partial class SourceGeneratorExtensions
             new(
                 queryName: queryGroup.Key,
                 tableData: tableData,
-                joinedTables: queryGroup.Select(GetJoinTable).NotNull().Distinct().ToArray(),
+                joinedTables: queryGroup.Select(GetJoinTable).NotNull().Distinct().OrderBy(GetJoinDataOrder).ToArray(),
                 fieldNames: queryGroup.Select(GetFieldName).ToArray());
+
+        int GetJoinDataOrder(DbJoinData dbJoinData)
+            =>
+            joinDataOrder.TryGetValue(dbJoinData, out var index) ? index : int.MaxValue;
 
         static string GetQueryName(DbSelectData data)
             =>
