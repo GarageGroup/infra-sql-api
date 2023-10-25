@@ -9,7 +9,23 @@ namespace GarageGroup.Infra;
 
 public static class SqlApiDependency
 {
-    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency, bool useLogging = false)
+    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency)
+    {
+        ArgumentNullException.ThrowIfNull(dependency);
+        return dependency.Map<ISqlApi>(InnerCreateSqlApi);
+
+        static SqlApi InnerCreateSqlApi(IServiceProvider serviceProvider, IDbProvider dbProvider)
+        {
+            ArgumentNullException.ThrowIfNull(serviceProvider);
+            ArgumentNullException.ThrowIfNull(dbProvider);
+
+            return new(
+                dbProvider: dbProvider,
+                loggerFactory: serviceProvider.GetServiceOrThrow<ILoggerFactory>());
+        }
+    }
+
+    public static Dependency<ISqlApi> UseSqlApi(this Dependency<IDbProvider> dependency, bool useLogging)
     {
         ArgumentNullException.ThrowIfNull(dependency);
         return dependency.With(GetLoggerFactory).Fold<ISqlApi>(CreateSqlApi);
@@ -25,7 +41,7 @@ public static class SqlApiDependency
         return dependency.Fold<ISqlApi>(CreateSqlApi);
     }
 
-    private static SqlApi CreateSqlApi(IDbProvider provider, ILoggerFactory? loggerFactory)
+    private static SqlApi CreateSqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory)
         =>
-        new(provider ?? throw new ArgumentNullException(nameof(provider)), loggerFactory);
+        new(dbProvider ?? throw new ArgumentNullException(nameof(dbProvider)), loggerFactory);
 }
