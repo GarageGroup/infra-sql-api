@@ -49,7 +49,8 @@ public static class DbRefTypeTest
             Name = TestData.SomeString,
             Price = 754.951,
             Sum = -17895,
-            ExternalId = 12391298712
+            ExternalId = 12391298712,
+            FieldValues = new(0)
         };
 
         actual.ShouldDeepEqual(expected);

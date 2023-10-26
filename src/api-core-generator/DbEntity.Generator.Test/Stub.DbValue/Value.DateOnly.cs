@@ -16,5 +16,5 @@ partial class StubDbValue
     private static DbValue InnerCreateDateOnly(DateOnly value)
         =>
         new(
-            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetDateOnly() == value));
+            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetDateOnly() == value && db.Get() == (object)value));
 }

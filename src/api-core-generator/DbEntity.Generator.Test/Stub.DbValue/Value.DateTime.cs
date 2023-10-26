@@ -16,5 +16,5 @@ partial class StubDbValue
     private static DbValue InnerCreateDateTime(DateTime value)
         =>
         new(
-            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetDateTime() == value));
+            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetDateTime() == value && db.Get() == (object)value));
 }

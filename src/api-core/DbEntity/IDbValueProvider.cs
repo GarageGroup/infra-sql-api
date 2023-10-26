@@ -33,4 +33,6 @@ public interface IDbValueProvider
     string? GetString();
 
     T Get<T>() where T : notnull;
+
+    object Get();
 }

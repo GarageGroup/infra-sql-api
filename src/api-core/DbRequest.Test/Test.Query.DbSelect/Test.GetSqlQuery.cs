@@ -6,7 +6,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 partial class DbSelectQueryTest
 {
     [Theory]
-    [MemberData(nameof(GetSqlQueryTestData))]
+    [MemberData(nameof(SqlQueryTestData))]
     public static void GetFilterSqlQuery_TypesAreInRange_ExpectCorrectSqlQuery(DbSelectQuery source, string expected)
     {
         var actual = source.GetSqlQuery();

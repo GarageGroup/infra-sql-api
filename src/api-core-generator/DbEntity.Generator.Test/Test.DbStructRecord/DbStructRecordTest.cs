@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DeepEqual.Syntax;
 using GarageGroup.TestType;
 using PrimeFuncPack.UnitTest;
 using Xunit;
@@ -35,7 +36,10 @@ public static class DbStructRecordTest
             ["ModifiedAt"] = StubDbValue.CreateNullableDateTime(new(2015, 11, 24, 12, 36, 41)),
             ["Price"] = StubDbValue.CreateNullableDecimal(5610.7m),
             ["Sum"] = StubDbValue.CreateNullableInt16(-2750),
-            ["AdditionalData"] = StubDbValue.CreateNullableStruct<RecordStruct>(TestData.SomeTextRecordStruct)
+            ["AdditionalData"] = StubDbValue.CreateNullableStruct<RecordStruct>(TestData.SomeTextRecordStruct),
+            ["name"] = StubDbValue.CreateString("Some text value"),
+            ["OtherSecond"] = StubDbValue.CreateNullable<object>(null),
+            ["OtherThird"] = StubDbValue.CreateNullable(TestData.PlusFifteenIdLowerSomeStringNameRecord)
         };
 
         var dbItem = StubDbItem.Create(orThrowValues, orDefaultValues);
@@ -50,10 +54,16 @@ public static class DbStructRecordTest
             Price = 5610.7m,
             Sum = -2750,
             Name = TestData.MixedWhiteSpacesString,
-            AdditionalData = TestData.SomeTextRecordStruct
+            AdditionalData = TestData.SomeTextRecordStruct,
+            OtherFields = new Dictionary<string, object?>
+            {
+                ["name"] = "Some text value",
+                ["OtherSecond"] = null,
+                ["OtherThird"] = TestData.PlusFifteenIdLowerSomeStringNameRecord
+            }
         };
 
-        Assert.Equal(expected, actual);
+        actual.ShouldDeepEqual(expected);
     }
 
     [Fact]
@@ -65,10 +75,11 @@ public static class DbStructRecordTest
         {
             JoinedTables = new DbJoinedTable[]
             {
-                new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId")),
-                new(DbJoinType.Right, "Right", "r", new DbRawFilter("r.Id = p.RightId"))
+                new(DbJoinType.Right, "Right", "r", new DbRawFilter("r.Id = p.RightId")),
+                new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId"))
             },
-            SelectedFields = new("Id", "p.IsActive", "l.Date", "r.ModifiedAt", "c.Price AS Price", "p.Sum", "p.Name", "p.AdditionalData")
+            SelectedFields = new("Id", "p.IsActive", "l.Date", "r.ModifiedAt", "c.Price AS Price", "p.Sum", "p.Name", "p.AdditionalData"),
+            GroupByFields = new("c.Price", "p.Sum")
         };
 
         Assert.StrictEqual(expected, actual);
@@ -85,7 +96,8 @@ public static class DbStructRecordTest
             {
                 new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId"))
             },
-            SelectedFields = new("Id", "p.IsActive", "l.Date")
+            SelectedFields = new("Id", "p.IsActive", "l.Date"),
+            GroupByFields = new("l.Date")
         };
 
         Assert.StrictEqual(expected, actual);

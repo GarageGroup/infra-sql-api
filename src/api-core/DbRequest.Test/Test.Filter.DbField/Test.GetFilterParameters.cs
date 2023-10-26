@@ -6,7 +6,7 @@ namespace GarageGroup.Infra.Sql.Api.Core.Test;
 partial class DbFieldFilterTest
 {
     [Theory]
-    [MemberData(nameof(GetFilterParametersTestData))]
+    [MemberData(nameof(FilterParametersTestData))]
     public static void GetFilterParameters_ExpectDefault(DbFieldFilter source)
     {
         var actual = source.GetFilterParameters();

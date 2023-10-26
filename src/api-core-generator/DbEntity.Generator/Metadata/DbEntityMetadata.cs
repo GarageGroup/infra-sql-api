@@ -9,12 +9,14 @@ internal sealed record class DbEntityMetadata
         string fileName,
         DbEntityType entityType,
         IReadOnlyList<DbFieldMetadata> fields,
-        IReadOnlyList<DbSelectQueryData> selectQueries)
+        IReadOnlyList<DbSelectQueryData> selectQueries,
+        DbExtensionFieldMetadata? extensionField)
     {
         FileName = fileName;
         EntityType = entityType;
         Fields = fields ?? Array.Empty<DbFieldMetadata>();
         SelectQueries = selectQueries ?? Array.Empty<DbSelectQueryData>();
+        ExtensionField = extensionField;
     }
 
     public string FileName { get; }
@@ -24,4 +26,6 @@ internal sealed record class DbEntityMetadata
     public IReadOnlyList<DbFieldMetadata> Fields { get; }
 
     public IReadOnlyList<DbSelectQueryData> SelectQueries { get; }
+
+    public DbExtensionFieldMetadata? ExtensionField { get; }
 }

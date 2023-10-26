@@ -45,18 +45,57 @@ partial class SourceGeneratorExtensions
             tableName: dbEntityAttribute.GetAttributeValue(0).ToStringOrElse(typeSymbol.Name),
             tableAlias: dbEntityAttribute.GetAttributeValue(1)?.ToString());
 
+        var fields = new List<DbFieldMetadata>();
+        DbExtensionFieldMetadata? extensionField = null;
+
+        foreach (var propertySymbol in typeSymbol.GetPropertySymbols())
+        {
+            if (propertySymbol.GetAttributes().Any(IsDbFieldIgnoreAttribute) || propertySymbol.SetMethod is null)
+            {
+                continue;
+            }
+
+            if (propertySymbol.GetAttributes().Any(IsDbExtensionDataAttribute))
+            {
+                if (extensionField is not null)
+                {
+                    throw new InvalidOperationException($"DbEntity type {typeSymbol.Name} may contain no more than one DbExtensionDataAttribute");
+                }
+
+                extensionField = new(propertySymbol.Name);
+                continue;
+            }
+
+            var field = new DbFieldMetadata(
+                propertyName: propertySymbol.Name,
+                fieldName: propertySymbol.Name,
+                isNullable: propertySymbol.Type.IsNullableType(),
+                castToMethod: propertySymbol.Type?.GetCastToMethod());
+            
+            fields.Add(field);
+        }
+
         return new(
             fileName: typeSymbol.Name,
             entityType: new(
                 displayedData: typeSymbol.GetDisplayedData(),
                 isRecordType: typeSymbol.IsRecord,
                 isValueType: typeSymbol.IsValueType),
-            fields: typeSymbol.GetPropertySymbols().Select(GetDbFieldMetadata).NotNull().ToArray(),
-            selectQueries: typeSymbol.GetPropertySymbols().SelectMany(InnerGetData).GroupBy(GetQueryName).Select(GetQueryData).ToArray());
+            fields: fields,
+            selectQueries: typeSymbol.GetPropertySymbols().SelectMany(InnerGetData).GroupBy(GetQueryName).Select(GetQueryData).ToArray(),
+            extensionField: extensionField);
 
         static bool IsDbEntityAttribute(AttributeData attributeData)
             =>
             attributeData.AttributeClass?.IsType(DefaultNamespace, "DbEntityAttribute") is true;
+
+        static bool IsDbFieldIgnoreAttribute(AttributeData attributeData)
+            =>
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbFieldIgnoreAttribute") is true;
+
+        static bool IsDbExtensionDataAttribute(AttributeData attributeData)
+            =>
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbExtensionDataAttribute") is true;
 
         IEnumerable<DbSelectData> InnerGetData(IPropertySymbol propertySymbol)
             =>
@@ -68,7 +107,8 @@ partial class SourceGeneratorExtensions
                 queryName: queryGroup.Key,
                 tableData: tableData,
                 joinedTables: queryGroup.Select(GetJoinTable).NotNull().Distinct().OrderBy(GetJoinDataOrder).ToArray(),
-                fieldNames: queryGroup.Select(GetFieldName).ToArray());
+                fieldNames: queryGroup.Select(GetFullFieldName).ToArray(),
+                groupByFields: queryGroup.Where(IsGroupByField).Select(GetFieldName).ToArray());
 
         int GetJoinDataOrder(DbJoinData dbJoinData)
             =>
@@ -82,9 +122,17 @@ partial class SourceGeneratorExtensions
             =>
             data.FieldName;
 
+        static string GetFullFieldName(DbSelectData data)
+            =>
+            string.IsNullOrEmpty(data.AliasName) ? data.FieldName : $"{data.FieldName} AS {data.AliasName}";
+
         static DbJoinData? GetJoinTable(DbSelectData data)
             =>
             data.JoinTable;
+
+        static bool IsGroupByField(DbSelectData data)
+            =>
+            data.GroupBy;
     }
 
     private static IReadOnlyList<DbJoinData> GetDbJoinData(this INamedTypeSymbol typeSymbol)
@@ -131,6 +179,8 @@ partial class SourceGeneratorExtensions
             }
 
             var fieldName = dbSelectAttribute.GetAttributeValue(2, "FieldName")?.ToString();
+            string? aliasName = null;
+
             if (string.IsNullOrEmpty(fieldName))
             {
                 if (string.IsNullOrEmpty(tableName))
@@ -144,13 +194,15 @@ partial class SourceGeneratorExtensions
             }
             else if (string.Equals(fieldName, propertySymbol.Name, StringComparison.InvariantCulture) is false)
             {
-                fieldName += " AS " + propertySymbol.Name;
+                aliasName = propertySymbol.Name;
             }
 
             yield return new(
                 queryName: dbSelectAttribute.GetAttributeValue(0).ToStringOrThrow(NotSpecifiedQueryNameException, true),
                 joinTable: joinTable,
-                fieldName: fieldName ?? string.Empty);
+                fieldName: fieldName ?? string.Empty,
+                aliasName: aliasName,
+                groupBy: dbSelectAttribute.GetAttributePropertyValue("GroupBy") is true);
 
             bool IsNameMatched(DbJoinData data)
                 =>
@@ -168,29 +220,6 @@ partial class SourceGeneratorExtensions
         InvalidOperationException NotSpecifiedQueryNameException()
             =>
             new($"DbSelect query name of property {propertySymbol.Name} must be specified");
-    }
-
-    private static DbFieldMetadata? GetDbFieldMetadata(IPropertySymbol propertySymbol)
-    {
-        if (propertySymbol.GetAttributes().Any(IsDbFieldIgnoreAttribute))
-        {
-            return null;
-        }
-
-        if (propertySymbol.SetMethod is null)
-        {
-            return null;
-        }
-
-        return new(
-            propertyName: propertySymbol.Name,
-            fieldName: propertySymbol.Name,
-            isNullable: propertySymbol.Type.IsNullableType(),
-            castToMethod: propertySymbol.Type?.GetCastToMethod());
-
-        static bool IsDbFieldIgnoreAttribute(AttributeData attributeData)
-            =>
-            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbFieldIgnoreAttribute") is true;
     }
 
     private static DisplayedMethodData? GetCastToMethod(this ITypeSymbol typeSymbol)
