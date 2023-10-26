@@ -15,5 +15,5 @@ partial class StubDbValue
     private static DbValue InnerCreateInt32(int value)
         =>
         new(
-            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetInt32() == value));
+            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetInt32() == value && db.Get() == (object)value));
 }

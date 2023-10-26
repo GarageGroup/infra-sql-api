@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GarageGroup.Infra;
 
 namespace GarageGroup.TestType;
@@ -22,4 +23,7 @@ internal sealed partial class DbRefType
 
     [DbFieldIgnore]
     public int SkippedValue { get; init; }
+
+    [DbExtensionData]
+    public Dictionary<string, object?>? FieldValues { get; init; }
 }

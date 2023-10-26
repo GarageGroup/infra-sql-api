@@ -16,5 +16,5 @@ partial class StubDbValue
     private static DbValue InnerCreateGuid(Guid value)
         =>
         new(
-            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetGuid() == value));
+            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetGuid() == value && db.Get() == (object)value));
 }

@@ -45,18 +45,57 @@ partial class SourceGeneratorExtensions
             tableName: dbEntityAttribute.GetAttributeValue(0).ToStringOrElse(typeSymbol.Name),
             tableAlias: dbEntityAttribute.GetAttributeValue(1)?.ToString());
 
+        var fields = new List<DbFieldMetadata>();
+        DbExtensionFieldMetadata? extensionField = null;
+
+        foreach (var propertySymbol in typeSymbol.GetPropertySymbols())
+        {
+            if (propertySymbol.GetAttributes().Any(IsDbFieldIgnoreAttribute) || propertySymbol.SetMethod is null)
+            {
+                continue;
+            }
+
+            if (propertySymbol.GetAttributes().Any(IsDbExtensionDataAttribute))
+            {
+                if (extensionField is not null)
+                {
+                    throw new InvalidOperationException($"DbEntity type {typeSymbol.Name} may contain no more than one DbExtensionDataAttribute");
+                }
+
+                extensionField = new(propertySymbol.Name);
+                continue;
+            }
+
+            var field = new DbFieldMetadata(
+                propertyName: propertySymbol.Name,
+                fieldName: propertySymbol.Name,
+                isNullable: propertySymbol.Type.IsNullableType(),
+                castToMethod: propertySymbol.Type?.GetCastToMethod());
+            
+            fields.Add(field);
+        }
+
         return new(
             fileName: typeSymbol.Name,
             entityType: new(
                 displayedData: typeSymbol.GetDisplayedData(),
                 isRecordType: typeSymbol.IsRecord,
                 isValueType: typeSymbol.IsValueType),
-            fields: typeSymbol.GetPropertySymbols().Select(GetDbFieldMetadata).NotNull().ToArray(),
-            selectQueries: typeSymbol.GetPropertySymbols().SelectMany(InnerGetData).GroupBy(GetQueryName).Select(GetQueryData).ToArray());
+            fields: fields,
+            selectQueries: typeSymbol.GetPropertySymbols().SelectMany(InnerGetData).GroupBy(GetQueryName).Select(GetQueryData).ToArray(),
+            extensionField: extensionField);
 
         static bool IsDbEntityAttribute(AttributeData attributeData)
             =>
             attributeData.AttributeClass?.IsType(DefaultNamespace, "DbEntityAttribute") is true;
+
+        static bool IsDbFieldIgnoreAttribute(AttributeData attributeData)
+            =>
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbFieldIgnoreAttribute") is true;
+
+        static bool IsDbExtensionDataAttribute(AttributeData attributeData)
+            =>
+            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbExtensionDataAttribute") is true;
 
         IEnumerable<DbSelectData> InnerGetData(IPropertySymbol propertySymbol)
             =>
@@ -181,29 +220,6 @@ partial class SourceGeneratorExtensions
         InvalidOperationException NotSpecifiedQueryNameException()
             =>
             new($"DbSelect query name of property {propertySymbol.Name} must be specified");
-    }
-
-    private static DbFieldMetadata? GetDbFieldMetadata(IPropertySymbol propertySymbol)
-    {
-        if (propertySymbol.GetAttributes().Any(IsDbFieldIgnoreAttribute))
-        {
-            return null;
-        }
-
-        if (propertySymbol.SetMethod is null)
-        {
-            return null;
-        }
-
-        return new(
-            propertyName: propertySymbol.Name,
-            fieldName: propertySymbol.Name,
-            isNullable: propertySymbol.Type.IsNullableType(),
-            castToMethod: propertySymbol.Type?.GetCastToMethod());
-
-        static bool IsDbFieldIgnoreAttribute(AttributeData attributeData)
-            =>
-            attributeData.AttributeClass?.IsType(DefaultNamespace, "DbFieldIgnoreAttribute") is true;
     }
 
     private static DisplayedMethodData? GetCastToMethod(this ITypeSymbol typeSymbol)

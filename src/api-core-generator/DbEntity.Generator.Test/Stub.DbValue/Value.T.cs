@@ -26,6 +26,7 @@ partial class StubDbValue
 
         _ = mock.Setup(static db => db.IsNull()).Returns(false);
         _ = mock.Setup(static db => db.Get<T>()).Returns(value);
+        _ = mock.Setup(static db => db.Get()).Returns(value);
 
         return new(mock.Object);
     }

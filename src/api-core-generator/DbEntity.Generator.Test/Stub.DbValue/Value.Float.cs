@@ -15,5 +15,5 @@ partial class StubDbValue
     private static DbValue InnerCreateFloat(float value)
         =>
         new(
-            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetFloat() == value));
+            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetFloat() == value && db.Get() == (object)value));
 }

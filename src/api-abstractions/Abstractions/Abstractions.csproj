@@ -4,13 +4,13 @@
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Abstractions</AssemblyName>
-    <Version>1.4.2</Version>
+    <Version>1.5.0-build.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.ExecuteNonQuery" Version="1.2.2" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.QueryEntity" Version="1.4.2" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="1.4.2" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.QueryEntity" Version="1.5.0-build.2" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="1.5.0-build.2" />
   </ItemGroup>
 
 </Project>

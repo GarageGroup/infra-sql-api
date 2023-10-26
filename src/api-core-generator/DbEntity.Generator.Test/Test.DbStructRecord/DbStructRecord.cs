@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GarageGroup.Infra;
 using PrimeFuncPack.UnitTest;
 
@@ -32,4 +33,7 @@ internal readonly partial record struct DbStructRecord
 
     [DbSelect("QueryAll", "p")]
     public RecordStruct? AdditionalData { get; init; }
+
+    [DbExtensionData]
+    public IReadOnlyDictionary<string, object?> OtherFields { get; init; }
 }

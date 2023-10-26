@@ -15,6 +15,10 @@ internal sealed partial class DbItem : IDbItem
         this.fieldIndexes = fieldIndexes;
     }
 
+    public IEnumerable<string> Fields
+        =>
+        fieldIndexes.Keys;
+
     private int? GetFieldIndex(string fieldName)
         =>
         fieldIndexes.TryGetValue(fieldName, out var index) ? index : null;

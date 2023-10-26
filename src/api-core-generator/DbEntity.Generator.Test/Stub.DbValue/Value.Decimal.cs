@@ -15,5 +15,5 @@ partial class StubDbValue
     private static DbValue InnerCreateDecimal(decimal value)
         =>
         new(
-            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetDecimal() == value));
+            Mock.Of<IDbValueProvider>(db => db.IsNull() == false && db.GetDecimal() == value && db.Get() == (object)value));
 }

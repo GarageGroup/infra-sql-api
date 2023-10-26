@@ -6,6 +6,8 @@ internal static partial class DbEntityBuilder
 {
     private const string InnerQueryBuilderClassName = "InnerQueryBuilder";
 
+    private const string DbExtensionFieldVariableName = "dbExtensionFieldValues";
+
     private static string GetQueryBuildMethodName(this DbSelectQueryData queryData)
         =>
         "Build" + queryData.QueryName;
