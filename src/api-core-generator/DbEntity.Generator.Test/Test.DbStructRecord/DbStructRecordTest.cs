@@ -65,10 +65,11 @@ public static class DbStructRecordTest
         {
             JoinedTables = new DbJoinedTable[]
             {
-                new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId")),
-                new(DbJoinType.Right, "Right", "r", new DbRawFilter("r.Id = p.RightId"))
+                new(DbJoinType.Right, "Right", "r", new DbRawFilter("r.Id = p.RightId")),
+                new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId"))
             },
-            SelectedFields = new("Id", "p.IsActive", "l.Date", "r.ModifiedAt", "c.Price AS Price", "p.Sum", "p.Name", "p.AdditionalData")
+            SelectedFields = new("Id", "p.IsActive", "l.Date", "r.ModifiedAt", "c.Price AS Price", "p.Sum", "p.Name", "p.AdditionalData"),
+            GroupByFields = new("c.Price", "p.Sum")
         };
 
         Assert.StrictEqual(expected, actual);
@@ -85,7 +86,8 @@ public static class DbStructRecordTest
             {
                 new(DbJoinType.Left, "Left", "l", new DbRawFilter("l.Id = p.LeftId"))
             },
-            SelectedFields = new("Id", "p.IsActive", "l.Date")
+            SelectedFields = new("Id", "p.IsActive", "l.Date"),
+            GroupByFields = new("l.Date")
         };
 
         Assert.StrictEqual(expected, actual);

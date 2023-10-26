@@ -6,7 +6,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbEntity.Generator</AssemblyName>
-    <Version>0.4.1</Version>
+    <Version>0.5.0-build.6</Version>
   </PropertyGroup>
 
   <ItemGroup>

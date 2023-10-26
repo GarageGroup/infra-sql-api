@@ -17,4 +17,6 @@ public sealed class DbSelectAttribute : Attribute
     public string? TableName { get; set; }
 
     public string? FieldName { get; set; }
+
+    public bool GroupBy { get; set; }
 }

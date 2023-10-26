@@ -99,20 +99,28 @@ partial class DbEntityBuilder
         }
 
         builder = builder.AppendCodeLine($"return new({queryData.BuildDbSelectQueryArguments()})").BeginCodeBlock();
-        var finalSymbol = hasJoinedTables ? "," : string.Empty;
 
         if (queryData.FieldNames.Count is 1)
         {
-            builder = builder.AppendCodeLine($"SelectedFields = new({queryData.FieldNames[0].AsStringSourceCodeOrStringEmpty()}){finalSymbol}");
+            builder = builder.AppendCodeLine($"SelectedFields = new({queryData.FieldNames[0].AsStringSourceCodeOrStringEmpty()}),");
         }
         else if (queryData.FieldNames.Count > 1)
         {
-            builder = builder.AppendCodeLine($"SelectedFields = InnerBuildSelectedFields(){finalSymbol}");
+            builder = builder.AppendCodeLine("SelectedFields = InnerBuildSelectedFields(),");
         }
 
         if (hasJoinedTables)
         {
-            builder = builder.AppendCodeLine("JoinedTables = InnerBuildJoinedTables()");
+            builder = builder.AppendCodeLine("JoinedTables = InnerBuildJoinedTables(),");
+        }
+
+        if (queryData.GroupByFields.Count is 1)
+        {
+            builder = builder.AppendCodeLine($"GroupByFields = new({queryData.GroupByFields[0].AsStringSourceCodeOrStringEmpty()})");
+        }
+        else if (queryData.GroupByFields.Count > 1)
+        {
+            builder = builder.AppendCodeLine("GroupByFields = InnerBuildGroupByFields()");
         }
 
         builder = builder.EndCodeBlock(';');
@@ -144,6 +152,22 @@ partial class DbEntityBuilder
             for (var i = 0; i < queryData.JoinedTables.Count; i++)
             {
                 builder = builder.AppendCodeLine($"builder[{i}] = {queryData.JoinedTables[i].BuildDbJoinedTableSourceCode()};");
+            }
+
+            builder = builder.AppendCodeLine("return builder.MoveToFlatArray();").EndCodeBlock();
+        }
+
+        if (queryData.GroupByFields.Count > 1)
+        {
+            builder = builder
+                .AppendEmptyLine()
+                .AppendCodeLine("static FlatArray<string> InnerBuildGroupByFields()")
+                .BeginCodeBlock()
+                .AppendCodeLine($"var builder = FlatArray<string>.Builder.OfLength({queryData.GroupByFields.Count});");
+
+            for (var i = 0; i < queryData.GroupByFields.Count; i++)
+            {
+                builder = builder.AppendCodeLine($"builder[{i}] = {queryData.GroupByFields[i].AsStringSourceCodeOrStringEmpty()};");
             }
 
             builder = builder.AppendCodeLine("return builder.MoveToFlatArray();").EndCodeBlock();

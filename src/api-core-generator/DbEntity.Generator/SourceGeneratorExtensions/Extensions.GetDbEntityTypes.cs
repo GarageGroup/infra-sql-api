@@ -68,7 +68,8 @@ partial class SourceGeneratorExtensions
                 queryName: queryGroup.Key,
                 tableData: tableData,
                 joinedTables: queryGroup.Select(GetJoinTable).NotNull().Distinct().OrderBy(GetJoinDataOrder).ToArray(),
-                fieldNames: queryGroup.Select(GetFieldName).ToArray());
+                fieldNames: queryGroup.Select(GetFullFieldName).ToArray(),
+                groupByFields: queryGroup.Where(IsGroupByField).Select(GetFieldName).ToArray());
 
         int GetJoinDataOrder(DbJoinData dbJoinData)
             =>
@@ -82,9 +83,17 @@ partial class SourceGeneratorExtensions
             =>
             data.FieldName;
 
+        static string GetFullFieldName(DbSelectData data)
+            =>
+            string.IsNullOrEmpty(data.AliasName) ? data.FieldName : $"{data.FieldName} AS {data.AliasName}";
+
         static DbJoinData? GetJoinTable(DbSelectData data)
             =>
             data.JoinTable;
+
+        static bool IsGroupByField(DbSelectData data)
+            =>
+            data.GroupBy;
     }
 
     private static IReadOnlyList<DbJoinData> GetDbJoinData(this INamedTypeSymbol typeSymbol)
@@ -131,6 +140,8 @@ partial class SourceGeneratorExtensions
             }
 
             var fieldName = dbSelectAttribute.GetAttributeValue(2, "FieldName")?.ToString();
+            string? aliasName = null;
+
             if (string.IsNullOrEmpty(fieldName))
             {
                 if (string.IsNullOrEmpty(tableName))
@@ -144,13 +155,15 @@ partial class SourceGeneratorExtensions
             }
             else if (string.Equals(fieldName, propertySymbol.Name, StringComparison.InvariantCulture) is false)
             {
-                fieldName += " AS " + propertySymbol.Name;
+                aliasName = propertySymbol.Name;
             }
 
             yield return new(
                 queryName: dbSelectAttribute.GetAttributeValue(0).ToStringOrThrow(NotSpecifiedQueryNameException, true),
                 joinTable: joinTable,
-                fieldName: fieldName ?? string.Empty);
+                fieldName: fieldName ?? string.Empty,
+                aliasName: aliasName,
+                groupBy: dbSelectAttribute.GetAttributePropertyValue("GroupBy") is true);
 
             bool IsNameMatched(DbJoinData data)
                 =>

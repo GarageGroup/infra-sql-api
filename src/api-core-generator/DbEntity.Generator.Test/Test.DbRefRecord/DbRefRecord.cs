@@ -8,7 +8,7 @@ namespace GarageGroup.TestType;
 [DbJoin(DbJoinType.Inner, "Unit", "u", "u.Id = p.UnitId")]
 public sealed partial record class DbRefRecord
 {
-    [DbSelect("QueryAll")]
+    [DbSelect("QueryAll", GroupBy = true)]
     [DbSelect("QueryId", FieldName = "p.Id")]
     public long Id { get; init; }
 

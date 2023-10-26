@@ -64,7 +64,8 @@ public static class DbRefRecordTest
         var expected = new DbSelectQuery("Product", "p")
         {
             JoinedTables = new DbJoinedTable(DbJoinType.Inner, "Unit", "u", new DbRawFilter("u.Id = p.UnitId")).AsFlatArray(),
-            SelectedFields = new("Id", "Byte", "Time AS EntityTime", "UpdatedAt", "Product.Price", "u.Sum", "AdditionalRefData")
+            SelectedFields = new("Id", "Byte", "Time AS EntityTime", "UpdatedAt", "Product.Price", "u.Sum", "AdditionalRefData"),
+            GroupByFields = new("Id")
         };
 
         Assert.StrictEqual(expected, actual);
