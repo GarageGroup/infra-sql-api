@@ -6,7 +6,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbEntity.Generator</AssemblyName>
-    <Version>0.5.0-build.12</Version>
+    <Version>0.5.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.CodeAnalysis.Extensions" Version="0.4.0-build.1" />
+    <PackageReference Include="GarageGroup.CodeAnalysis.Extensions" Version="0.4.0" />
     <PackageReference Include="GarageGroup.CodeAnalysis.SourceBuilder" Version="0.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
