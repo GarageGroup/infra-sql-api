@@ -17,15 +17,16 @@ partial class SqlApi
             return ValueTask.FromCanceled<Result<FlatArray<T>, Failure<Unit>>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetOrFailureAsync<T>(query, T.ReadEntity, cancellationToken);
+        return InnerQueryEntitySetOrFailureAsync<T>(query, cancellationToken);
     }
 
     private async ValueTask<Result<FlatArray<T>, Failure<Unit>>> InnerQueryEntitySetOrFailureAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, CancellationToken cancellationToken)
+        where T : IDbEntity<T>
     {
         try
         {
-            return await InnerQueryEntitySetAsync(query, mapper, cancellationToken).ConfigureAwait(false);
+            return await InnerQueryEntitySetAsync<T>(query, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {

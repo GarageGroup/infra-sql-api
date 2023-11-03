@@ -16,11 +16,12 @@ partial class SqlApi
             return ValueTask.FromCanceled<Result<T, Unit>>(cancellationToken);
         }
 
-        return InnerQueryDbItemOrAbsentAsync(query, T.ReadEntity, cancellationToken);
+        return InnerQueryDbItemOrAbsentAsync<T>(query, cancellationToken);
     }
 
     private async ValueTask<Result<T, Unit>> InnerQueryDbItemOrAbsentAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, CancellationToken cancellationToken)
+        where T : IDbEntity<T>
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -38,6 +39,6 @@ partial class SqlApi
         var fieldIndexes = CreateFieldIndexes(dbReader);
         var dbItem = new DbItem(dbReader, fieldIndexes);
 
-        return mapper.Invoke(dbItem);
+        return T.ReadEntity(dbItem);
     }
 }

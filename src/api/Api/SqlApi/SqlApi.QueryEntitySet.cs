@@ -17,11 +17,12 @@ partial class SqlApi
             return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetAsync(query, T.ReadEntity, cancellationToken);
+        return InnerQueryEntitySetAsync<T>(query, cancellationToken);
     }
 
     private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, CancellationToken cancellationToken)
+        where T : IDbEntity<T>
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -44,7 +45,7 @@ partial class SqlApi
             cancellationToken.ThrowIfCancellationRequested();
 
             var dbItem = new DbItem(dbReader, fieldIndexes);
-            var dbEntity = mapper.Invoke(dbItem);
+            var dbEntity = T.ReadEntity(dbItem);
 
             collection.Add(dbEntity);
 
