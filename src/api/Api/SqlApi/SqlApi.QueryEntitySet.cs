@@ -7,7 +7,6 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi
 {
-#if NET7_0_OR_GREATER
     public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
@@ -18,23 +17,8 @@ partial class SqlApi
             return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetAsync<T>(query, T.ReadEntity, cancellationToken);
+        return InnerQueryEntitySetAsync(query, T.ReadEntity, cancellationToken);
     }
-#else
-    public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(query);
-        ArgumentNullException.ThrowIfNull(mapper);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
-        }
-
-        return InnerQueryEntitySetAsync(query, mapper, cancellationToken);
-    }
-#endif
 
     private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(
         IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
