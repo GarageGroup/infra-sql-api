@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Threading;
-using System.Threading.Tasks;
 using Moq;
 
 namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
@@ -107,40 +105,4 @@ public static partial class SqlApiTest
             =>
             parameters[dbParameter];
     }
-
-    private static ValueTask<FlatArray<StubDbEntity>> QueryStubDbEntitySetAsync(
-        this ISqlQueryEntitySetSupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
-        =>
-#if NET7_0_OR_GREATER
-        sqlApi.QueryEntitySetAsync<StubDbEntity>(dbQuery, cancellationToken);
-#else
-        sqlApi.QueryEntitySetAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
-#endif
-
-    private static ValueTask<Result<FlatArray<StubDbEntity>, Failure<Unit>>> QueryStubDbEntitySetOrFailureAsync(
-        this ISqlQueryEntitySetSupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
-        =>
-#if NET7_0_OR_GREATER
-        sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(dbQuery, cancellationToken);
-#else
-        sqlApi.QueryEntitySetOrFailureAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
-#endif
-
-    private static ValueTask<Result<StubDbEntity, Unit>> QueryStubDbEntityOrAbsentAsync(
-        this ISqlQueryEntitySupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
-        =>
-#if NET7_0_OR_GREATER
-        sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(dbQuery, cancellationToken);
-#else
-        sqlApi.QueryEntityOrAbsentAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
-#endif
-
-    private static ValueTask<Result<StubDbEntity, Failure<EntityQueryFailureCode>>> QueryStubDbEntityOrFailureAsync(
-        this ISqlQueryEntitySupplier sqlApi, IDbQuery dbQuery, CancellationToken cancellationToken)
-        =>
-#if NET7_0_OR_GREATER
-        sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(dbQuery, cancellationToken);
-#else
-        sqlApi.QueryEntityOrFailureAsync(dbQuery, StubDbEntity.ReadEntity, cancellationToken);
-#endif
 }

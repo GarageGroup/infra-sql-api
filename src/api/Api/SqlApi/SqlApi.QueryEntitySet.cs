@@ -7,7 +7,6 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi
 {
-#if NET7_0_OR_GREATER
     public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
@@ -18,26 +17,12 @@ partial class SqlApi
             return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
         }
 
-        return InnerQueryEntitySetAsync<T>(query, T.ReadEntity, cancellationToken);
+        return InnerQueryEntitySetAsync<T>(query, cancellationToken);
     }
-#else
-    public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(query);
-        ArgumentNullException.ThrowIfNull(mapper);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
-        }
-
-        return InnerQueryEntitySetAsync(query, mapper, cancellationToken);
-    }
-#endif
 
     private async ValueTask<FlatArray<T>> InnerQueryEntitySetAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, CancellationToken cancellationToken)
+        where T : IDbEntity<T>
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -60,7 +45,7 @@ partial class SqlApi
             cancellationToken.ThrowIfCancellationRequested();
 
             var dbItem = new DbItem(dbReader, fieldIndexes);
-            var dbEntity = mapper.Invoke(dbItem);
+            var dbEntity = T.ReadEntity(dbItem);
 
             collection.Add(dbEntity);
 

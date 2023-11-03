@@ -6,7 +6,6 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi
 {
-#if NET7_0_OR_GREATER
     public ValueTask<Result<T, Failure<EntityQueryFailureCode>>> QueryEntityOrFailureAsync<T>(
         IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
@@ -18,30 +17,16 @@ partial class SqlApi
             return ValueTask.FromCanceled<Result<T, Failure<EntityQueryFailureCode>>>(cancellationToken);
         }
 
-        return InnerQueryEntityOrFailureAsync(query, T.ReadEntity, cancellationToken);
+        return InnerQueryEntityOrFailureAsync<T>(query, cancellationToken);
     }
-#else
-    public ValueTask<Result<T, Failure<EntityQueryFailureCode>>> QueryEntityOrFailureAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(query);
-        ArgumentNullException.ThrowIfNull(mapper);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<Result<T, Failure<EntityQueryFailureCode>>>(cancellationToken);
-        }
-
-        return InnerQueryEntityOrFailureAsync(query, mapper, cancellationToken);
-    }
-#endif
 
     private async ValueTask<Result<T, Failure<EntityQueryFailureCode>>> InnerQueryEntityOrFailureAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, CancellationToken cancellationToken)
+        where T : IDbEntity<T>
     {
         try
         {
-            var result = await InnerQueryDbItemOrAbsentAsync(query, mapper, cancellationToken).ConfigureAwait(false);
+            var result = await InnerQueryDbItemOrAbsentAsync<T>(query, cancellationToken).ConfigureAwait(false);
             return result.MapFailure(NotFoundFailure);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)

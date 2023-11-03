@@ -6,7 +6,6 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi
 {
-#if NET7_0_OR_GREATER
     public ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
@@ -17,26 +16,12 @@ partial class SqlApi
             return ValueTask.FromCanceled<Result<T, Unit>>(cancellationToken);
         }
 
-        return InnerQueryDbItemOrAbsentAsync(query, T.ReadEntity, cancellationToken);
+        return InnerQueryDbItemOrAbsentAsync<T>(query, cancellationToken);
     }
-#else
-    public ValueTask<Result<T, Unit>> QueryEntityOrAbsentAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(query);
-        ArgumentNullException.ThrowIfNull(mapper);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<Result<T, Unit>>(cancellationToken);
-        }
-
-        return InnerQueryDbItemOrAbsentAsync(query, mapper, cancellationToken);
-    }
-#endif
 
     private async ValueTask<Result<T, Unit>> InnerQueryDbItemOrAbsentAsync<T>(
-        IDbQuery query, Func<IDbItem, T> mapper, CancellationToken cancellationToken)
+        IDbQuery query, CancellationToken cancellationToken)
+        where T : IDbEntity<T>
     {
         using var dbConnection = dbProvider.GetDbConnection();
         await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -54,6 +39,6 @@ partial class SqlApi
         var fieldIndexes = CreateFieldIndexes(dbReader);
         var dbItem = new DbItem(dbReader, fieldIndexes);
 
-        return mapper.Invoke(dbItem);
+        return T.ReadEntity(dbItem);
     }
 }

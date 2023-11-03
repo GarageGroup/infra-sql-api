@@ -30,32 +30,8 @@ partial class SqlApiTest
 
         async Task TestAsync()
             =>
-            _ = await sqlApi.QueryStubDbEntitySetOrFailureAsync(null!, cancellationToken);
+            _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(null!, cancellationToken);
     }
-#if NET6_0
-
-    [Fact]
-    public static async Task QueryEntitySetOrFailureAsync_MapperIsNull_ExpectArgumentNullException()
-    {
-        using var dbDataReader = CreateDbDataReader(3, SomeFieldNames);
-        using var dbCommand = CreateDbCommand(dbDataReader);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var dbProvider = CreateDbProvider(dbConnection);
-
-        var sqlApi = new SqlApi(dbProvider);
-        var cancellationToken = new CancellationToken(canceled: false);
-
-        var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
-        Assert.Equal("mapper", ex.ParamName);
-
-        async Task TestAsync()
-            =>
-            _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, null!, cancellationToken);
-    }
-#endif
 
     [Fact]
     public static void QueryEntitySetOrFailureAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
@@ -71,7 +47,7 @@ partial class SqlApiTest
         var sqlApi = new SqlApi(dbProvider);
         var cancellationToken = new CancellationToken(canceled: true);
 
-        var actual = sqlApi.QueryStubDbEntitySetOrFailureAsync(SomeDbQuery, cancellationToken);
+        var actual = sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, cancellationToken);
         Assert.True(actual.IsCanceled);
     }
 
@@ -87,7 +63,7 @@ partial class SqlApiTest
         var dbProvider = CreateDbProvider(dbConnection);
         var sqlApi = new SqlApi(dbProvider);
 
-        _ = await sqlApi.QueryStubDbEntitySetOrFailureAsync(SomeDbQuery, default);
+        _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
 
@@ -102,7 +78,7 @@ partial class SqlApiTest
         var dbProvider = CreateDbProvider(dbConnection);
         var sqlApi = new SqlApi(dbProvider);
 
-        var actual = await sqlApi.QueryStubDbEntitySetOrFailureAsync(SomeDbQuery, default);
+        var actual = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
         var expected = Failure.Create("An unexpected exception was thrown when executing the input query", dbConnectionException);
 
         Assert.StrictEqual(expected, actual);
@@ -131,7 +107,7 @@ partial class SqlApiTest
                 new("Param03", TestData.PlusFifteenIdRefType)
             });
 
-        _ = await sqlApi.QueryStubDbEntitySetOrFailureAsync(dbQuery, default);
+        _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(dbQuery, default);
         Assert.Equal(sqlQuery, dbCommand.CommandText);
     }
 
@@ -160,7 +136,7 @@ partial class SqlApiTest
             query: "Some SQL",
             parameters: parameters.Select(GetKey).ToFlatArray());
 
-        _ = await sqlApi.QueryStubDbEntitySetOrFailureAsync(dbQuery, default);
+        _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(dbQuery, default);
         var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? new();
 
         var expected = new object[]
@@ -198,7 +174,7 @@ partial class SqlApiTest
             TimeoutInSeconds = timeout
         };
 
-        _ = await sqlApi.QueryStubDbEntitySetOrFailureAsync(dbQuery, default);
+        _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(dbQuery, default);
         Assert.Equal(timeout, dbCommand.CommandTimeout);
     }
 
@@ -214,7 +190,7 @@ partial class SqlApiTest
         var dbProvider = CreateDbProvider(dbConnection);
         var sqlApi = new SqlApi(dbProvider);
 
-        var actual = await sqlApi.QueryStubDbEntitySetOrFailureAsync(SomeDbQuery, default);
+        var actual = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
         var expected = Failure.Create("An unexpected exception was thrown when executing the input query", dbCommandException);
 
         Assert.StrictEqual(expected, actual);
@@ -235,7 +211,7 @@ partial class SqlApiTest
         var dbProvider = CreateDbProvider(dbConnection);
         var sqlApi = new SqlApi(dbProvider);
 
-        var actual = await sqlApi.QueryStubDbEntitySetOrFailureAsync(SomeDbQuery, default);
+        var actual = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
 
         var expectedFieldIndexes = new Dictionary<string, int>
         {
