@@ -130,32 +130,13 @@ jobs:
     # Api.Provider.Abstractions
 
     - name: Restore Api.Provider.Abstractions
-      run: dotnet restore ./src/api-provider/*/Abstractions.csproj
+      run: dotnet restore ./src/api-abstractions/*/Provider.Abstractions.csproj
 
     - name: Build Api.Provider.Abstractions
-      run: dotnet build ./src/api-provider/*/Abstractions.csproj --no-restore  -c Release
+      run: dotnet build ./src/api-abstractions/*/Provider.Abstractions.csproj --no-restore  -c Release
 
     - name: Pack Api.Provider.Abstractions
-      run: dotnet pack ./src/api-provider/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Provider.Microsoft
-
-    - name: Restore Api.Provider.Microsoft
-      run: dotnet restore ./src/*/*/Microsoft.csproj
-
-    - name: Build Api.Provider.Microsoft
-      run: dotnet build ./src/*/*/Microsoft.csproj --no-restore  -c Release
-
-    - name: Pack Api.Provider.Microsoft
-      run: dotnet pack ./src/*/*/Microsoft.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Provider.Microsoft.Test
-
-    - name: Restore Api.Provider.Microsoft.Test
-      run: dotnet restore ./src/*/*/Microsoft.Test.csproj
-
-    - name: Test Api.Provider.Microsoft.Test
-      run: dotnet test ./src/*/*/Microsoft.Test.csproj --no-restore  -c Release
+      run: dotnet pack ./src/api-abstractions/*/Provider.Abstractions.csproj --no-restore -o ~/nuget  -c Release
 
     # Api
 
