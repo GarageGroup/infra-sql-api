@@ -79,7 +79,7 @@ public static partial class SqlApiTest
     {
         var mock = new Mock<IStubDbConnection>();
 
-        _ = mock.Setup(db => db.CreateDbCommand()).Throws(exception);
+        _ = mock.Setup(db => db.Open()).Throws(exception);
 
         return mock;
     }

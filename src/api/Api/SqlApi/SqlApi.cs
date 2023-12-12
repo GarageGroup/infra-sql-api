@@ -8,13 +8,17 @@ namespace GarageGroup.Infra;
 
 internal sealed partial class SqlApi : ISqlApi
 {
+    private const string PingQuery = "SELECT 1;";
+
     private readonly IDbProvider dbProvider;
 
     private readonly ILogger? logger;
 
     internal SqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory = null)
-        =>
-        (this.dbProvider, logger) = (dbProvider, loggerFactory?.CreateLogger<SqlApi>());
+    {
+        this.dbProvider = dbProvider;
+        logger = loggerFactory?.CreateLogger<SqlApi>();
+    }
 
     private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
     {
@@ -33,7 +37,7 @@ internal sealed partial class SqlApi : ISqlApi
             dbCommand.CommandTimeout = query.TimeoutInSeconds.Value;
         }
 
-        logger?.LogDebug("SQL: {0}, Parameters: {1}", dbCommand.CommandText, parameterLogBuilder?.ToString());
+        logger?.LogDebug("SQL: {sql}, Parameters: {parameters}", dbCommand.CommandText, parameterLogBuilder?.ToString());
 
         return dbCommand;
 
