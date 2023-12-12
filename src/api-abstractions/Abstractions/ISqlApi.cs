@@ -1,5 +1,5 @@
 ﻿namespace GarageGroup.Infra;
 
-public interface ISqlApi : ISqlExecuteNonQuerySupplier, ISqlQueryEntitySupplier, ISqlQueryEntitySetSupplier
+public interface ISqlApi : ISqlExecuteNonQuerySupplier, ISqlQueryEntitySupplier, ISqlQueryEntitySetSupplier, IPingSupplier
 {
 }
