@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +23,7 @@ internal sealed partial class SqlApi : ISqlApi
     {
         var dbCommand = dbConnection.CreateCommand();
         dbCommand.CommandText = query.GetSqlQuery();
+
         var parameterLogBuilder = logger is null ? null : new StringBuilder();
 
         foreach (var sqlParameter in GetDistinctDbParameters(query))
@@ -75,6 +75,21 @@ internal sealed partial class SqlApi : ISqlApi
     }
 
     private static IReadOnlyDictionary<string, int> CreateFieldIndexes(DbDataReader dbDataReader)
-        =>
-        Enumerable.Range(0, dbDataReader.FieldCount).ToDictionary(dbDataReader.GetName, static index => index);
+    {
+        var fieldCount = dbDataReader.FieldCount;
+        var filedIndexes = new Dictionary<string, int>(capacity: fieldCount);
+
+        for (var index = 0; index < fieldCount; index++)
+        {
+            var fieldName = dbDataReader.GetName(index);
+            if (filedIndexes.ContainsKey(fieldName))
+            {
+                continue;
+            }
+
+            filedIndexes.Add(fieldName, index);
+        }
+
+        return filedIndexes;
+    }
 }

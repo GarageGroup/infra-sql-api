@@ -7,7 +7,7 @@ namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 internal sealed class StubDbParameterCollection : DbParameterCollection
 {
-    private readonly List<object> parameters = new();
+    private readonly List<object> parameters = [];
 
     public override int Count
         =>

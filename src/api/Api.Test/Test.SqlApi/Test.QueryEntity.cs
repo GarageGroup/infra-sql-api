@@ -120,7 +120,7 @@ partial class SqlApiTest
             parameters: parameters.Select(GetKey).ToFlatArray());
 
         _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(dbQuery, default);
-        var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? new();
+        var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? [];
 
         var expected = new object[]
         {
@@ -182,7 +182,7 @@ partial class SqlApiTest
     [Fact]
     public static async Task QueryEntityOrAbsentAsync_DbDataReaderIsNotEmpty_ExpectSuccessFirstResult()
     {
-        using var dbDataReader = CreateDbDataReader(3, "FirstField", "SecondField");
+        using var dbDataReader = CreateDbDataReader(3, "FirstField", "SecondField", "FirstField");
         using var dbCommand = CreateDbCommand(dbDataReader);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
