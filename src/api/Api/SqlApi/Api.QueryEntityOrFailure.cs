@@ -36,6 +36,6 @@ partial class SqlApi
 
         static Failure<EntityQueryFailureCode> NotFoundFailure(Unit _)
             =>
-            Failure.Create(EntityQueryFailureCode.NotFound, "A db entity was not found by the input query");
+            new(EntityQueryFailureCode.NotFound, "A db entity was not found by the input query");
     }
 }

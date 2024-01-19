@@ -20,10 +20,9 @@ public static partial class SqlApiTest
 
     private static readonly string[] SomeFieldNames
         =
-        new[]
-        {
+        [
             "First", "Second", "Third"
-        };
+        ];
 
     private static StubDbCommand CreateDbCommand(int nonQueryResult)
         =>

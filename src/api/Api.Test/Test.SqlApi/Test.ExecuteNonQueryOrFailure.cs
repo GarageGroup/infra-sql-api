@@ -134,7 +134,7 @@ partial class SqlApiTest
             parameters: parameters.Select(GetKey).ToFlatArray());
 
         _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, default);
-        var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? new();
+        var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? [];
 
         var expected = new object[]
         {
