@@ -5,47 +5,40 @@ using Microsoft.Extensions.Logging;
 
 namespace GarageGroup.Infra;
 
-internal sealed partial class SqlApi : ISqlApi
+internal sealed partial class SqlApi<TDbConnection> : ISqlApi
+    where TDbConnection : DbConnection
 {
     private const string PingQuery = "SELECT 1;";
 
-    private readonly IDbProvider dbProvider;
+    private readonly IDbProvider<TDbConnection> dbProvider;
 
     private readonly ILogger? logger;
 
-    internal SqlApi(IDbProvider dbProvider, ILoggerFactory? loggerFactory = null)
+    internal SqlApi(IDbProvider<TDbConnection> dbProvider, ILoggerFactory? loggerFactory = null)
     {
         this.dbProvider = dbProvider;
-        logger = loggerFactory?.CreateLogger<SqlApi>();
+        logger = loggerFactory?.CreateLogger<SqlApi<TDbConnection>>();
     }
 
-    private DbCommand CreateDbCommand(DbConnection dbConnection, IDbQuery query)
+    private DbCommand CreateDbCommand(TDbConnection dbConnection, IDbQuery query)
     {
-        var dbCommand = dbConnection.CreateCommand();
-        dbCommand.CommandText = query.GetSqlQuery();
+        var dbParameters = query.GetParameters();
+        var dbNameParameters = new Dictionary<string, DbParameter>(dbParameters.Length);
 
         var parameterLogBuilder = logger is null ? null : new StringBuilder();
 
-        foreach (var sqlParameter in GetDistinctDbParameters(query))
+        foreach (var dbParameter in dbParameters)
         {
-            AppendParameter(sqlParameter);
-            dbCommand.Parameters.Add(dbProvider.GetSqlParameter(sqlParameter));
-        }
+            if (dbNameParameters.ContainsKey(dbParameter.Name))
+            {
+                continue;
+            }
 
-        if (query.TimeoutInSeconds is not null)
-        {
-            dbCommand.CommandTimeout = query.TimeoutInSeconds.Value;
-        }
+            dbNameParameters[dbParameter.Name] = dbParameter;
 
-        logger?.LogDebug("SQL: {sql}, Parameters: {parameters}", dbCommand.CommandText, parameterLogBuilder?.ToString());
-
-        return dbCommand;
-
-        void AppendParameter(DbParameter dbParameter)
-        {
             if (parameterLogBuilder is null)
             {
-                return;
+                continue;
             }
 
             if (parameterLogBuilder.Length > 0)
@@ -53,25 +46,13 @@ internal sealed partial class SqlApi : ISqlApi
                 parameterLogBuilder.Append(", ");
             }
 
-            parameterLogBuilder
-                .Append(dbParameter.Name)
-                .Append(": ")
-                .Append(dbParameter.Value)
-                .Append("");
-        }
-    }
-
-    private static IEnumerable<DbParameter> GetDistinctDbParameters(IDbQuery query)
-    {
-        var dbParameters = query.GetParameters();
-        var dbNameParameters = new Dictionary<string, DbParameter>(dbParameters.Length);
-
-        foreach (var dbParameter in dbParameters)
-        {
-            dbNameParameters[dbParameter.Name] = dbParameter;
+            parameterLogBuilder.Append(dbParameter.Name).Append(": '").Append(dbParameter.Value).Append('\'');
         }
 
-        return dbNameParameters.Values;
+        var commandText = query.GetSqlQuery();
+
+        logger?.LogDebug("SQL: {sql}. Parameters: {parameters}", commandText, parameterLogBuilder?.ToString());
+        return dbProvider.GetDbCommand(dbConnection, commandText, dbNameParameters.Values, query.TimeoutInSeconds);
     }
 
     private static IReadOnlyDictionary<string, int> CreateFieldIndexes(DbDataReader dbDataReader)

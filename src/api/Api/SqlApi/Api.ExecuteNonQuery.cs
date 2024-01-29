@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GarageGroup.Infra;
 
-partial class SqlApi
+partial class SqlApi<TDbConnection>
 {
     public ValueTask<int> ExecuteNonQueryAsync(IDbQuery query, CancellationToken cancellationToken = default)
     {

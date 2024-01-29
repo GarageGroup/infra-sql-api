@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GarageGroup.Infra;
 
-partial class SqlApi
+partial class SqlApi<TDbConnection>
 {
     public ValueTask<Result<FlatArray<T>, Failure<Unit>>> QueryEntitySetOrFailureAsync<T>(
         IDbQuery query, CancellationToken cancellationToken = default)
@@ -30,7 +30,7 @@ partial class SqlApi
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            return exception.ToFailure("An unexpected exception was thrown when executing the input query");
+            return exception.ToFailure("An unexpected exception was thrown when executing the input database query");
         }
     }
 }

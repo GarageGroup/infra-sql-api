@@ -15,7 +15,7 @@ public static partial class SqlApiTest
             parameters: new DbParameter[]
             {
                 new("First", 3781.5m),
-                new("Second", "")
+                new("Second", "Some text")
             });
 
     private static readonly string[] SomeFieldNames
@@ -83,25 +83,24 @@ public static partial class SqlApiTest
         return mock;
     }
 
-    private static IDbProvider CreateDbProvider(DbConnection dbConnection, IReadOnlyDictionary<DbParameter, object>? parameters = null)
+    private static Mock<IDbProvider<DbConnection>> CreateMockDbProvider(
+        DbConnection dbConnection, DbCommand dbCommand, Action<IReadOnlyCollection<DbParameter>?>? dbParametersCallback = null)
     {
-        var mock = new Mock<IDbProvider>();
+        var mock = new Mock<IDbProvider<DbConnection>>();
 
         _ = mock.Setup(db => db.GetDbConnection()).Returns(dbConnection);
-        
-        if (parameters is null)
+
+        var m = mock.Setup(
+            db => db.GetDbCommand(
+                It.IsAny<DbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyCollection<DbParameter>?>(), It.IsAny<int?>()))
+        .Returns(dbCommand);
+
+        if (dbParametersCallback is not null)
         {
-            _ = mock.Setup(db => db.GetSqlParameter(It.IsAny<DbParameter>())).Returns(new object());
-        }
-        else
-        {
-            _ = mock.Setup(db => db.GetSqlParameter(It.IsAny<DbParameter>())).Returns(GetValue);
+            _ = m.Callback<DbConnection, string, IReadOnlyCollection<DbParameter>?, int?>(
+                (_, _, actual, _) => dbParametersCallback.Invoke(actual));
         }
 
-        return mock.Object;
-
-        object GetValue(DbParameter dbParameter)
-            =>
-            parameters[dbParameter];
+        return mock;
     }
 }

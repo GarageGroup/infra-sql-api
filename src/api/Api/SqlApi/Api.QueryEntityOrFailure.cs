@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GarageGroup.Infra;
 
-partial class SqlApi
+partial class SqlApi<TDbConnection>
 {
     public ValueTask<Result<T, Failure<EntityQueryFailureCode>>> QueryEntityOrFailureAsync<T>(
         IDbQuery query, CancellationToken cancellationToken = default)
@@ -31,11 +31,11 @@ partial class SqlApi
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            return exception.ToFailure(EntityQueryFailureCode.Unknown, "An unexpected exception was thrown when executing the input query");
+            return exception.ToFailure(EntityQueryFailureCode.Unknown, "An unexpected exception was thrown when executing the input database query");
         }
 
         static Failure<EntityQueryFailureCode> NotFoundFailure(Unit _)
             =>
-            new(EntityQueryFailureCode.NotFound, "A db entity was not found by the input query");
+            new(EntityQueryFailureCode.NotFound, "A db entity was not found by the input database query");
     }
 }

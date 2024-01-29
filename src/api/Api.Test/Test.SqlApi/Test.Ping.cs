@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -17,9 +18,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var cancellationToken = new CancellationToken(canceled: true);
         var actual = sqlApi.PingAsync(default, cancellationToken);
@@ -35,8 +35,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var cancellationToken = new CancellationToken(canceled: false);
         _ = await sqlApi.PingAsync(default, cancellationToken);
@@ -52,8 +52,10 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbConnectionException);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        using var dbCommand = CreateDbCommand(57);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.PingAsync(default, default);
         var expected = Failure.Create("An unexpected exception was thrown when trying to ping a database", dbConnectionException);
@@ -62,20 +64,18 @@ partial class SqlApiTest
     }
 
     [Fact]
-    public static async Task PingAsync_ConnectionDoesNotThrowException_ExpectSelectOneSqlQuery()
+    public static async Task PingAsync_ConnectionDoesNotThrowException_ExpectDbCommandGetCalledOnce()
     {
         using var dbCommand = CreateDbCommand(10);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.PingAsync(default, default);
-
-        Assert.Equal("SELECT 1;", dbCommand.CommandText);
-        Assert.Empty(dbCommand.Parameters);
+        mockDbProvider.Verify(p => p.GetDbCommand(dbConnection, "SELECT 1;", null, null), Times.Once);
     }
 
     [Fact]
@@ -87,8 +87,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.PingAsync(default, default);
         var expected = Failure.Create("An unexpected exception was thrown when trying to ping a database", dbCommandException);
@@ -108,8 +108,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.PingAsync(default, default);
         var expected = Result.Success<Unit>(default);
