@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GarageGroup.Infra;
 
-partial class SqlApi
+partial class SqlApi<TDbConnection>
 {
     public ValueTask<FlatArray<T>> QueryEntitySetAsync<T>(IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>

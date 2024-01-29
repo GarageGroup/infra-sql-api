@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -19,9 +19,9 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
 
-        var sqlApi = new SqlApi(dbProvider);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
         var cancellationToken = new CancellationToken(canceled: false);
 
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
@@ -40,9 +40,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var cancellationToken = new CancellationToken(canceled: true);
         var actual = sqlApi.ExecuteNonQueryAsync(SomeDbQuery, cancellationToken);
@@ -58,104 +57,35 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, default);
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
 
     [Theory]
-    [InlineData(TestData.EmptyString)]
-    [InlineData(TestData.SomeString)]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectCommandTextIsSqlQuery(
-        string sqlQuery)
+    [MemberData(nameof(SqlApiTestSource.DbCommandTestData), MemberType = typeof(SqlApiTestSource))]
+    internal static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectDbCommandGetCalledOnce(
+        StubDbQuery dbQuery, StubDbCommandRequest expectedRequest)
     {
         using var dbCommand = CreateDbCommand(73);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
-
-        var dbQuery = new StubDbQuery(
-            query: sqlQuery,
-            parameters: new DbParameter[]
-            {
-                new("SomeParameterName", TestData.PlusFifteenIdRefType)
-            });
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand, OnCommandGet);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
-        Assert.Equal(sqlQuery, dbCommand.CommandText);
-    }
 
-    [Fact]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectCommandParametersAreDistinct()
-    {
-        using var dbCommand = CreateDbCommand(73);
+        mockDbProvider.Verify(
+            p => p.GetDbCommand(dbConnection, expectedRequest.CommandText, It.IsAny<IReadOnlyCollection<DbParameter>?>(), expectedRequest.Timeout),
+            Times.Once);
 
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var parameters = new Dictionary<DbParameter, object>
-        {
-            [new("FirstParam", 71)] = TestData.MixedWhiteSpacesString,
-            [new("SecondParam", new())] = TestData.SomeString,
-            [new(string.Empty, "Some text value")] = TestData.PlusFifteenIdRefType,
-            [new("FirstParam", false)] = decimal.One,
-            [new("FifthName", null)] = TestData.SomeTextRecordStruct
-        };
-
-        var dbProvider = CreateDbProvider(dbConnection, parameters);
-        var sqlApi = new SqlApi(dbProvider);
-
-        var dbQuery = new StubDbQuery(
-            query: "SELECT * From Product",
-            parameters: parameters.Select(GetKey).ToFlatArray());
-
-        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
-        var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? [];
-
-        var expected = new object[]
-        {
-            decimal.One, TestData.SomeString, TestData.PlusFifteenIdRefType, TestData.SomeTextRecordStruct
-        };
-
-        Assert.Equal(expected, actual);
-
-        static DbParameter GetKey(KeyValuePair<DbParameter, object> kv)
+        void OnCommandGet(IReadOnlyCollection<DbParameter>? actual)
             =>
-            kv.Key;
-    }
-
-    [Theory]
-    [InlineData(TestData.MinusOne)]
-    [InlineData(TestData.Zero)]
-    [InlineData(TestData.PlusFifteen)]
-    public static async Task ExecuteNonQueryAsync_TimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
-        int timeout)
-    {
-        using var dbCommand = CreateDbCommand(73);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
-
-        var dbQuery = new StubDbQuery(
-            query: "SELECT * From Product",
-            parameters: new DbParameter[]
-            {
-                new("SomeParameterName", TestData.PlusFifteenIdRefType)
-            })
-        {
-            TimeoutInSeconds = timeout
-        };
-
-        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
-        Assert.Equal(timeout, dbCommand.CommandTimeout);
+            Assert.Equal(expectedRequest.Parameters, actual);
     }
 
     [Theory]
@@ -170,8 +100,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, default);
         Assert.StrictEqual(nonQueryResult, actual);

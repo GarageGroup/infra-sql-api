@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GarageGroup.Infra;
 
-partial class SqlApi
+partial class SqlApi<TDbConnection>
 {
     public ValueTask<Result<Unit, Failure<Unit>>> PingAsync(Unit _, CancellationToken cancellationToken)
     {
@@ -24,10 +24,9 @@ partial class SqlApi
             using var dbConnection = dbProvider.GetDbConnection();
             await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-            using var dbCommand = dbConnection.CreateCommand();
-            dbCommand.CommandText = PingQuery;
-
+            using var dbCommand = dbProvider.GetDbCommand(dbConnection, PingQuery, default, default);
             _ = await dbCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+
             return Result.Success<Unit>(default);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using PrimeFuncPack.UnitTest;
 using Xunit;
 
 namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
@@ -20,12 +19,12 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var sqlApi = new SqlApi(dbProvider);
         var cancellationToken = new CancellationToken(canceled: false);
-
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
+
         Assert.Equal("query", ex.ParamName);
 
         async Task TestAsync()
@@ -42,9 +41,9 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
 
-        var sqlApi = new SqlApi(dbProvider);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
         var cancellationToken = new CancellationToken(canceled: true);
 
         var actual = sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(SomeDbQuery, cancellationToken);
@@ -60,8 +59,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
@@ -75,23 +74,26 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbConnectionException);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        using var dbDataReader = CreateDbDataReader(7, SomeFieldNames);
+        using var dbCommand = CreateDbCommand(dbDataReader);
+
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
+
         var expected = Failure.Create(
             EntityQueryFailureCode.Unknown,
-            "An unexpected exception was thrown when executing the input query",
+            "An unexpected exception was thrown when executing the input database query",
             dbConnectionException);
 
         Assert.StrictEqual(expected, actual);
     }
 
     [Theory]
-    [InlineData(TestData.EmptyString)]
-    [InlineData(TestData.SomeString)]
-    public static async Task QueryEntityOrFailureAsync_ConnectionDoesNotThrowException_ExpectCommandTextIsSqlQuery(
-        string sqlQuery)
+    [MemberData(nameof(SqlApiTestSource.DbCommandTestData), MemberType = typeof(SqlApiTestSource))]
+    internal static async Task QueryEntityOrFailureAsync_ConnectionDoesNotThrowException_ExpectDbCommandGetCalledOnce(
+        StubDbQuery dbQuery, StubDbCommandRequest expectedRequest)
     {
         using var dbDataReader = CreateDbDataReader(5, "Field01", "Field02");
         using var dbCommand = CreateDbCommand(dbDataReader);
@@ -99,86 +101,18 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
-
-        var dbQuery = new StubDbQuery(
-            query: sqlQuery,
-            parameters: new DbParameter[]
-            {
-                new("Param01", null),
-                new("Param03", TestData.PlusFifteenIdRefType)
-            });
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand, OnCommandGet);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(dbQuery, default);
-        Assert.Equal(sqlQuery, dbCommand.CommandText);
-    }
 
-    [Fact]
-    public static async Task QueryEntityOrFailureAsync_ConnectionDoesNotThrowException_ExpectCommandParametersAreDistinct()
-    {
-        using var dbDataReader = CreateDbDataReader(3, SomeFieldNames);
-        using var dbCommand = CreateDbCommand(dbDataReader);
+        mockDbProvider.Verify(
+            p => p.GetDbCommand(dbConnection, expectedRequest.CommandText, It.IsAny<IReadOnlyCollection<DbParameter>?>(), expectedRequest.Timeout),
+            Times.Once);
 
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var parameters = new Dictionary<DbParameter, object>
-        {
-            [new(string.Empty, new())] = TestData.PlusFifteen,
-            [new("Second", string.Empty)] = TestData.SomeString,
-            [new("Third", 'a')] = TestData.MinusFifteenIdRefType,
-            [new("Second", byte.MaxValue)] = TestData.ZeroIdNullNameRecord,
-            [new("Fifth", decimal.MinusOne)] = TestData.SomeTextRecordStruct
-        };
-
-        var dbProvider = CreateDbProvider(dbConnection, parameters);
-        var sqlApi = new SqlApi(dbProvider);
-
-        var dbQuery = new StubDbQuery(
-            query: "Some SQL",
-            parameters: parameters.Select(GetKey).ToFlatArray());
-
-        _ = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(dbQuery, default);
-        var actual = dbCommand.Parameters.GetInnerFieldValue<List<object>>("parameters") ?? [];
-
-        var expected = new object[]
-        {
-            TestData.PlusFifteen, TestData.ZeroIdNullNameRecord, TestData.MinusFifteenIdRefType, TestData.SomeTextRecordStruct
-        };
-
-        Assert.Equal(expected, actual);
-
-        static DbParameter GetKey(KeyValuePair<DbParameter, object> kv)
+        void OnCommandGet(IReadOnlyCollection<DbParameter>? actual)
             =>
-            kv.Key;
-    }
-
-    [Theory]
-    [InlineData(TestData.MinusOne)]
-    [InlineData(TestData.Zero)]
-    [InlineData(TestData.PlusFifteen)]
-    public static async Task QueryEntityOrFailureAsync_ConnectionDoesNotThrowExceptionAndTimeoutIsNotNull_ExpectCommandTimeoutWasConfigured(
-        int timeout)
-    {
-        using var dbDataReader = CreateDbDataReader(0, SomeFieldNames);
-        using var dbCommand = CreateDbCommand(dbDataReader);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
-
-        var dbQuery = new StubDbQuery(
-            query: "SELECT * From Product",
-            parameters: default)
-        {
-            TimeoutInSeconds = timeout
-        };
-
-        _ = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(dbQuery, default);
-        Assert.Equal(timeout, dbCommand.CommandTimeout);
+            Assert.Equal(expectedRequest.Parameters, actual);
     }
 
     [Fact]
@@ -190,13 +124,13 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
         var expected = Failure.Create(
             EntityQueryFailureCode.Unknown,
-            "An unexpected exception was thrown when executing the input query",
+            "An unexpected exception was thrown when executing the input database query",
             dbCommandException);
 
         Assert.StrictEqual(expected, actual);
@@ -211,11 +145,11 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
-        var expected = Failure.Create(EntityQueryFailureCode.NotFound, "A db entity was not found by the input query");
+        var expected = Failure.Create(EntityQueryFailureCode.NotFound, "A db entity was not found by the input database query");
 
         Assert.StrictEqual(expected, actual);
     }
@@ -229,8 +163,8 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var dbProvider = CreateDbProvider(dbConnection);
-        var sqlApi = new SqlApi(dbProvider);
+        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntityOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
 
