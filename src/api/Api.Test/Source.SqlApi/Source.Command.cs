@@ -12,13 +12,13 @@ partial class SqlApiTestSource
             {
                 new(
                     query: string.Empty,
-                    parameters: new DbParameter[]
-                    {
+                    parameters:
+                    [
                         new("FirstParam", 71),
                         new("SecondParam", TestData.PlusFifteenIdRefType),
                         new("FirstParam", false),
                         new("FifthName", null)
-                    })
+                    ])
                 {
                     TimeoutInSeconds = 51
                 },

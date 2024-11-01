@@ -1,6 +1,5 @@
 ﻿using System;
 using Moq;
-using PrimeFuncPack.UnitTest;
 using Xunit;
 
 namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;

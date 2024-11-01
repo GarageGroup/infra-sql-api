@@ -33,7 +33,7 @@ partial class DbItemTest
         var dbItem = new DbItem(dbDataReader, fieldIndexes);
 
         var actual = dbItem.Fields;
-        var expected = new[] { "First", "Second", string.Empty, "Third" };
+        string[] expected = ["First", "Second", string.Empty, "Third"];
 
         Assert.Equal(expected, actual);
     }
