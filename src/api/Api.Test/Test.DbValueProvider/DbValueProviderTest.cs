@@ -1,5 +1,3 @@
 namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
-public static partial class DbValueProviderTest
-{
-}
+public static partial class DbValueProviderTest;

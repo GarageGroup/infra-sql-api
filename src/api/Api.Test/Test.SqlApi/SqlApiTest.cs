@@ -12,11 +12,11 @@ public static partial class SqlApiTest
         =
         new(
             query: "Some SQL",
-            parameters: new DbParameter[]
-            {
+            parameters:
+            [
                 new("First", 3781.5m),
                 new("Second", "Some text")
-            });
+            ]);
 
     private static readonly string[] SomeFieldNames
         =

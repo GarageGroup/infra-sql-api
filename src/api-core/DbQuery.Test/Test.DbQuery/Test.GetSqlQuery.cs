@@ -31,30 +31,30 @@ partial class DbQueryTest
             {
                 new(
                     query: null!,
-                    parameters: new DbParameter[]
-                    {
+                    parameters:
+                    [
                         new("P1", 15),
                         new("P2", "Some text")
-                    }),
+                    ]),
                 string.Empty
             },
             {
                 new(
                     query: string.Empty,
-                    parameters: new DbParameter[]
-                    {
+                    parameters:
+                    [
                         new("SomeName", null)
-                    }),
+                    ]),
                 string.Empty
             },
             {
                 new(
                     query: "Some query",
-                    parameters: new DbParameter[]
-                    {
+                    parameters:
+                    [
                         new("SomeName1", "One"),
                         new("SomeName2", null)
-                    }),
+                    ]),
                 "Some query"
             }
         };
