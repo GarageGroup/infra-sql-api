@@ -31,24 +31,29 @@ public static class SqlApiDependency
         where TDbConnection : DbConnection
     {
         ArgumentNullException.ThrowIfNull(dependency);
-        return dependency.With(GetLoggerFactory).Fold<ISqlApi>(CreateSqlApi);
+        return dependency.Map<ISqlApi>(InnerCreateSqlApi);
 
-        ILoggerFactory? GetLoggerFactory(IServiceProvider serviceProvider)
-            =>
-            useLogging ? serviceProvider.GetServiceOrAbsent<ILoggerFactory>().OrDefault() : null;
+        SqlApi<TDbConnection> InnerCreateSqlApi(IServiceProvider serviceProvider, IDbProvider<TDbConnection> dbProvider)
+        {
+            ArgumentNullException.ThrowIfNull(serviceProvider);
+            ArgumentNullException.ThrowIfNull(dbProvider);
+
+            return new(
+                dbProvider: dbProvider,
+                loggerFactory: useLogging ? serviceProvider.GetServiceOrThrow<ILoggerFactory>() : null);
+        }
     }
 
     public static Dependency<ISqlApi> UseSqlApi<TDbConnection>(this Dependency<IDbProvider<TDbConnection>, ILoggerFactory> dependency)
         where TDbConnection : DbConnection
     {
         ArgumentNullException.ThrowIfNull(dependency);
-        return dependency.Fold<ISqlApi>(CreateSqlApi);
-    }
+        return dependency.Fold<ISqlApi>(InnerCreateSqlApi);
 
-    private static SqlApi<TDbConnection> CreateSqlApi<TDbConnection>(IDbProvider<TDbConnection> dbProvider, ILoggerFactory? loggerFactory)
-        where TDbConnection : DbConnection
-    {
-        ArgumentNullException.ThrowIfNull(dbProvider);
-        return new(dbProvider, loggerFactory);
+        static SqlApi<TDbConnection> InnerCreateSqlApi(IDbProvider<TDbConnection> dbProvider, ILoggerFactory? loggerFactory)
+        {
+            ArgumentNullException.ThrowIfNull(dbProvider);
+            return new(dbProvider, loggerFactory);
+        }
     }
 }

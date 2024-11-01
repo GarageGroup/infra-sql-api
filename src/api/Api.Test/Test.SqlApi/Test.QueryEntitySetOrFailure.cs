@@ -19,7 +19,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var cancellationToken = new CancellationToken(canceled: false);
@@ -41,7 +41,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
         var cancellationToken = new CancellationToken(canceled: true);
@@ -59,7 +59,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
@@ -77,7 +77,7 @@ partial class SqlApiTest
         using var dbDataReader = CreateDbDataReader(3, SomeFieldNames);
         using var dbCommand = CreateDbCommand(dbDataReader);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
@@ -89,7 +89,7 @@ partial class SqlApiTest
     [Theory]
     [MemberData(nameof(SqlApiTestSource.DbCommandTestData), MemberType = typeof(SqlApiTestSource))]
     internal static async Task QueryEntitySetOrFailureAsync_ConnectionDoesNotThrowException_ExpectDbCommandGetCalledOnce(
-        StubDbQuery dbQuery, StubDbCommandRequest expectedRequest)
+        StubDbQuery dbQuery, SqlDialect dialect, StubDbCommandRequest expectedRequest)
     {
         using var dbDataReader = CreateDbDataReader(3, "Param01", "Param02");
         using var dbCommand = CreateDbCommand(dbDataReader);
@@ -97,7 +97,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand, OnCommandGet);
+        var mockDbProvider = CreateMockDbProvider(dialect, dbConnection, dbCommand, OnCommandGet);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(dbQuery, default);
@@ -120,7 +120,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);
@@ -141,7 +141,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.QueryEntitySetOrFailureAsync<StubDbEntity>(SomeDbQuery, default);

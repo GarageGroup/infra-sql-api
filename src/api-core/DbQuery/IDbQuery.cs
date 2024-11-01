@@ -4,7 +4,7 @@ namespace GarageGroup.Infra;
 
 public interface IDbQuery
 {
-    string GetSqlQuery();
+    string GetSqlQuery(SqlDialect dialect);
 
     FlatArray<DbParameter> GetParameters();
 

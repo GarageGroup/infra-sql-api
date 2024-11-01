@@ -31,7 +31,7 @@ partial class DbValueProviderTest
 
         using var dbDataReader = new StubDbDataReader(mockDbDataReader.Object);
         var dbValueProvider = new DbValueProvider(dbDataReader, 23, "Some name");
-        
+
         var ex = Assert.Throws<InvalidOperationException>(Test);
         Assert.Same(sourceException, ex.InnerException);
 

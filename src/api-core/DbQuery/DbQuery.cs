@@ -7,7 +7,7 @@ public sealed record class DbQuery : IDbQuery
     public DbQuery(string query)
     {
         Query = query ?? string.Empty;
-        Parameters = FlatArray.Empty<DbParameter>();
+        Parameters = [];
     }
 
     public DbQuery(string query, FlatArray<DbParameter> parameters)
@@ -22,7 +22,7 @@ public sealed record class DbQuery : IDbQuery
 
     public int? TimeoutInSeconds { get; init; }
 
-    public string GetSqlQuery()
+    public string GetSqlQuery(SqlDialect dialect)
         =>
         Query;
 

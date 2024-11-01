@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbQuery</AssemblyName>
-    <Version>2.1.0</Version>
+    <Version>3.0.0-build.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbParameter" Version="2.0.0" />
-    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.3.0" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbParameter" Version="3.0.0-build.1" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.SqlDialect" Version="0.0.1-build.1" />
+    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.5.0" />
   </ItemGroup>
 
 </Project>

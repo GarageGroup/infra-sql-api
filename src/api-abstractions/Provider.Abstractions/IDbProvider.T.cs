@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace GarageGroup.Infra;
 
-public interface IDbProvider<TDbConnection>
+public interface IDbProvider<TDbConnection> : ISqlDialectProvider
     where TDbConnection : DbConnection
 {
     TDbConnection GetDbConnection();

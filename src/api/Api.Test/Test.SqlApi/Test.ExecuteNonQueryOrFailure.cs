@@ -19,7 +19,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
         var cancellationToken = new CancellationToken(canceled: false);
@@ -40,7 +40,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
@@ -58,7 +58,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var cancellationToken = new CancellationToken(canceled: false);
@@ -76,7 +76,7 @@ partial class SqlApiTest
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
         using var dbCommand = CreateDbCommand(347);
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
@@ -89,14 +89,14 @@ partial class SqlApiTest
     [Theory]
     [MemberData(nameof(SqlApiTestSource.DbCommandTestData), MemberType = typeof(SqlApiTestSource))]
     internal static async Task ExecuteNonQueryOrFailureAsync_ConnectionDoesNotThrowException_ExpectDbCommandGetCalledOnce(
-        StubDbQuery dbQuery, StubDbCommandRequest expectedRequest)
+        StubDbQuery dbQuery, SqlDialect dialect, StubDbCommandRequest expectedRequest)
     {
         using var dbCommand = CreateDbCommand(573);
 
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand, OnCommandGet);
+        var mockDbProvider = CreateMockDbProvider(dialect, dbConnection, dbCommand, OnCommandGet);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, default);
@@ -119,7 +119,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
@@ -140,7 +140,7 @@ partial class SqlApiTest
         var mockDbConnection = CreateMockDbConnection(dbCommand);
         using var dbConnection = new StubDbConnection(mockDbConnection.Object);
 
-        var mockDbProvider = CreateMockDbProvider(dbConnection, dbCommand);
+        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
         var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);

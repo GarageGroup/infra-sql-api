@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Abstractions.QueryEntity</AssemblyName>
-    <Version>2.2.0</Version>
+    <Version>3.0.0-build.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbEntity" Version="2.0.0" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbQuery" Version="2.1.0" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbEntity" Version="3.0.0-build.1" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbQuery" Version="3.0.0-build.2" />
     <PackageReference Include="PrimeFuncPack.Core.Failure" Version="2.2.0" />
     <PackageReference Include="PrimeFuncPack.Core.Result" Version="2.0.2" />
   </ItemGroup>

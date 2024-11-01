@@ -11,12 +11,16 @@ public static partial class SqlApiTest
     private static readonly StubDbQuery SomeDbQuery
         =
         new(
-            query: "Some SQL",
-            parameters: new DbParameter[]
+            queries: new Dictionary<SqlDialect, string>
             {
+                [SqlDialect.TransactSql] = "Some TransactSql",
+                [SqlDialect.PostgreSql] = "Some PostgreSql"
+            },
+            parameters:
+            [
                 new("First", 3781.5m),
                 new("Second", "Some text")
-            });
+            ]);
 
     private static readonly string[] SomeFieldNames
         =
@@ -84,22 +88,24 @@ public static partial class SqlApiTest
     }
 
     private static Mock<IDbProvider<DbConnection>> CreateMockDbProvider(
-        DbConnection dbConnection, DbCommand dbCommand, Action<IReadOnlyCollection<DbParameter>?>? dbParametersCallback = null)
+        SqlDialect dialect, DbConnection dbConnection, DbCommand dbCommand, Action<IReadOnlyCollection<DbParameter>?>? dbParametersCallback = null)
     {
         var mock = new Mock<IDbProvider<DbConnection>>();
 
-        _ = mock.Setup(db => db.GetDbConnection()).Returns(dbConnection);
+        _ = mock.Setup(static db => db.GetDbConnection()).Returns(dbConnection);
 
         var m = mock.Setup(
             db => db.GetDbCommand(
                 It.IsAny<DbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyCollection<DbParameter>?>(), It.IsAny<int?>()))
-        .Returns(dbCommand);
+            .Returns(dbCommand);
 
         if (dbParametersCallback is not null)
         {
             _ = m.Callback<DbConnection, string, IReadOnlyCollection<DbParameter>?, int?>(
                 (_, _, actual, _) => dbParametersCallback.Invoke(actual));
         }
+
+        _ = mock.SetupGet(static db => db.Dialect).Returns(dialect);
 
         return mock;
     }
