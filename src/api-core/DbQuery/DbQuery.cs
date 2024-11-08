@@ -10,7 +10,7 @@ public sealed record class DbQuery : IDbQuery
         Parameters = [];
     }
 
-    public DbQuery(string query, FlatArray<DbParameter> parameters)
+    public DbQuery(string query, params FlatArray<DbParameter> parameters)
     {
         Query = query ?? string.Empty;
         Parameters = parameters;
