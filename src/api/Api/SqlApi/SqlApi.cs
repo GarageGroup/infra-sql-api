@@ -17,7 +17,7 @@ internal sealed partial class SqlApi<TDbConnection> : ISqlApi
     internal SqlApi(IDbProvider<TDbConnection> dbProvider, ILoggerFactory? loggerFactory = null)
     {
         this.dbProvider = dbProvider;
-        logger = loggerFactory?.CreateLogger<SqlApi<TDbConnection>>();
+        logger = loggerFactory?.CreateLogger("GarageGroup.Infra.SqlApi");
     }
 
     private DbCommand CreateDbCommand(TDbConnection dbConnection, IDbQuery query)
@@ -49,7 +49,7 @@ internal sealed partial class SqlApi<TDbConnection> : ISqlApi
             parameterLogBuilder.Append(dbParameter.Name).Append(": '").Append(dbParameter.Value).Append('\'');
         }
 
-        var commandText = query.GetSqlQuery();
+        var commandText = query.GetSqlQuery(dbProvider.Dialect);
 
         logger?.LogDebug("SQL: {sql}. Parameters: {parameters}", commandText, parameterLogBuilder?.ToString());
         return dbProvider.GetDbCommand(dbConnection, commandText, dbNameParameters.Values, query.TimeoutInSeconds);

@@ -1,24 +1,25 @@
 using System;
+using System.Collections.Generic;
 
 namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 internal sealed record class StubDbQuery : IDbQuery
 {
-    private readonly string query;
+    private readonly IReadOnlyDictionary<SqlDialect, string> queries;
 
     private readonly FlatArray<DbParameter> parameters;
 
-    internal StubDbQuery(string query, FlatArray<DbParameter> parameters)
+    internal StubDbQuery(IReadOnlyDictionary<SqlDialect, string> queries, FlatArray<DbParameter> parameters)
     {
-        this.query = query;
+        this.queries = queries;
         this.parameters = parameters;
     }
 
     public int? TimeoutInSeconds { get; init; }
 
-    public string GetSqlQuery()
+    public string GetSqlQuery(SqlDialect dialect)
         =>
-        query;
+        queries[dialect];
 
     public FlatArray<DbParameter> GetParameters()
         =>

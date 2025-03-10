@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "api\Api\Api.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Abstractions", "api-abstractions\Provider.Abstractions\Provider.Abstractions.csproj", "{BA79F60A-3473-40A1-846D-707CB5AF96DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDialect", "api-core\SqlDialect\SqlDialect.csproj", "{50AA8E70-0E6F-484D-A09A-BF4AE280CEC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{BA79F60A-3473-40A1-846D-707CB5AF96DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA79F60A-3473-40A1-846D-707CB5AF96DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA79F60A-3473-40A1-846D-707CB5AF96DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50AA8E70-0E6F-484D-A09A-BF4AE280CEC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50AA8E70-0E6F-484D-A09A-BF4AE280CEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50AA8E70-0E6F-484D-A09A-BF4AE280CEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50AA8E70-0E6F-484D-A09A-BF4AE280CEC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +110,7 @@ Global
 		{A41B8ECF-8AE0-4C25-BF3A-30A63453C6F5} = {5E4F5B1C-D629-4D34-B81A-65F7951AE426}
 		{B0B8E4C3-C17A-4D6A-90D0-52657FDF0115} = {5E4F5B1C-D629-4D34-B81A-65F7951AE426}
 		{BA79F60A-3473-40A1-846D-707CB5AF96DA} = {6106F9AD-BAA7-4F24-AD96-17D27BFC486D}
+		{50AA8E70-0E6F-484D-A09A-BF4AE280CEC6} = {53EEC557-BEA5-4E2C-8F1A-F96404E2FDA1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBFE5C85-563F-4917-95A1-4501407AD8D8}

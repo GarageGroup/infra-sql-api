@@ -1,17 +1,21 @@
-﻿using PrimeFuncPack.UnitTest;
+﻿using System.Collections.Generic;
+using PrimeFuncPack.UnitTest;
 using Xunit;
 
 namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 
 partial class SqlApiTestSource
 {
-    public static TheoryData<StubDbQuery, StubDbCommandRequest> DbCommandTestData
+    public static TheoryData<StubDbQuery, SqlDialect, StubDbCommandRequest> DbCommandTestData
         =>
         new()
         {
             {
                 new(
-                    query: string.Empty,
+                    queries: new Dictionary<SqlDialect, string>
+                    {
+                        [SqlDialect.TransactSql] = string.Empty
+                    },
                     parameters:
                     [
                         new("FirstParam", 71),
@@ -22,6 +26,7 @@ partial class SqlApiTestSource
                 {
                     TimeoutInSeconds = 51
                 },
+                SqlDialect.TransactSql,
                 new()
                 {
                     CommandText = string.Empty,
@@ -36,11 +41,15 @@ partial class SqlApiTestSource
             },
             {
                 new(
-                    query: "SELECT * From Product",
+                    queries: new Dictionary<SqlDialect, string>
+                    {
+                        [SqlDialect.PostgreSql] = "SELECT * From Product"
+                    },
                     parameters: default)
                 {
                     TimeoutInSeconds = null
                 },
+                SqlDialect.PostgreSql,
                 new()
                 {
                     CommandText = "SELECT * From Product",

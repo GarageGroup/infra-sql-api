@@ -22,7 +22,7 @@ public sealed record class DbQuery : IDbQuery
 
     public int? TimeoutInSeconds { get; init; }
 
-    public string GetSqlQuery()
+    public string GetSqlQuery(SqlDialect dialect)
         =>
         Query;
 

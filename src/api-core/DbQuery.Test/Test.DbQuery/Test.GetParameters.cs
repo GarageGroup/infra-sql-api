@@ -56,8 +56,11 @@ partial class DbQueryTest
             {
                 new(
                     query: "Some query",
-                    new("SomeName1", "One"),
-                    new("SomeName2", null)),
+                    parameters:
+                    [
+                        new("SomeName1", "One"),
+                        new("SomeName2", null)
+                    ]),
                 [
                     new("SomeName1", "One"),
                     new("SomeName2", null)

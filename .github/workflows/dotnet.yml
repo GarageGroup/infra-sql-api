@@ -32,6 +32,17 @@ jobs:
         -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
         --store-password-in-clear-text
 
+    # Api.Core.SqlDialect
+
+    - name: Restore Api.Core.SqlDialect
+      run: dotnet restore ./src/*/*/SqlDialect.csproj
+
+    - name: Build Api.Core.SqlDialect
+      run: dotnet build ./src/*/*/SqlDialect.csproj --no-restore  -c Release
+
+    - name: Pack Api.Core.SqlDialect
+      run: dotnet pack ./src/*/*/SqlDialect.csproj --no-restore -o ~/nuget  -c Release
+
     # Api.Core.DbEntity
 
     - name: Restore Api.Core.DbEntity

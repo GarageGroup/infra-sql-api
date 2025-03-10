@@ -4,13 +4,13 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api</AssemblyName>
-    <Version>2.7.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions" Version="2.4.0" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Provider.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions" Version="3.0.0" />
+    <PackageReference Include="GarageGroup.Infra.Sql.Api.Provider.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
     <PackageReference Include="PrimeFuncPack.Dependency" Version="2.1.0" />
   </ItemGroup>
 
