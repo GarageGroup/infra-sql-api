@@ -34,8 +34,6 @@ partial class DbQueryTest
                     query: null!,
                     parameters:
                     [
-                    parameters:
-                    [
                         new("P1", 15),
                         new("P2", "Some text")
                     ]),
@@ -65,8 +63,6 @@ partial class DbQueryTest
                     ]),
                 [
                     new("SomeName1", "One"),
-                    new("SomeName2", null)
-                ]
                     new("SomeName2", null)
                 ]
             }

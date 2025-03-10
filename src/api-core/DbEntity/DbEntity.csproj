@@ -4,7 +4,7 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbEntity</AssemblyName>
-    <Version>3.0.0-build.1</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
 </Project>
