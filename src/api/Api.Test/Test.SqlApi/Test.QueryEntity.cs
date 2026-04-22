@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using Xunit;
@@ -22,36 +21,17 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var cancellationToken = new CancellationToken(canceled: false);
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
 
         Assert.Equal("query", ex.ParamName);
 
         async Task TestAsync()
             =>
-            _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(null!, cancellationToken);
+            _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(null!, TestContext.Current.CancellationToken);
     }
 
     [Fact]
-    public static void QueryEntityOrAbsentAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
-    {
-        using var dbDataReader = CreateDbDataReader(5, SomeFieldNames);
-        using var dbCommand = CreateDbCommand(dbDataReader);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
-
-        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
-        var cancellationToken = new CancellationToken(canceled: true);
-
-        var actual = sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, cancellationToken);
-        Assert.True(actual.IsCanceled);
-    }
-
-    [Fact]
-    public static async Task QueryEntityOrAbsentAsync_CancellationTokenIsNotCanceled_ExpectConnectionOpenCalledOnce()
+    public static async Task QueryEntityOrAbsentAsync_ExpectConnectionOpenCalledOnce()
     {
         using var dbDataReader = CreateDbDataReader(7, SomeFieldNames);
         using var dbCommand = CreateDbCommand(dbDataReader);
@@ -62,13 +42,13 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, default);
+        _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, TestContext.Current.CancellationToken);
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
 
     [Theory]
     [MemberData(nameof(SqlApiTestSource.DbCommandTestData), MemberType = typeof(SqlApiTestSource))]
-    internal static async Task QueryEntityOrAbsentAsync_CancellationTokenIsNotCanceled_ExpectDbCommandGetCalledOnce(
+    internal static async Task QueryEntityOrAbsentAsync_ExpectDbCommandGetCalledOnce(
         StubDbQuery dbQuery, SqlDialect dialect, StubDbCommandRequest expectedRequest)
     {
         using var dbDataReader = CreateDbDataReader(5, "Field01", "Field02");
@@ -80,7 +60,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(dialect, dbConnection, dbCommand, OnCommandGet);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(dbQuery, default);
+        _ = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(dbQuery, TestContext.Current.CancellationToken);
 
         mockDbProvider.Verify(
             p => p.GetDbCommand(dbConnection, expectedRequest.CommandText, It.IsAny<IReadOnlyCollection<DbParameter>?>(), expectedRequest.Timeout),
@@ -103,7 +83,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, default);
+        var actual = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, TestContext.Current.CancellationToken);
         var expected = Result.Absent<StubDbEntity>();
 
         Assert.StrictEqual(expected, actual);
@@ -121,7 +101,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, default);
+        var actual = await sqlApi.QueryEntityOrAbsentAsync<StubDbEntity>(SomeDbQuery, TestContext.Current.CancellationToken);
 
         var expectedFieldIndexes = new Dictionary<string, int>
         {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using PrimeFuncPack.UnitTest;
@@ -22,36 +21,17 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
-        var cancellationToken = new CancellationToken(canceled: false);
 
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
         Assert.Equal("query", ex.ParamName);
 
         async Task TestAsync()
             =>
-            _ = await sqlApi.ExecuteNonQueryOrFailureAsync(null!, cancellationToken);
+            _ = await sqlApi.ExecuteNonQueryOrFailureAsync(null!, TestContext.Current.CancellationToken);
     }
 
     [Fact]
-    public static void ExecuteNonQueryOrFailureAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
-    {
-        using var dbCommand = CreateDbCommand(7);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
-
-        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
-
-        var cancellationToken = new CancellationToken(canceled: true);
-        var actual = sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, cancellationToken);
-
-        Assert.True(actual.IsCanceled);
-    }
-
-    [Fact]
-    public static async Task ExecuteNonQueryOrFailureAsync_CancellationTokenIsNotCanceled_ExpectConnectionOpenCalledOnce()
+    public static async Task ExecuteNonQueryOrFailureAsync_ExpectConnectionOpenCalledOnce()
     {
         using var dbCommand = CreateDbCommand(347);
 
@@ -61,8 +41,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var cancellationToken = new CancellationToken(canceled: false);
-        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, cancellationToken);
+        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, TestContext.Current.CancellationToken);
 
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
@@ -80,7 +59,7 @@ partial class SqlApiTest
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
+        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, TestContext.Current.CancellationToken);
         var expected = Failure.Create("An unexpected exception was thrown when executing the input database query", dbConnectionException);
 
         Assert.StrictEqual(expected, actual);
@@ -99,7 +78,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(dialect, dbConnection, dbCommand, OnCommandGet);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, default);
+        _ = await sqlApi.ExecuteNonQueryOrFailureAsync(dbQuery, TestContext.Current.CancellationToken);
 
         mockDbProvider.Verify(
             p => p.GetDbCommand(dbConnection, expectedRequest.CommandText, It.IsAny<IReadOnlyCollection<DbParameter>?>(), expectedRequest.Timeout),
@@ -122,7 +101,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
+        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, TestContext.Current.CancellationToken);
         var expected = Failure.Create("An unexpected exception was thrown when executing the input database query", dbCommandException);
 
         Assert.StrictEqual(expected, actual);
@@ -143,7 +122,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, default);
+        var actual = await sqlApi.ExecuteNonQueryOrFailureAsync(SomeDbQuery, TestContext.Current.CancellationToken);
         var expected = nonQueryResult;
 
         Assert.StrictEqual(expected, actual);

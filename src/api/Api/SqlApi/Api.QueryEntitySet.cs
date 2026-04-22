@@ -11,12 +11,6 @@ partial class SqlApi<TDbConnection>
         where T : IDbEntity<T>
     {
         ArgumentNullException.ThrowIfNull(query);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<FlatArray<T>>(cancellationToken);
-        }
-
         return InnerQueryEntitySetAsync<T>(query, cancellationToken);
     }
 

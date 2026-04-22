@@ -6,18 +6,7 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi<TDbConnection>
 {
-    public ValueTask<Result<Unit, Failure<Unit>>> PingAsync(Unit _, CancellationToken cancellationToken)
-    {
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<Result<Unit, Failure<Unit>>>(cancellationToken);
-        }
-
-        return InnerPingAsync(cancellationToken);
-    }
-
-    private async ValueTask<Result<Unit, Failure<Unit>>> InnerPingAsync(
-        CancellationToken cancellationToken)
+    public async ValueTask<Result<Unit, Failure<Unit>>> PingAsync(Unit input, CancellationToken cancellationToken)
     {
         try
         {

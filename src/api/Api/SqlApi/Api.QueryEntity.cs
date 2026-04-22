@@ -10,12 +10,6 @@ partial class SqlApi<TDbConnection>
         where T : IDbEntity<T>
     {
         ArgumentNullException.ThrowIfNull(query);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<Result<T, Unit>>(cancellationToken);
-        }
-
         return InnerQueryDbItemOrAbsentAsync<T>(query, cancellationToken);
     }
 

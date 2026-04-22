@@ -6,22 +6,11 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi<TDbConnection>
 {
-    public ValueTask<Result<int, Failure<Unit>>> ExecuteNonQueryOrFailureAsync(
+    public async ValueTask<Result<int, Failure<Unit>>> ExecuteNonQueryOrFailureAsync(
         IDbQuery query, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<Result<int, Failure<Unit>>>(cancellationToken);
-        }
-
-        return InnerExecuteNonQueryOrFailureAsync(query, cancellationToken);
-    }
-
-    private async ValueTask<Result<int, Failure<Unit>>> InnerExecuteNonQueryOrFailureAsync(
-        IDbQuery query, CancellationToken cancellationToken)
-    {
         try
         {
             return await InnerExecuteNonQueryAsync(query, cancellationToken).ConfigureAwait(false);
