@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -14,164 +15,27 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
-
-    # Add NuGet Sources
+        dotnet-version: 10.0.x
 
     - name: Create Local NuGet Directory
       run: mkdir ~/nuget
 
-    - name: Add Local Nuget Source
-      run: dotnet nuget add source ~/nuget
+    - name: Restore Infra.SqlApi
+      run: dotnet restore ./*/Infra.SqlApi.slnx
 
-    - name: Add GarageGroup NuGet Source
-      run: >
-        dotnet nuget add source ${{ vars.GG_NUGET_SOURCE_URL }}
-        -n garage
-        -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
-        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --store-password-in-clear-text
+    - name: Build Infra.SqlApi
+      run: dotnet build ./*/Infra.SqlApi.slnx --no-restore -c Release
 
-    # Api.Core.SqlDialect
+    - name: Test Infra.SqlApi
+      run: dotnet test ./*/Infra.SqlApi.slnx --no-restore -c Release
 
-    - name: Restore Api.Core.SqlDialect
-      run: dotnet restore ./src/*/*/SqlDialect.csproj
-
-    - name: Build Api.Core.SqlDialect
-      run: dotnet build ./src/*/*/SqlDialect.csproj --no-restore  -c Release
-
-    - name: Pack Api.Core.SqlDialect
-      run: dotnet pack ./src/*/*/SqlDialect.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Core.DbEntity
-
-    - name: Restore Api.Core.DbEntity
-      run: dotnet restore ./src/*/*/DbEntity.csproj
-
-    - name: Build Api.Core.DbEntity
-      run: dotnet build ./src/*/*/DbEntity.csproj --no-restore  -c Release
-
-    - name: Pack Api.Core.DbEntity
-      run: dotnet pack ./src/*/*/DbEntity.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Core.DbEntity.Test
-
-    - name: Restore Api.Core.DbEntity.Test
-      run: dotnet restore ./src/*/*/DbEntity.Test.csproj
-
-    - name: Test Api.Core.DbEntity.Test
-      run: dotnet test ./src/*/*/DbEntity.Test.csproj --no-restore  -c Release
-
-    # Api.Core.DbParameter
-
-    - name: Restore Api.Core.DbParameter
-      run: dotnet restore ./src/*/*/DbParameter.csproj
-
-    - name: Build Api.Core.DbParameter
-      run: dotnet build ./src/*/*/DbParameter.csproj --no-restore  -c Release
-
-    - name: Pack Api.Core.DbParameter
-      run: dotnet pack ./src/*/*/DbParameter.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Core.DbQuery
-
-    - name: Restore Api.Core.DbQuery
-      run: dotnet restore ./src/*/*/DbQuery.csproj
-
-    - name: Build Api.Core.DbQuery
-      run: dotnet build ./src/*/*/DbQuery.csproj --no-restore  -c Release
-
-    - name: Pack Api.Core.DbQuery
-      run: dotnet pack ./src/*/*/DbQuery.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Core.DbQuery.Test
-
-    - name: Restore Api.Core.DbQuery.Test
-      run: dotnet restore ./src/*/*/DbQuery.Test.csproj
-
-    - name: Test Api.Core.DbQuery.Test
-      run: dotnet test ./src/*/*/DbQuery.Test.csproj --no-restore  -c Release
-
-    # Api.Abstractions.ExecuteNonQuery
-
-    - name: Restore Api.Abstractions.ExecuteNonQuery
-      run: dotnet restore ./src/*/*/Abstractions.ExecuteNonQuery.csproj
-
-    - name: Build Api.Abstractions.ExecuteNonQuery
-      run: dotnet build ./src/*/*/Abstractions.ExecuteNonQuery.csproj --no-restore  -c Release
-
-    - name: Pack Api.Abstractions.ExecuteNonQuery
-      run: dotnet pack ./src/*/*/Abstractions.ExecuteNonQuery.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Abstractions.QueryEntity
-
-    - name: Restore Api.Abstractions.QueryEntity
-      run: dotnet restore ./src/*/*/Abstractions.QueryEntity.csproj
-
-    - name: Build Api.Abstractions.QueryEntity
-      run: dotnet build ./src/*/*/Abstractions.QueryEntity.csproj --no-restore  -c Release
-
-    - name: Pack Api.Abstractions.QueryEntity
-      run: dotnet pack ./src/*/*/Abstractions.QueryEntity.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Abstractions.QueryEntitySet
-
-    - name: Restore Api.Abstractions.QueryEntitySet
-      run: dotnet restore ./src/*/*/Abstractions.QueryEntitySet.csproj
-
-    - name: Build Api.Abstractions.QueryEntitySet
-      run: dotnet build ./src/*/*/Abstractions.QueryEntitySet.csproj --no-restore  -c Release
-
-    - name: Pack Api.Abstractions.QueryEntitySet
-      run: dotnet pack ./src/*/*/Abstractions.QueryEntitySet.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Abstractions
-
-    - name: Restore Api.Abstractions
-      run: dotnet restore ./src/api-abstractions/*/Abstractions.csproj
-
-    - name: Build Api.Abstractions
-      run: dotnet build ./src/api-abstractions/*/Abstractions.csproj --no-restore  -c Release
-
-    - name: Pack Api.Abstractions
-      run: dotnet pack ./src/api-abstractions/*/Abstractions.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Provider.Abstractions
-
-    - name: Restore Api.Provider.Abstractions
-      run: dotnet restore ./src/api-abstractions/*/Provider.Abstractions.csproj
-
-    - name: Build Api.Provider.Abstractions
-      run: dotnet build ./src/api-abstractions/*/Provider.Abstractions.csproj --no-restore  -c Release
-
-    - name: Pack Api.Provider.Abstractions
-      run: dotnet pack ./src/api-abstractions/*/Provider.Abstractions.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api
-
-    - name: Restore Api
-      run: dotnet restore ./src/*/*/Api.csproj
-
-    - name: Build Api
-      run: dotnet build ./src/*/*/Api.csproj --no-restore  -c Release
-
-    - name: Pack Api
-      run: dotnet pack ./src/*/*/Api.csproj --no-restore -o ~/nuget  -c Release
-
-    # Api.Test
-
-    - name: Restore Api.Test
-      run: dotnet restore ./src/*/*/Api.Test.csproj
-
-    - name: Test Api.Test
-      run: dotnet test ./src/*/*/Api.Test.csproj --no-restore  -c Release
-
-    # Push
+    - name: Pack Infra.SqlApi
+      run: dotnet pack ./*/Infra.SqlApi.slnx --no-build -o ~/nuget -c Release
 
     - name: Push Packages
       if: ${{ github.ref == 'refs/heads/main' }}
       run: >
-        dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ vars.GG_NUGET_SOURCE_URL }}
-        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        dotnet nuget push ~/nuget/*.nupkg
+        -s https://api.nuget.org/v3/index.json
+        -k ${{ secrets.NUGET_SECRET }}
         --skip-duplicate

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using PrimeFuncPack.UnitTest;
@@ -11,24 +10,7 @@ namespace GarageGroup.Infra.Sql.Api.Provider.Api.Test;
 partial class SqlApiTest
 {
     [Fact]
-    public static void PingAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
-    {
-        using var dbCommand = CreateDbCommand(71);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
-        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
-
-        var cancellationToken = new CancellationToken(canceled: true);
-        var actual = sqlApi.PingAsync(default, cancellationToken);
-
-        Assert.True(actual.IsCanceled);
-    }
-
-    [Fact]
-    public static async Task PingAsync_CancellationTokenIsNotCanceled_ExpectConnectionOpenCalledOnce()
+    public static async Task PingAsync_ExpectConnectionOpenCalledOnce()
     {
         using var dbCommand = CreateDbCommand(19);
 
@@ -38,8 +20,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var cancellationToken = new CancellationToken(canceled: false);
-        _ = await sqlApi.PingAsync(default, cancellationToken);
+        _ = await sqlApi.PingAsync(default, TestContext.Current.CancellationToken);
 
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
@@ -57,7 +38,7 @@ partial class SqlApiTest
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.PingAsync(default, default);
+        var actual = await sqlApi.PingAsync(default, TestContext.Current.CancellationToken);
         var expected = Failure.Create("An unexpected exception was thrown when trying to ping a database", dbConnectionException);
 
         Assert.StrictEqual(expected, actual);
@@ -78,7 +59,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(dialect, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        _ = await sqlApi.PingAsync(default, default);
+        _ = await sqlApi.PingAsync(default, TestContext.Current.CancellationToken);
         mockDbProvider.Verify(p => p.GetDbCommand(dbConnection, "SELECT 1;", null, null), Times.Once);
     }
 
@@ -94,7 +75,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.PingAsync(default, default);
+        var actual = await sqlApi.PingAsync(default, TestContext.Current.CancellationToken);
         var expected = Failure.Create("An unexpected exception was thrown when trying to ping a database", dbCommandException);
 
         Assert.StrictEqual(expected, actual);
@@ -115,7 +96,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.PingAsync(default, default);
+        var actual = await sqlApi.PingAsync(default, TestContext.Current.CancellationToken);
         var expected = Result.Success<Unit>(default);
 
         Assert.StrictEqual(expected, actual);

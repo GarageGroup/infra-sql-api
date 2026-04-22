@@ -9,12 +9,6 @@ partial class SqlApi<TDbConnection>
     public ValueTask<int> ExecuteNonQueryAsync(IDbQuery query, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(query);
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<int>(cancellationToken);
-        }
-
         return InnerExecuteNonQueryAsync(query, cancellationToken);
     }
 

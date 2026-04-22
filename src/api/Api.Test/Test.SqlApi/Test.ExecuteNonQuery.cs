@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using PrimeFuncPack.UnitTest;
@@ -22,18 +21,17 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
 
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
-        var cancellationToken = new CancellationToken(canceled: false);
 
         var ex = await Assert.ThrowsAsync<ArgumentNullException>(TestAsync);
         Assert.Equal("query", ex.ParamName);
 
         async Task TestAsync()
             =>
-            _ = await sqlApi.ExecuteNonQueryAsync(null!, cancellationToken);
+            _ = await sqlApi.ExecuteNonQueryAsync(null!, TestContext.Current.CancellationToken);
     }
 
     [Fact]
-    public static void ExecuteNonQueryAsync_CancellationTokenIsCanceled_ExpectCanceledValueTask()
+    public static async Task ExecuteNonQueryAsync_ExpectConnectionOpenCalledOnce()
     {
         using var dbCommand = CreateDbCommand(21);
 
@@ -43,30 +41,13 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var cancellationToken = new CancellationToken(canceled: true);
-        var actual = sqlApi.ExecuteNonQueryAsync(SomeDbQuery, cancellationToken);
-
-        Assert.True(actual.IsCanceled);
-    }
-
-    [Fact]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectConnectionOpenCalledOnce()
-    {
-        using var dbCommand = CreateDbCommand(21);
-
-        var mockDbConnection = CreateMockDbConnection(dbCommand);
-        using var dbConnection = new StubDbConnection(mockDbConnection.Object);
-
-        var mockDbProvider = CreateMockDbProvider(SqlDialect.TransactSql, dbConnection, dbCommand);
-        var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
-
-        _ = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, default);
+        _ = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, TestContext.Current.CancellationToken);
         mockDbConnection.Verify(static db => db.Open(), Times.Once);
     }
 
     [Theory]
     [MemberData(nameof(SqlApiTestSource.DbCommandTestData), MemberType = typeof(SqlApiTestSource))]
-    internal static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectDbCommandGetCalledOnce(
+    internal static async Task ExecuteNonQueryAsync_ExpectDbCommandGetCalledOnce(
         StubDbQuery dbQuery, SqlDialect dialect, StubDbCommandRequest expectedRequest)
     {
         using var dbCommand = CreateDbCommand(73);
@@ -77,7 +58,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(dialect, dbConnection, dbCommand, OnCommandGet);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, default);
+        _ = await sqlApi.ExecuteNonQueryAsync(dbQuery, TestContext.Current.CancellationToken);
 
         mockDbProvider.Verify(
             p => p.GetDbCommand(dbConnection, expectedRequest.CommandText, It.IsAny<IReadOnlyCollection<DbParameter>?>(), expectedRequest.Timeout),
@@ -92,7 +73,7 @@ partial class SqlApiTest
     [InlineData(TestData.MinusFifteen)]
     [InlineData(TestData.Zero)]
     [InlineData(int.MaxValue)]
-    public static async Task ExecuteNonQueryAsync_CancellationTokenIsNotCanceled_ExpectNonQueryResult(
+    public static async Task ExecuteNonQueryAsync_ExpectNonQueryResult(
         int nonQueryResult)
     {
         using var dbCommand = CreateDbCommand(nonQueryResult);
@@ -103,7 +84,7 @@ partial class SqlApiTest
         var mockDbProvider = CreateMockDbProvider(SqlDialect.PostgreSql, dbConnection, dbCommand);
         var sqlApi = new SqlApi<DbConnection>(mockDbProvider.Object);
 
-        var actual = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, default);
+        var actual = await sqlApi.ExecuteNonQueryAsync(SomeDbQuery, TestContext.Current.CancellationToken);
         Assert.StrictEqual(nonQueryResult, actual);
     }
 }

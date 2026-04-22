@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/.github/workflows/">
+    <File Path="../.github/workflows/dotnet.yml" />
+  </Folder>
+  <Folder Name="/api-abstractions/">
+    <Project Path="api-abstractions/Abstractions.ExecuteNonQuery/Abstractions.ExecuteNonQuery.csproj" />
+    <Project Path="api-abstractions/Abstractions.QueryEntity/Abstractions.QueryEntity.csproj" />
+    <Project Path="api-abstractions/Abstractions.QueryEntitySet/Abstractions.QueryEntitySet.csproj" />
+    <Project Path="api-abstractions/Abstractions/Abstractions.csproj" />
+    <Project Path="api-abstractions/Provider.Abstractions/Provider.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/api-core/">
+    <Project Path="api-core/DbEntity.Test/DbEntity.Test.csproj" />
+    <Project Path="api-core/DbEntity/DbEntity.csproj" />
+    <Project Path="api-core/DbParameter/DbParameter.csproj" />
+    <Project Path="api-core/DbQuery.Test/DbQuery.Test.csproj" />
+    <Project Path="api-core/DbQuery/DbQuery.csproj" />
+    <Project Path="api-core/SqlDialect/SqlDialect.csproj" />
+  </Folder>
+  <Folder Name="/api/">
+    <Project Path="api/Api.Test/Api.Test.csproj" />
+    <Project Path="api/Api/Api.csproj" />
+  </Folder>
+</Solution>

@@ -1,17 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);IDE0130;CA1859;CA1873</NoWarn>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Abstractions</AssemblyName>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.HealthCheck.Api.Contract.Ping" Version="0.0.1" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.ExecuteNonQuery" Version="3.0.0" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.QueryEntity" Version="3.0.0" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Abstractions.QueryEntitySet" Version="3.0.0" />
+    <PackageReference Include="GarageGroup.Infra.HealthCheck.Api.Contract.Ping" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Abstractions.ExecuteNonQuery/Abstractions.ExecuteNonQuery.csproj" />
+    <ProjectReference Include="../Abstractions.QueryEntity/Abstractions.QueryEntity.csproj" />
+    <ProjectReference Include="../Abstractions.QueryEntitySet/Abstractions.QueryEntitySet.csproj" />
   </ItemGroup>
 
 </Project>

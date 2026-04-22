@@ -6,24 +6,12 @@ namespace GarageGroup.Infra;
 
 partial class SqlApi<TDbConnection>
 {
-    public ValueTask<Result<T, Failure<EntityQueryFailureCode>>> QueryEntityOrFailureAsync<T>(
+    public async ValueTask<Result<T, Failure<EntityQueryFailureCode>>> QueryEntityOrFailureAsync<T>(
         IDbQuery query, CancellationToken cancellationToken = default)
         where T : IDbEntity<T>
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return ValueTask.FromCanceled<Result<T, Failure<EntityQueryFailureCode>>>(cancellationToken);
-        }
-
-        return InnerQueryEntityOrFailureAsync<T>(query, cancellationToken);
-    }
-
-    private async ValueTask<Result<T, Failure<EntityQueryFailureCode>>> InnerQueryEntityOrFailureAsync<T>(
-        IDbQuery query, CancellationToken cancellationToken)
-        where T : IDbEntity<T>
-    {
         try
         {
             var result = await InnerQueryDbItemOrAbsentAsync<T>(query, cancellationToken).ConfigureAwait(false);

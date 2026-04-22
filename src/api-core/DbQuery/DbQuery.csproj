@@ -1,16 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);IDE0130;CA1859;CA1873</NoWarn>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Sql.Api.Core.DbQuery</AssemblyName>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.DbParameter" Version="3.0.0" />
-    <PackageReference Include="GarageGroup.Infra.Sql.Api.Core.SqlDialect" Version="1.0.0" />
-    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.5.0" />
+    <ProjectReference Include="../DbParameter/DbParameter.csproj" />
+    <ProjectReference Include="../SqlDialect/SqlDialect.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.5.1" />
   </ItemGroup>
 
 </Project>
